@@ -1,5 +1,11 @@
 # Device Connect Vuzix M100 demo UI application in MWC2015
 
+## Introduction
+
+This demo application, or view the live streaming video to shoot in the M100 smart glass of the camera's remote PC to the browser window,
+Receiving a human heart from wristwatch type of heart rate monitor, it is a demo application that real-time displayed on the M100 smart glass.
+
+
 
 ## For M100 demo environment
 
