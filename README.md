@@ -6,9 +6,9 @@ DeviceConnect Experiments.
 
 DeviceConnect WebAPI achieves interoperability for various OS and protocols.
 
-<center><a href="assets/DeviceConnectConcept.png target="_blank">
+<div style="text-align:center"><a href="assets/DeviceConnectConcept.png target="_blank">
 <img src="assets/DeviceConnectConcept.png" border="0"
- width="450" height="229" alt="" /></a></center>
+ width="901" height="458" alt="" /></a></div>
  
  
 * NTT DOCOMO open sourced GotAPI project as “Device Connect”

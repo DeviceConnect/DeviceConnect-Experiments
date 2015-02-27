@@ -27,15 +27,17 @@
 
 　Shows the demo configuration diagram below.
 
-<center><a href="assets/figure1.png target="_blank">
+<div style="text-align:center">
+<a href="assets/figure1.png target="_blank">
 <img src="assets/figure1.png" border="0"
- width="549" height="329" alt="" /></a>
-Figure 1 demo configuration diagram</center>
+ width="549" height="329" alt="" /></a><br>
+Figure 1 demo configuration diagram</div>
 
 
-<center><a href="assets/figure2.png target="_blank">
+<div style="text-align:center">
+<a href="assets/figure2.png target="_blank">
 <img src="assets/figure2.png" border="0"
- width="521" height="283" alt="" /></a>
+ width="521" height="283" alt="" /></a><br>
 Figure 2 Device Connect plug-in cooperation Figure</center>
 
 
