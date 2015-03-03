@@ -874,6 +874,7 @@ function searchHealth(flag) {
             if (DEBUG) console.log("services: ", obj.services[i].name);
             if ( (obj.services[i].name == "MIO GLOBAL")
               || (obj.services[i].name.indexOf('PS-100') === 0)
+              || (obj.services[i].name.indexOf('PS-500') === 0)
               || (obj.services[i].name.indexOf('Polar H7') === 0)
               || (obj.services[i].name.indexOf('Wahoo HRM') === 0) ) {
                 HealthServiceID = obj.services[i].id;
