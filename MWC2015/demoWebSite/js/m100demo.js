@@ -764,8 +764,8 @@ function M100DemoAuthorization(){
     var scopes = Array("servicediscovery", "battery", "connect", "deviceorientation", "file_descriptor", "file", "media_player",
                     "mediastream_recording", "notification", "phone", "proximity", "settings", "vibration", "light",
                     "remote_controller", "drive_controller", "mhealth", "sphero", "dice", "temperature","camera", "canvas", "health");
-        dConnect.authorization('http://www.deviceconnect.org/demo/', scopes, 'サンプル',
-            function(clientId, clientSecret, newAccessToken) {
+        dConnect.authorization(scopes, 'サンプル',
+            function(clientId, newAccessToken) {
                 // Client ID
                 M100DemoCurrentClientId = clientId;
                 
@@ -795,8 +795,8 @@ function HostDemoAuthorization(flag){
     var scopes = Array("servicediscovery", "battery", "connect", "deviceorientation", "file_descriptor", "file", "media_player",
                     "mediastream_recording", "notification", "phone", "proximity", "settings", "vibration", "light",
                     "remote_controller", "drive_controller", "mhealth", "sphero", "dice", "temperature","camera", "canvas", "health");
-        dConnect.authorization('http://www.deviceconnect.org/demo/', scopes, 'サンプル',
-            function(clientId, clientSecret, newAccessToken) {
+        dConnect.authorization(scopes, 'サンプル',
+            function(clientId, newAccessToken) {
                 // Client ID
                 HostCurrentClientId = clientId;
                 
