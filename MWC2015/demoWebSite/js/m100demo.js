@@ -278,11 +278,11 @@ function doDeviceHRSetup(serviceId){
 
     if(DEBUG) console.log("Uri:"+uri)
 
-    dConnect.get(uri, null, null, function(json) {
+    dConnect.get(uri, null, function(json) {
         if (DEBUG) console.log("Response: ", json);
         for (var i = 0; i < json.plugins.length; i++) {
             if (DEBUG) console.log("id : " + json.plugins[i].id + " name : " + json.plugins[i].name);
-            if (json.plugins[i].name == "HeartRate(BLE)デバイスプラグイン") {
+            if (json.plugins[i].packageName == "org.deviceconnect.android.deviceplugin.heartrate") {
                 launchDevicePlugin(json.plugins[i].id);
                 break;
             }
