@@ -278,11 +278,11 @@ function doDeviceHRSetup(serviceId){
 
     if(DEBUG) console.log("Uri:"+uri)
 
-    dConnect.get(uri, null, null, function(json) {
+    dConnect.get(uri, null, function(json) {
         if (DEBUG) console.log("Response: ", json);
         for (var i = 0; i < json.plugins.length; i++) {
             if (DEBUG) console.log("id : " + json.plugins[i].id + " name : " + json.plugins[i].name);
-            if (json.plugins[i].name == "HeartRate(BLE)デバイスプラグイン") {
+            if (json.plugins[i].packageName == "org.deviceconnect.android.deviceplugin.heartrate") {
                 launchDevicePlugin(json.plugins[i].id);
                 break;
             }
@@ -764,8 +764,8 @@ function M100DemoAuthorization(){
     var scopes = Array("servicediscovery", "battery", "connect", "deviceorientation", "file_descriptor", "file", "media_player",
                     "mediastream_recording", "notification", "phone", "proximity", "settings", "vibration", "light",
                     "remote_controller", "drive_controller", "mhealth", "sphero", "dice", "temperature","camera", "canvas", "health");
-        dConnect.authorization('http://www.deviceconnect.org/demo/', scopes, 'サンプル',
-            function(clientId, clientSecret, newAccessToken) {
+        dConnect.authorization(scopes, 'サンプル',
+            function(clientId, newAccessToken) {
                 // Client ID
                 M100DemoCurrentClientId = clientId;
                 
@@ -795,8 +795,8 @@ function HostDemoAuthorization(flag){
     var scopes = Array("servicediscovery", "battery", "connect", "deviceorientation", "file_descriptor", "file", "media_player",
                     "mediastream_recording", "notification", "phone", "proximity", "settings", "vibration", "light",
                     "remote_controller", "drive_controller", "mhealth", "sphero", "dice", "temperature","camera", "canvas", "health");
-        dConnect.authorization('http://www.deviceconnect.org/demo/', scopes, 'サンプル',
-            function(clientId, clientSecret, newAccessToken) {
+        dConnect.authorization(scopes, 'サンプル',
+            function(clientId, newAccessToken) {
                 // Client ID
                 HostCurrentClientId = clientId;
                 
