@@ -1,0 +1,176 @@
+/**
+ demo.css
+ Copyright (c) 2015 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
+
+@charset 'UTF-8';
+
+header {
+  width: 100%;
+  height: 60px;
+  background-color: #3DA4D3;
+}
+
+header .nav {
+  margin-top: 10px;
+  float: right;
+}
+
+header .nav > li > a:hover {
+  color: #337cbb;
+}
+
+header .nav > li.active > a,
+header .nav > li.active > a:hover,
+header .nav > li.active > a:focus {
+  color: #337cbb;
+  background-color: #eeeeee;
+}
+
+header .title {
+  line-height: 60px;
+  font-size: 1.4em;
+  color: #FFF;
+}
+
+header .nav > li > a {
+  font-size: 1.1em;
+  color: #FFF;
+}
+
+.mytext {
+  color: #25799f;
+}
+
+.mybg {
+  background-color: #b9deef;
+}
+
+.collapse-btn {
+  margin-top: 20px;
+}
+
+.controller {
+  margin: 5px;
+  padding: 5px;
+}
+
+.video-header {
+  height: 50px;
+  line-height: 50px;
+}
+
+.video-area .modify,
+.audio-area,
+.controller {
+  border: 1px #BBB solid;
+}
+
+.media-area {
+  padding: 20px;
+}
+
+#other .video-area,
+#my .video-area {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#other .modify,
+#other .original,
+#other video,
+#other .video-area {
+  width: 266px;
+  height: 200px;
+}
+
+#my .modify,
+#my .original,
+#my video,
+#my .video-area {
+  width: 133px;
+  height: 100px;
+}
+
+.media-area .audio-area {
+  width: 266px;
+  height: 64px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.media-area .modify,
+.media-area .original,
+.media-area video {
+  position: absolute;
+}
+
+.media-area .original,
+.media-area video {
+  visibility: hidden;
+}
+
+#input-callee-id {
+  margin-bottom: 4px;
+}
+
+.connect > button {
+  margin-right: 8px;
+}
+
+#collees-list {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  height: 0px;
+  overflow: auto;
+  color: black;
+}
+
+.controller.video .selector input,
+.controller.audio .process-select input {
+  margin: 5px;
+}
+
+.controller.video .selector input,
+.controller.audio .process-select input {
+  margin: 5px;
+}
+
+.btn-warning,
+.btn-warning:focus,
+.btn-warning:hover {
+  color: #FFF;
+}
+
+#enable-video:hover,
+#enable-video:focus {
+  color: #25799f;
+}
+
+/* xs */
+@media (max-width: 767px) {
+  header .title {
+    font-size: 0.6em;
+  }
+
+  header .nav > li > a {
+    font-size: 0.4em;
+  }
+}
+
+/* sm */
+@media (min-width: 768px) and (max-width: 991px){
+
+}
+
+/* md */
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/* lg */
+@media (min-width: 1200px) {
+
+}
