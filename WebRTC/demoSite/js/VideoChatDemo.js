@@ -1,8 +1,9 @@
 (function() {
 
-  var _skywayApiKey = "[ INPUT YOUR ID ]";
+  var _skywayApiKey = "[ YOUR API KEY ]";
   var _skywayDomain = "localhost";
 
+  var _ip;
   var _accessToken;
   var _serviceId;
   var _sessionKey = Math.random().toString(36).slice(-8);
@@ -19,6 +20,22 @@
     builder.setAttribute(attribute);
     builder.addParameter('config', createConfig());
     return builder;
+  }
+
+  function getIpString() {
+    if (1 < document.location.search.length) {
+      var query = document.location.search.substring(1);
+      var parameters = query.split('&');
+      for (var i = 0; i < parameters.length; i++) {
+        var element = parameters[i].split('=');
+        var paramName = decodeURIComponent(element[0]);
+        var paramValue = decodeURIComponent(element[1]);
+        if (paramName == 'ip') {
+          return paramValue;
+        }
+      }
+    }
+    return 'localhost';
   }
 
   function getCookie(name) {
@@ -48,7 +65,7 @@
         function(clientId, accessToken) {
           _accessToken = accessToken;
           console.log(clientId + " " + accessToken);
-          document.cookie = 'accessToken=' + accessToken;
+          document.cookie = 'accessToken' + _ip + '=' + accessToken;
           searchWebRTCDevicePlugin();
         },
         function(errorCode, errorMessage) {
@@ -193,8 +210,10 @@
   }
 
   $(document).ready(function() {
+    _ip = getIpString();
+    _accessToken = getCookie('accessToken' + _ip);
 
-    _accessToken = getCookie('accessToken');
+    dConnect.setHost(_ip);
     if (_accessToken) {
       searchWebRTCDevicePlugin();
     } else {
