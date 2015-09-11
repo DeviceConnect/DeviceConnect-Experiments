@@ -69,7 +69,7 @@
           searchWebRTCDevicePlugin();
         },
         function(errorCode, errorMessage) {
-          showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+          showErrorDialog("Error", "Failed to the authroization.<br>errorCode: " + errorCode + "<br>" + errorMessage);
         });
   }
 
@@ -98,7 +98,7 @@
         getMyProfile();
       }
     }, function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to discovery the plug-in.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     });
   }
 
@@ -109,7 +109,7 @@
       registerEvent();
     };
     var errorCallback = function (errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to connect the skyway.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     };
     dConnect.get(builder.build(), null, successCallback, errorCallback);
   }
@@ -134,7 +134,7 @@
         $('#input-callee-id').val($(this).text());
       });
     }, function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to get the list.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     });
   }
 
@@ -149,7 +149,7 @@
     var successCallback = function(json) {
     };
     var errorCallback = function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to make call.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     };
     dConnect.post(builder.build(), null, null, successCallback, errorCallback);
   }
@@ -161,7 +161,7 @@
     var successCallback = function(json) {
     };
     var errorCallback = function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to end call.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     };
     dConnect.delete(builder.build(), null, successCallback, errorCallback);
   }
@@ -177,7 +177,7 @@
     var successCallback = function(json) {
     };
     var errorCallback = function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to answer.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     };
     dConnect.post(builder.build(), null, null, successCallback, errorCallback);
   }
@@ -198,7 +198,7 @@
     var successCallback = function(json) {
     };
     var errorCallback = function(errorCode, errorMessage) {
-      showErrorDialog("Error", "errorCode: " + errorCode + "<br>" + errorMessage);
+      showErrorDialog("Error", "Failed to register event.<br>errorCode: " + errorCode + "<br>" + errorMessage);
     };
     dConnect.addEventListener(builder.build(), eventCallback, successCallback, errorCallback);
   }
