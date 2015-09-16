@@ -1,0 +1,118 @@
+<html>
+
+<head>
+  <title>WebRTC Processing Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+
+  <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="./css/demo.css">
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://skyway.io/dist/0.3/peer.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <script src="js/Demo.js"></script>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="title col-xs-5 col-sm-8">
+        <div>WebRTC Processing Demo</div>
+      </div>
+      <div class="col-xs-7 col-sm-4">
+        <ul class="nav nav-pills">
+          <li><a id="standalone" data-toggle="tab" href="#">Standalone</a></li>
+          <li class="active"><a id="peer2peer" data-toggle="tab" href="#">Peer2Peer</a></li>
+        </ul>
+      </div>
+    </div>
+</div>
+</header>
+
+<div class="container">
+
+  <div id="main-view" class="row mytext">
+
+    <div id="other" class="col-xs-12 col-sm-6 media-area">
+      <div class="video-header text-center">
+        <span>Other : </span> <span class="skyway-id">XXXXXX</span>
+      </div>
+      <div class="video-area mybg">
+        <canvas class="modify"></canvas>
+        <canvas class="original"></canvas>
+        <video autoplay="autoplay"></video>
+      </div>
+      <!-- other's analyser is not working. so none.-->
+      <div style="display: none;" class="audio-area mybg">
+        <div class="process-analyser"></div>
+      </div>
+    </div>
+
+    <div id="my" class="col-xs-12 col-sm-6 media-area">
+      <div class="video-header text-center">
+        <span>My : </span> <span class="skyway-id">XXXXXX</span>
+      </div>
+      <div class="video-area mybg">
+        <canvas class="modify"></canvas>
+        <canvas class="original"></canvas>
+        <video muted="true" autoplay="autoplay"></video>
+      </div>
+      <div class="text-center audiotext" style="margin-top: 8px;">analyser</div>
+      <div class="audio-area mybg">
+        <div class="process-analyser"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row collapse-btn connector-btn"><div class="col-xs-12"><button type="button" class="btn btn-success" data-toggle="collapse" data-target=".controller.connect">
+      <i class="fa fa-phone"></i> Connector
+  </button></div></div>
+
+  <div class="row controller connect mybg collapse">
+    <input class="form-control" type="text" placeholder="Input other id" id="input-callee-id">
+    <button class="btn btn-success btn-sm" id="get-list"><i class="fa fa-list"></i>  Get List</button>
+    <button class="btn btn-success btn-sm" id="make-call"><i class="fa fa-phone"></i>  Call</button>
+    <button class="btn btn-danger btn-sm" id="end-call"><i class="fa fa-stop"></i>  End call</button>
+    <ul class="list-group" id="collees-list"></ul>
+  </div>
+
+  <div class="row collapse-btn"><div class="col-xs-12"><button type="button" class="btn btn-success" data-toggle="collapse" data-target=".controller.video">
+    <i class="fa fa-television"></i> Video Processor
+  </button></div></div>
+
+  <div class="row controller video mybg collapse">
+    <div class="mytext">My</div>
+    <div class="my-selector selector"></div>
+    <div class="mytext other-text" style="margin-top: 5px;">Other</div>
+    <div class="other-selector selector"></div>
+  </div>
+
+  <div class="row collapse-btn audio"><div class="col-xs-12"><button type="button" class="btn btn-success" data-toggle="collapse" data-target=".controller.audio">
+      <i class="fa fa-microphone"></i> Audio Processor
+  </button></div></div>
+
+  <div class="row controller audio mybg collapse">
+    <div class="process-select"></div>
+    <input class="btn btn-danger" onclick="onPressRemoveProcess();" type="button" value="RemoveProcess"/>
+    <div class="operations mytext"></div>
+  </div>
+
+</div>
+
+<div class="container"><hr></div>
+
+<script src="js/WebRTCManager.js"></script>
+<script src="js/ImageProcessManager.js"></script>
+<script src="js/AllPatch.js"></script>
+<script src="js/ProcessNodes.js"></script>
+<script src="js/SoundAnalyser.js"></script>
+
+</body>
+
+</html>
