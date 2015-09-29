@@ -59,21 +59,6 @@
   ];
 
   var walkthroughData = [
-    // {
-    //   'name' : 'walk サンプル1',
-    //   'thumbnail' : 'assets/walk/route1/R001.jpg',
-    //   'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route1'
-    // },
-    // {
-    //   'name' : 'walk サンプル2',
-    //   'thumbnail' : 'assets/walk/route2/R001.jpg',
-    //   'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route2'
-    // },
-    // {
-    //   'name' : 'walk サンプル3',
-    //   'thumbnail' : 'assets/walk/route3/R001.jpg',
-    //   'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route3'
-    // },
     {
       'name' : '水族館',
       'thumbnail' : 'assets/walk/route4/R0001.jpg',
@@ -165,7 +150,7 @@
 
   function init() {
     var ip = getIpString();
-    var origin  = 'http://localhost';
+    var origin = 'http://localhost';
 
     client = new demoWeb.Client(ip, origin);
     client.setApplicationName(applicationName);
@@ -502,7 +487,7 @@
 
   function createContent(data) {
     var str = '';
-    str += '  <div class="col-sm-4 col-md-3 content-list-view">';
+    str += '  <div class="col-sm-6 col-md-4 content-list-view">';
     str += '    <div class="content">';
     str += '      <img class="content-image" src="' + data['thumbnail'] + '">';
     str += '      <div class="play-image"></div>';
@@ -517,12 +502,12 @@
     var str = "";
     for (var i = 0; i < roiData.length; i+=2) {
       str += '<div class="row">';
-      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
+      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
       str += '   <a href="#R-' + i + '">' + createContent(roiData[i]) + '</a>';
       if (i + 1 < roiData.length) {
         str += '   <a href="#R-' + (i + 1) + '">' + createContent(roiData[i + 1]) + '</a>';
       }
-      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
+      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
       str += '</div>';
     }
     $('#list-view').html(str);
@@ -535,12 +520,12 @@
     var str = "";
     for (var i = 0; i < walkthroughData.length; i+=2) {
       str += '<div class="row">';
-      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
+      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
       str += '   <a href="#W-' + i + '">' + createContent(walkthroughData[i]) + '</a>';
       if (i + 1 < walkthroughData.length) {
         str += '   <a href="#W-' + (i + 1) + '">' + createContent(walkthroughData[i + 1]) + '</a>';
       }
-      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
+      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
       str += '</div>';
     }
     $('#list-view').html(str);
@@ -666,6 +651,7 @@
       target: $('#roi-target'),
       overlay: $('#roi-overlay')
     };
+
     content['#W'] = {
       main: $('#walk-content-main'),
       target: $('#walk-target'),
@@ -676,6 +662,7 @@
       content['#R'].target.unbind('load');
       showErrorDialog('エラー', '静止画の読み込みに失敗しました。静止画選択画面に戻ります。');
     });
+
     content['#W'].target.bind('error', function() {
       content['#W'].target.unbind('load');
       showErrorDialog('エラー', '動画の読み込みに失敗しました。動画選択画面に戻ります。');

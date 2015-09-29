@@ -12,6 +12,11 @@
   margin: 0;
 }
 
+h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
 .header-menu {
   background: #404040;
   border-radius: 0;
@@ -57,13 +62,12 @@ a:visited {
 .content-line {
   border-top: 1px solid #ccc;
   width: 260px;
-  
 }
 
 .content {
   position: relative;
   text-align: center;
-  padding-top: 24px;
+  padding-top: 16px;
   background: #FFF;
 }
 
@@ -103,7 +107,7 @@ div.content-text {
 
 .content-text {
   color: #666;
-  padding: 16px;
+  padding: 12px;
 }
 
 html, body {
