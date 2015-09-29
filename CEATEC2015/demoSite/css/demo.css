@@ -56,19 +56,19 @@ a:visited {
 
 .content-line {
   border-top: 1px solid #ccc;
-  width: 320px;
+  width: 260px;
   
 }
 
 .content {
   position: relative;
   text-align: center;
-  padding-top: 32px;
+  padding-top: 24px;
   background: #FFF;
 }
 
 .content-image {
-  width: 300px;
+  width: 240px;
 }
 
 .content-image:hover, .content-image:active {
@@ -103,7 +103,7 @@ div.content-text {
 
 .content-text {
   color: #666;
-  padding: 24px;
+  padding: 16px;
 }
 
 html, body {
@@ -127,6 +127,7 @@ html, body {
 #roi-content-main {
   display: none;
 }
+
 #walk-content-main {
   display: none;
 }
@@ -139,6 +140,7 @@ html, body {
   margin: 0px;
   padding: 0px;
 }
+
 #walk-overlay {
   position: fixed;
   bottom: 10px;

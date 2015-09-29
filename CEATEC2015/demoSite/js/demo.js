@@ -502,7 +502,7 @@
 
   function createContent(data) {
     var str = '';
-    str += '  <div class="col-sm-6 col-md-4 content-list-view">';
+    str += '  <div class="col-sm-4 col-md-3 content-list-view">';
     str += '    <div class="content">';
     str += '      <img class="content-image" src="' + data['thumbnail'] + '">';
     str += '      <div class="play-image"></div>';
@@ -517,12 +517,12 @@
     var str = "";
     for (var i = 0; i < roiData.length; i+=2) {
       str += '<div class="row">';
-      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
+      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
       str += '   <a href="#R-' + i + '">' + createContent(roiData[i]) + '</a>';
       if (i + 1 < roiData.length) {
         str += '   <a href="#R-' + (i + 1) + '">' + createContent(roiData[i + 1]) + '</a>';
       }
-      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
+      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
       str += '</div>';
     }
     $('#list-view').html(str);
@@ -535,12 +535,12 @@
     var str = "";
     for (var i = 0; i < walkthroughData.length; i+=2) {
       str += '<div class="row">';
-      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
+      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
       str += '   <a href="#W-' + i + '">' + createContent(walkthroughData[i]) + '</a>';
       if (i + 1 < walkthroughData.length) {
         str += '   <a href="#W-' + (i + 1) + '">' + createContent(walkthroughData[i + 1]) + '</a>';
       }
-      str += '  <div class="col-sm-0 col-md-2 content-list-view"></div>';
+      str += '  <div class="col-sm-2 col-md-3 content-list-view"></div>';
       str += '</div>';
     }
     $('#list-view').html(str);
