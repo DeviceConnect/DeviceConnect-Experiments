@@ -192,6 +192,7 @@
     });
   }
 
+  var retryCount = 0;
   function pollingImage(uri, targetElem, isWalkthrough) {
     var hash = location.hash;
     if (!hash || hash.split("-").length != 2) {
@@ -201,11 +202,23 @@
     var fps = 1000 / walkthroughParam.fps;
     var startTime = Date.now();
     targetElem.attr('src', uri + '?snapshot&date=' + startTime);
+    targetElem.bind('error', function() {
+      console.log("Failed to load a img. count=" + retryCount);
+      targetElem.unbind('load');
+      targetElem.unbind('error');
+      retryCount++;
+      if (retryCount > 3) {
+        showErrorDialog('エラー', '静止画の読み込みに失敗しました。静止画選択画面に戻ります。');
+      } else {
+        pollingImage(uri, targetElem, isWalkthrough);
+      }
+    });
     targetElem.bind('load', function() {
       targetElem.unbind('load');
+      targetElem.unbind('error');
+      retryCount = 0;
 
       var currentTime = Date.now();
-
       var dt = currentTime - startTime;
       if (dt > fps) {
         pollingImage(uri, targetElem, isWalkthrough);
@@ -267,40 +280,6 @@
     
     debug.setWalkThroughParams(walkthroughData[index]);
   }
-
-  // function zoomWalk(delta) {
-  //   console.log('zoomWalk: delta = ' + delta);
-  //   var hash = location.hash;
-  //   var split = hash.split('-');
-  //   if (split.length == 2) {
-  //     var name = split[0];
-  //     var index = split[1];
-  //     zoomWalkInternal(index, delta);
-  //   }
-  // }
-
-  // function zoomWalkInternal(index, delta) {
-  //   if (!checkIndex(index, walkthroughData.length)) {
-  //     showErrorDialog('エラー', '指定されたコンテンツは存在しません。');
-  //     return;
-  //   }
-  //   var uri = walkthroughData[index]['uri'];
-  //   client.request({
-  //     'method': 'PUT',
-  //     'profile': 'walkthrough',
-  //     'devices': [walkthroughServiceId],
-  //     'params': {
-  //       'uri': uri,
-  //       'delta': delta,
-  //       'fov': walkthroughParam.fov,
-  //     },
-  //     'onsuccess': function(id, json) {
-  //     },
-  //     'onerror': function(id, errorCode, errorMessage) {
-  //       showErrorDialog('エラー', 'WalkThroughの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
-  //     }
-  //   });
-  // }
 
   function stepWalkThrough(delta) {
     var hash = location.hash;
@@ -657,16 +636,6 @@
       target: $('#walk-target'),
       overlay: $('#walk-overlay')
     };
-
-    content['#R'].target.bind('error', function() {
-      content['#R'].target.unbind('load');
-      showErrorDialog('エラー', '静止画の読み込みに失敗しました。静止画選択画面に戻ります。');
-    });
-
-    content['#W'].target.bind('error', function() {
-      content['#W'].target.unbind('load');
-      showErrorDialog('エラー', '動画の読み込みに失敗しました。動画選択画面に戻ります。');
-    });
 
     $('#close').on('click', function() {
       var href = location.href;
