@@ -201,6 +201,8 @@
 
     var fps = 1000 / walkthroughParam.fps;
     var startTime = Date.now();
+    targetElem.unbind('load');
+    targetElem.unbind('error');
     targetElem.attr('src', uri + '?snapshot&date=' + startTime);
     targetElem.bind('error', function() {
       console.log("Failed to load a img. count=" + retryCount);
@@ -264,7 +266,6 @@
       'onsuccess': function(id, json) {
         var targetElem = content['#W'].target;
         walkthroughData[index]['uri'] = json.uri;
-        targetElem.unbind('load');
         pollingImage(json.uri.replace('localhost', client.getHost()), targetElem, true);
 
         if (!debug.isEnabledAutoPlay()) {
@@ -316,13 +317,14 @@
       }
     });
   }
-  
+
   function stopWalkThrough(index) {
     if (!checkIndex(index, walkthroughData.length)) {
       return;
     }
 
     content['#W'].target.unbind('load');
+    content['#W'].target.unbind('error');
     content['#W'].target.attr('src', 'assets/img/white.png');
 
     var uri = walkthroughData[index]['uri'];
@@ -365,9 +367,8 @@
         var targetElem = content['#R'].target;
         roiData[index]['uri'] = json.uri;
         setVRMode(roiData[index]);
-        targetElem.unbind('load');
         pollingImage(json.uri.replace('localhost', client.getHost()), targetElem, false);
-        
+
         if (debug.isEnabledDebugView()) {
           content['#R'].overlay.show();
         } else {
@@ -386,6 +387,7 @@
     }
 
     content['#R'].target.unbind('load');
+    content['#R'].target.unbind('error');
     content['#R'].target.attr('src', 'assets/img/white.png');
 
     var uri = roiData[index]['uri'];
@@ -601,7 +603,6 @@
 
   function preloadFunc() {
     for (var i = 0; i< arguments.length; i++) {
-      console.log(arguments[i]);
       $("<img>").attr("src", arguments[i]);
     }
   }
@@ -624,7 +625,7 @@
     window.onhashchange = function() {
       changeHash();
     }
-    
+
     content['#R'] = {
       main: $('#roi-content-main'),
       target: $('#roi-target'),
