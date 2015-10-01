@@ -1,0 +1,6 @@
+<nav class="navbar">
+  <div class="nav-btn back" ng-show="$parent.nav.goBack" ng-click="back()"></div>
+  <div class="nav-title">{{ $parent.nav.title }}</div>
+  <div class="nav-btn graph" ng-show="$parent.nav.goGraph"  ng-click="transitToGraph($parent.nav.serviceId)"></div>
+  <div class="nav-btn setting" ng-show="$parent.nav.goSetting"  ng-click="transitToSetting()"></div>
+</nav>

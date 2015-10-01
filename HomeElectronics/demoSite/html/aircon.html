@@ -1,0 +1,39 @@
+<div ng-include="'html/navi.html'"></div>
+<content>
+  <div class="simple-text">デバイス名 : {{deviceName}}</div>
+  <div class="simple-text">消費電力量<br>{{consumption}} Wh</div>
+
+  <div class="text-center simple-text">現在の室内温度</div>
+  <div class="text-center" style="position:relative;">
+    <img class="aircon-temperature-img" ng-src="img/img_temperature.png">
+    <span class="aircon-temperature-text">{{roomTemperature}}</span>
+  </div>
+
+  <div class='aircon-switch text-center'>
+    <button ng-class="{'aircon-run-icon':!isOn,'aircon-running-icon':isOn}" class="icon" ng-click="pressRun()"/>
+    <span style="margin-left:10px;"></span>
+    <button ng-class="{'aircon-stopping-icon':!isOn,'aircon-stop-icon':isOn}" class="icon " ng-click="pressStop()"/>
+  </div>
+
+  <div class="simple-text">運転モード</div>
+
+  <div class="text-center">
+    <div class="aircon-table">
+      <table>
+        <tr>
+          <td><button ng-class="{selected:mode==='Automatic'}" class="icon aircon-auto-icon" ng-click="pressAuto()"/></td>
+          <td><button ng-class="{selected:mode==='Dehumidification'}" class="icon aircon-dry-icon" ng-click="pressDry()"/></td>
+        </tr>
+        <tr>
+          <td><button ng-class="{selected:mode==='Cooling'}" class="icon aircon-cool-icon" ng-click="pressCool()"/></td>
+          <td><button ng-class="{selected:mode==='Heating'}" class="icon aircon-hot-icon" ng-click="pressHot()"/></td>
+        </tr>
+        <tr>
+          <td><button ng-class="{selected:mode==='AirCirculator'}" class="icon aircon-air-icon" ng-click="pressAir()"/></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div ng-include="'html/updown-btn.html'" onload="onUpdownLoaded()"></div>
+  <div style="margin-bottom:20px;"></div>
+</content>
