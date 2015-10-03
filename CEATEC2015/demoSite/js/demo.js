@@ -62,7 +62,10 @@
     {
       'name' : '水族館',
       'thumbnail' : 'assets/walk/route4/R0001.jpg',
-      'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route4'
+      'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route4',
+      'yaw': 0,
+      'roll': 0,
+      'pitch': 0
     },
   ];
 
@@ -210,7 +213,22 @@
       targetElem.unbind('error');
       retryCount++;
       if (retryCount > 3) {
-        showErrorDialog('エラー', '静止画の読み込みに失敗しました。静止画選択画面に戻ります。');
+        var type = isWalkthrough ? '動画' : '静止画';
+        showErrorDialog(
+          'エラー', 
+          type + 'の読み込みに失敗しました。' + type + '選択画面に戻ります。', 
+          function() {
+            var hash = location.hash;
+            if (hash) {
+              var split = hash.split('-');
+              if (split.length == 2) {
+                var name = split[0];
+                var index = split[1];
+                stopFuncs[name](index);
+                startFuncs[name](index);
+              }
+            }
+          });
       } else {
         pollingImage(uri, targetElem, isWalkthrough);
       }
@@ -248,6 +266,9 @@
     }
 
     var source = walkthroughData[index]['source'];
+    var yaw = walkthroughData[index]['yaw'];
+    var roll = walkthroughData[index]['roll'];
+    var pitch = walkthroughData[index]['pitch'];
     var autoPlay = debug.isEnabledAutoPlay();
     console.log('Cookie: AutoPlay: ' + autoPlay);
 
@@ -261,6 +282,9 @@
         'height': walkthroughParam.height,
         'fps': walkthroughParam.fps,
         'fov': walkthroughParam.fov,
+        'yaw': yaw,
+        'roll': roll,
+        'pitch': pitch,
         'autoPlay': autoPlay
       },
       'onsuccess': function(id, json) {
@@ -280,6 +304,39 @@
     });
     
     debug.setWalkThroughParams(walkthroughData[index]);
+  }
+
+  function calibrateWalkThrough() {
+    var hash = location.hash;
+    var split = hash.split('-');
+    if (split.length == 2) {
+      var name = split[0];
+      var index = split[1];
+      calibrateWalkThroughInternal(index);
+    }
+  }
+
+  function calibrateWalkThroughInternal(index) {
+    if (!checkIndex(index, walkthroughData.length)) {
+      showErrorDialog('エラー', '指定されたコンテンツは存在しません。');
+      return;
+    }
+
+    var uri = walkthroughData[index]['uri'];
+    client.request({
+      'method': 'PUT',
+      'profile': 'walkthrough',
+      'devices': [walkthroughServiceId],
+      'params': {
+        'uri': uri,
+        'calibration': true
+      },
+      'onsuccess': function(id, json) {
+      },
+      'onerror': function(id, errorCode, errorMessage) {
+        showErrorDialog('エラー', 'WalkThroughの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+      }
+    });
   }
 
   function stepWalkThrough(delta) {
@@ -426,6 +483,34 @@
     }
   }
 
+  function calibrateRoi() {
+    var hash = location.hash;
+    var split = hash.split('-');
+    if (split.length == 2) {
+      var name = split[0];
+      var index = split[1];
+      
+      var roi = roiData[index];
+      client.request({
+        'method': 'PUT',
+        'profile': 'omnidirectional_image',
+        'interface': 'roi',
+        'attribute': 'settings',
+        'devices': [roiServiceId],
+        'params': {
+          'uri': roi.uri,
+          'calibration': true,
+        },
+        'onsuccess': function(id, json) {
+          console.log(json);
+        },
+        'onerror': function(id, errorCode, errorMessage) {
+          showErrorDialog('エラー', 'OmniDirectional Imageの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
+      });
+    }
+  }
+
   function setVRMode(roi) {
     debug.setRoiParams(roi);
     client.request({
@@ -460,7 +545,15 @@
     return true;
   }
 
-  function showErrorDialog(title, message) {
+  function showErrorDialog(title, message, onretry) {
+    $('#retry').off('click');
+    if (onretry === undefined) {
+      $('#retry').hide();
+    } else {
+      $('#retry').on('click', onretry);
+      $('#retry').show();
+    }
+
     $('.modal-title').text(title);
     $('.modal-body').html(message);
     $('#error-dialog').modal('show');
@@ -668,13 +761,13 @@
       zoomRoi(5);
     });
 
-    // $('#walk-zoom-in').on('click', function() {
-    //   zoomWalk(-5);
-    // });
+    $('#walk-target').on('click', function() {
+      calibrateWalkThrough();
+    });
 
-    // $('#walk-zoom-out').on('click', function() {
-    //   zoomWalk(5);
-    // });
+    $('#roi-target').on('click', function() {
+      calibrateRoi();
+    });
 
     if ($.cookie('enabled-debug-view') === undefined || $.cookie('enabled-debug-view') === null) {
       $.cookie('enabled-debug-view', 'false', { path: '/' });
