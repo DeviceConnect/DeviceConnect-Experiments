@@ -1,8 +1,8 @@
 (function() {
 
   var _skywayApiKey = "[ YOUR API KEY ]";
-  var _skywayDomain = "localhost";
-
+  var _skywayDomain = "[ YOUR DOMAIN ]";
+ 
   var _ip;
   var _accessToken;
   var _serviceId;
@@ -219,7 +219,6 @@
     } else {
       authorization();
     }
-    openWebsocket();
 
     $('#skyway-connect').on('click', function() {
       getMyProfile();
@@ -244,5 +243,7 @@
     $('#call-answer').on('click', function() {
       answer();
     });
+
+    openWebsocket();
   });
 })();
