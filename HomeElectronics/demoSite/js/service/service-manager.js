@@ -38,7 +38,6 @@
   function getIpString() {
     if (1 < document.location.search.length) {
       var query = document.location.search.substring(1);
-      query = query.slice(0,-1);
       var parameters = query.split('&');
       for (var i = 0; i < parameters.length; i++) {
         var element = parameters[i].split('=');
