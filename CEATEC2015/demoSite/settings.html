@@ -65,17 +65,12 @@
       var KEY_ENABLED_DEBUG_AUTOPLAY = 'enabled-debug-autoplay';
       
       function Switch(arg) {
-        this.isOn = arg.isOn;
-        
         arg.on.on('click', function() { change(true) });
         arg.off.on('click', function() { change(false) });
         show(arg.isOn);
         
         function change(isOn) {
-          if (this.isOn != isOn) {
-            this.isOn = isOn;
-            arg.onchange(isOn);
-          }
+          arg.onchange(isOn);
           show(isOn);
         };
         
@@ -91,38 +86,43 @@
       };
       
       function init() {
-        var isEnabledDebugView = loadBoolean(KEY_ENABLED_DEBUG_VIEW),
-            isEnabledAutoPlay = loadBoolean(KEY_ENABLED_DEBUG_AUTOPLAY);
-        console.log('Load Cookie: ' + KEY_ENABLED_DEBUG_VIEW + ' = ' + isEnabledDebugView);
-        console.log('Load Cookie: ' + KEY_ENABLED_DEBUG_AUTOPLAY + ' = ' + isEnabledAutoPlay);
+        $.cookie.json = true;
+        
+        var demoSettings = $.cookie('demoSettings');
+        if (demoSettings === undefined) {
+          $.cookie('demoSettings', {
+            isEnabledDebugView: false,
+            isEnabledDebugAutoplay: true
+          }, { path: '/' });
+          demoSettings = $.cookie('demoSettings');
+          console.log('Cookie: demoSettings is created.', demoSettings);
+        } else {
+          if (typeof demoSettings === 'string') {
+             demoSettings = JSON.parse(demoSettings);
+          }
+          console.log('Cookie: demoSettings is loaded.', demoSettings);
+        }
 
         new Switch({
           on: $('#debug-params-on'),
           off: $('#debug-params-off'),
-          isOn: isEnabledDebugView,
+          isOn: demoSettings.isEnabledDebugView,
           onchange: function(isOn) {
-            $.cookie(KEY_ENABLED_DEBUG_VIEW, isOn.toString(), { path: '/' });
-            console.log('Write Cookie: ' + KEY_ENABLED_DEBUG_VIEW + ' = ' + $.cookie(KEY_ENABLED_DEBUG_VIEW));
+            demoSettings.isEnabledDebugView = isOn;
+            $.cookie('demoSettings', demoSettings, { path: '/' });
+            console.log('Write Cookie: demoSettings', demoSettings);
           }
         });
         new Switch({
           on: $('#debug-autoplay-on'),
           off: $('#debug-autoplay-off'),
-          isOn: isEnabledAutoPlay,
+          isOn: demoSettings.isEnabledDebugAutoplay,
           onchange: function(isOn) {
-            $.cookie(KEY_ENABLED_DEBUG_AUTOPLAY, isOn.toString(), { path: '/' });
-            console.log('Write Cookie: ' + KEY_ENABLED_DEBUG_AUTOPLAY + ' = ' + $.cookie(KEY_ENABLED_DEBUG_AUTOPLAY));
+            demoSettings.isEnabledDebugAutoplay = isOn;
+            $.cookie('demoSettings', demoSettings, { path: '/' });
+            console.log('Write Cookie: demoSettings', demoSettings);
           }
         });
-      }
-
-      function loadBoolean(key) {
-        var flag = $.cookie(key);
-        if (flag === 'true' || flag === true) {
-          return true;
-        } else {
-          return false;
-        }
       }
       
       $(document).ready(function() {

@@ -80,28 +80,26 @@
     'fps': 10,
     'fov': 65
   }
+
+  var KEY_ENABLED_DEBUG_VIEW = 'enabled-debug-view';
+  var KEY_ENABLED_DEBUG_AUTOPLAY = 'enabled-debug-autoplay';
   
   var debug = (function() {
-    var KEY_ENABLED_DEBUG_VIEW = 'enabled-debug-view';
-    var KEY_ENABLED_DEBUG_AUTOPLAY = 'enabled-debug-autoplay';
-
-    function loadBoolean(key) {
-      var flag = $.cookie(key);
-      console.log('Load Cookie: ' + key + ' = ' + flag);
-      if (flag === 'true' || flag === true) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    
+    var demoSettings;
     
     return {
+      
+      setSettings: function(settings) {
+        demoSettings = settings;
+      },
+      
       isEnabledDebugView: function() {
-        return loadBoolean(KEY_ENABLED_DEBUG_VIEW);
+        return demoSettings.isEnabledDebugView;
       },
 
       isEnabledAutoPlay: function() {
-        return loadBoolean(KEY_ENABLED_DEBUG_AUTOPLAY);
+        return demoSettings.isEnabledDebugAutoplay;
       },
       
       showDebugView: function(isShown) {
@@ -167,7 +165,11 @@
         discovery();
       },
       onerror: function(errorCode, errorMessage) {
-        showErrorDialog('エラー', 'DeviceConnectManagerの認証に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'DeviceConnectManagerの認証に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
   }
@@ -186,11 +188,30 @@
         if (!roiServiceId || !walkthroughServiceId) {
           showErrorDialog('エラー', 'デバイスの検索に失敗しました。<br>デバイスプラグインのインストールされていない可能性があります。');
         } else {
+          //stopAllWalkThrough();
           changeHash();
         }
       },
       onerror: function(errorCode, errorMessage) {
-        showErrorDialog('エラー', 'デバイスの検索に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'デバイスの検索に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
+      }
+    });
+  }
+  
+  function stopAllWalkThrough() {
+    client.request({
+      'method': 'DELETE',
+      'profile': 'walkthrough',
+      'devices': [walkthroughServiceId],
+      'onsuccess': function(id, json) {
+        console.log("Stopped walk through." + json);
+      },
+      'onerror': function(id, errorCode, errorMessage) {
+        console.log("Failed to stop walk through: errorCode=" + errorCode + ", errorMessage=" + errorMessage);
       }
     });
   }
@@ -224,8 +245,12 @@
               if (split.length == 2) {
                 var name = split[0];
                 var index = split[1];
-                stopFuncs[name](index);
-                startFuncs[name](index);
+                stopFuncs[name](index, {
+                  onsuccess: function() {
+                    startFuncs[name](index);
+                  },
+                  onerror: function() {}
+                });
               }
             }
           });
@@ -252,10 +277,6 @@
         var delta = (currentTime - prevTime);
       }
       prevTime = currentTime;
-
-      // if (isWalkthrough && debug.isEnabledAutoPlay()) {
-      //   stepWalkThrough(1);
-      // }
     });
   }
 
@@ -299,7 +320,11 @@
         }
       },
       'onerror': function(id, errorCode, errorMessage) {
-        showErrorDialog('エラー', 'WalkThroughの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'WalkThroughの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
     
@@ -334,7 +359,11 @@
       'onsuccess': function(id, json) {
       },
       'onerror': function(id, errorCode, errorMessage) {
-        showErrorDialog('エラー', 'WalkThroughの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'WalkThroughの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
   }
@@ -370,12 +399,16 @@
       'onsuccess': function(id, json) {
       },
       'onerror': function(id, errorCode, errorMessage) {
-        showErrorDialog('エラー', 'WalkThroughの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'WalkThroughの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
   }
 
-  function stopWalkThrough(index) {
+  function stopWalkThrough(index, callback) {
     if (!checkIndex(index, walkthroughData.length)) {
       return;
     }
@@ -395,9 +428,19 @@
         },
         'onsuccess': function(id, json) {
           console.log("Stopped walk through." + json);
+          if (callback) {
+            callback.onsuccess();
+          }
         },
         'onerror': function(id, errorCode, errorMessage) {
-          showErrorDialog('エラー', 'WalkThroughの終了に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          if (errorCode === -1) {
+            showSettingsPromptDialog();
+          } else {
+            showErrorDialog('エラー', 'WalkThroughの終了に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          }
+          if (callback) {
+            callback.onerror();
+          }
         }
       });
     }
@@ -433,12 +476,16 @@
         }
       },
       'onerror': function(id, errorCode, errorMessage) {
-        showErrorDialog('エラー', 'OmniDirectional Imageの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'OmniDirectional Imageの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
   }
 
-  function stopRoi(index) {
+  function stopRoi(index, callback) {
     if (!checkIndex(index, roiData.length)) {
       return;
     }
@@ -459,9 +506,19 @@
         },
         'onsuccess': function(id, json) {
           console.log("Stopped region of image."+ json);
+          if (callback) {
+            callback.onsuccess();
+          }
         },
         'onerror': function(id, errorCode, errorMessage) {
-          showErrorDialog('エラー', 'OmniDirectional Imageの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          if (errorCode === -1) {
+            showSettingsPromptDialog();
+          } else {
+            showErrorDialog('エラー', 'OmniDirectional Imageの初期化に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          }
+          if (callback) {
+            callback.onerror();
+          }
         }
       });
     }
@@ -505,7 +562,11 @@
           console.log(json);
         },
         'onerror': function(id, errorCode, errorMessage) {
-          showErrorDialog('エラー', 'OmniDirectional Imageの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          if (errorCode === -1) {
+            showSettingsPromptDialog();
+          } else {
+            showErrorDialog('エラー', 'OmniDirectional Imageの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+          }
         }
       });
     }
@@ -533,7 +594,11 @@
         console.log(json);
       },
       'onerror': function(id, errorCode, errorMessage) {
-        showErrorDialog('エラー', 'OmniDirectional Imageの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        if (errorCode === -1) {
+          showSettingsPromptDialog();
+        } else {
+          showErrorDialog('エラー', 'OmniDirectional Imageの設定に失敗しました。<br>errorCode: ' + errorCode + '<br>errorMessage:' + errorMessage);
+        }
       }
     });
   }
@@ -554,9 +619,15 @@
       $('#retry').show();
     }
 
-    $('.modal-title').text(title);
-    $('.modal-body').html(message);
+    $('#error-dialog .modal-title').text(title);
+    $('#error-dialog .modal-body').html(message);
     $('#error-dialog').modal('show');
+  }
+
+  function showSettingsPromptDialog() {
+    $('#settings-prompt-dialog .modal-title').text('エラー');
+    $('#settings-prompt-dialog .modal-body').html('DeviceConnectとの通信に失敗しました。設定画面での再起動をお試しください。');
+    $('#settings-prompt-dialog').modal('show');
   }
 
   function createContent(data) {
@@ -700,6 +771,21 @@
     }
   }
 
+  function setDoubleTapListener(elem, ondbltap) {
+    var dataName = 'dblTap';
+    elem.data(dataName, false).on('click', function() {
+      if ($(this).data(dataName)) {
+        ondbltap();
+        elem.data(dataName, false);
+      } else {
+        $(this).data(dataName, true);
+      }
+      setTimeout(function() {
+        elem.data(dataName, false);
+      }, 500);
+    });
+  }
+
   $(document).ready(function() {
     preloadFunc(
         "assets/img/down_hover.png",
@@ -745,8 +831,12 @@
       }
     });
 
+    $('#settings').on('click', function() {
+      location.href = 'dconnect://settings/';
+    });
+
     $('#walk-arrow-up').on('click', function() {
-      stepWalkThrough(30);
+      stepWalkThrough(+30);
     });
 
     $('#walk-arrow-down').on('click', function() {
@@ -761,21 +851,32 @@
       zoomRoi(5);
     });
 
-    $('#walk-target').on('click', function() {
+    setDoubleTapListener($('#walk-target'), function() {
       calibrateWalkThrough();
     });
 
-    $('#roi-target').on('click', function() {
+    setDoubleTapListener($('#roi-target'), function() {
       calibrateRoi();
     });
-
-    if ($.cookie('enabled-debug-view') === undefined || $.cookie('enabled-debug-view') === null) {
-      $.cookie('enabled-debug-view', 'false', { path: '/' });
-    }
-    if ($.cookie('enabled-debug-autoplay') === undefined || $.cookie('enabled-debug-autoplay') === null) {
-      $.cookie('enabled-debug-autoplay', 'true', { path: '/' });
+    
+    $.cookie.json = true;
+    
+    var demoSettings = $.cookie('demoSettings');
+    if (demoSettings === undefined) {
+      $.cookie('demoSettings', {
+        isEnabledDebugView: false,
+        isEnabledDebugAutoplay: true
+      }, { path: '/' });
+      demoSettings = $.cookie('demoSettings');
+      console.log('Cookie: demoSettings is created.', demoSettings);
+    } else {
+      if (typeof demoSettings === 'string') {
+         demoSettings = JSON.parse(demoSettings);
+      }
+      console.log('Cookie: demoSettings is loaded.', demoSettings);
     }
     
+    debug.setSettings(demoSettings);
     debug.showDebugView(debug.isEnabledDebugView());
   });
 })();
