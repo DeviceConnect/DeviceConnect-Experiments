@@ -21,48 +21,21 @@
 
   var roiData = [
     {
-      'name' : 'Color Run Savannagh',
-      'thumbnail' : 'assets/picture/Color_Run_Savannagh.jpg',
-      'source' : 'assets/picture/Color_Run_Savannagh.jpg',
+      'name' : '静止画サンプル',
+      'thumbnail' : 'assets/picture/R0010162.JPG',
+      'source' : 'assets/picture/R0010162.JPG',
       'fov' : 60,
       'yaw' : 0,
       'roll' : 0,
       'pitch' : 0
-    },
-    {
-      'name' : 'パラグライダー',
-      'thumbnail' : 'assets/picture/p_original14.jpg',
-      'source' : 'assets/picture/p_original14.jpg',
-      'fov' : 65,
-      'yaw' : 0,
-      'roll' : 0,
-      'pitch' : 0
-    },
-    {
-      'name' : 'フライト',
-      'thumbnail' : 'assets/picture/flight.JPG',
-      'source' : 'assets/picture/flight.JPG',
-      'fov' : 65,
-      'yaw' : 0,
-      'roll' : 0,
-      'pitch' : 0
-    },
-    {
-      'name' : '海',
-      'thumbnail' : 'assets/picture/sea.JPG',
-      'source' : 'assets/picture/sea.JPG',
-      'fov' : 65,
-      'yaw' : 0,
-      'roll' : 0,
-      'pitch' : 0
-    },
+    }
   ];
 
   var walkthroughData = [
     {
-      'name' : '水族館',
-      'thumbnail' : 'assets/walk/route4/R0001.jpg',
-      'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route4',
+      'name' : '動画サンプル',
+      'thumbnail' : 'assets/walk/route0/R0001.jpg',
+      'source' : 'org.deviceconnect.android.manager/demoWebSite/assets/walk/route0',
       'yaw': 0,
       'roll': 0,
       'pitch': 0
