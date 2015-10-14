@@ -49,6 +49,7 @@
         });
         $scope.$apply(function(){
           $scope.consumption = total.toFixed(2);
+          updateData();
         });
       });
     }

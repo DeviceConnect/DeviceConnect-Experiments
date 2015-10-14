@@ -65,6 +65,7 @@
         if(value){
           $scope.$apply(function(){
             $scope.consumption = value.toFixed(2);
+            updateData();
           });
         }
       });
