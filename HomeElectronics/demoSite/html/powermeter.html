@@ -1,0 +1,11 @@
+<div ng-include="'html/navi.html'"></div>
+<content>
+  <table class="powermeter-list">
+    <tbody>
+      <tr class="powermeter-row" ng-repeat="device in devices" ng-click="setPowerMeter(device)">
+        <td class="powermeter-icon"><img ng-src="{{device.active && 'img/option_button_on.png' || 'img/option_button_off.png'}}"/></td>
+        <td class="powermeter-name">{{ device.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+</content>

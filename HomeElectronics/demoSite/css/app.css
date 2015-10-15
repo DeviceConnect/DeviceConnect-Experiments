@@ -1,0 +1,418 @@
+/**
+ app.css
+ Copyright (c) 2015 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
+
+body {
+  color: #5a5a5a;
+  margin: 0;
+  padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+.icon {
+  border: 0 none;
+  border-radius: 12px;
+  padding: 0px;
+}
+
+/*!
+ * Navbar
+ */
+
+.navbar {
+  position: fixed;
+  left:0px;
+  top:0px;
+  width: 100%;
+  height: 80px;
+
+  background: -moz-linear-gradient(top, #626c74, #49545c);
+  background: -webkit-gradient(linear, left top, left bottom, from(#626c74), to(#49545c));
+
+  border: 0;
+  margin-bottom: 0;
+  z-index: 0;
+}
+
+.navbar .nav-title {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  text-align: center;
+
+  height: 80px;
+  padding: 30px 30px;
+  font-size: 24px;
+  line-height: 24px;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.navbar .nav-btn {
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  width: 40px;
+  height: 40px;
+  background-size: 40px 40px;
+  z-index: 2;
+  text-align: center;
+}
+
+.navbar .nav-btn.graph {
+  float: right;
+  margin-right: 10px;
+  background-image: url('../img/bt_graph.png');
+}
+
+.navbar .nav-btn.graph:active {
+  background-image: url('../img/bt_graph_down.png');
+}
+
+.navbar .nav-btn.setting {
+  float: right;
+  margin-right: 10px;
+  background-image: url('../img/bt_edit.png');
+}
+
+.navbar .nav-btn.setting:active {
+  background-image: url('../img/bt_edit_down.png');
+}
+
+.navbar .nav-btn.back {
+  float: left;
+  margin-left: 10px;
+  background-image: url('../img/bt_back.png');
+}
+
+.navbar .nav-btn.back:active {
+  background-image: url('../img/bt_back_down.png');
+}
+
+content {
+  position: absolute;
+  width: 100%;
+  top: 80px;
+  z-index: -1;
+}
+
+/*!
+ * DeviceSetting
+ */
+.setting-input {
+   padding-left: 50px;
+   padding-right: 50px;
+}
+
+.setting-input,
+.setting-powermeter-btn {
+   border-radius: 6px;
+   border: 0px;
+   width : 322px;
+   height : 82px;
+   background-image: url("../img/img_control_01.png");
+   background-repeat: no-repeat;
+}
+
+.setting-text {
+  font-size: 24px;
+}
+
+.setting-text.large {
+  font-size: 28px;
+}
+
+.setting-text.small {
+  font-size: 20px;
+}
+
+.setting-name,
+.setting-id {
+  margin-top: 20px;
+}
+
+.setting-meter {
+  margin-top: 120px;
+}
+
+/*!
+ * DeviceList
+ */
+.device-list {
+  width: 100%;
+  border-top: #999 solid 1px;
+}
+
+.device-row {
+  border-bottom: #999 solid 1px;
+  font-size: 18px;
+}
+
+.device-row:active {
+  background-color: #e0e0e0;
+}
+
+.device-icon {
+  padding: 18px;
+  width: 120px;
+}
+
+.device-icon > img {
+  height: 60px;
+}
+
+.device-name {
+  font-size: 22px;
+  padding-left: 10px;
+}
+
+/*!
+ * PowerMeterList
+ */
+.powermeter-list {
+  width: 100%;
+  border-top: #999 solid 1px;
+}
+
+.powermeter-row {
+  border-bottom: #999 solid 1px;
+  font-size: 18px;
+}
+
+.powermeter-row:active {
+  background-color: #e0e0e0;
+}
+
+.powermeter-icon {
+  padding: 18px;
+  width: 120px;
+}
+
+.powermeter-icon > img {
+  height: 60px;
+}
+
+.powermeter-name {
+  font-size: 22px;
+  padding-left: 10px;
+}
+
+.logo {
+  display: block;
+  height: 64px;
+  margin: 0 auto;
+}
+
+.demo-name {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+.modal-spinner-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.75em;
+}
+
+.simple-text {
+  font-size: 20px;
+  text-align: center;
+  padding: 20px;
+}
+
+/*!
+ * UpDown Button
+ */
+.updown-title {
+  font-size: 18px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.updown-icon {
+  width: 40px;
+  height: 45px;
+  background-color: #FFF;
+  background-size: 100%;
+  border-radius: 0px;
+  vertical-align:top;
+}
+.updown-icon:focus {
+  outline: none;
+  border: 0 none;
+}
+
+.updown-control-img {
+  width: 161px;
+  height: 40px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.updown-control-text {
+  display: inline-block;
+  width: 161px;
+  height: 45px;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  font-size: 28px;
+}
+
+/*!
+ * Light
+ */
+
+.light-on-icon,
+.light-off-icon {
+  width: 121px;
+  height: 36px;
+  border: 0px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-color: #FFF;
+}
+
+#color-cursor {
+  position:absolute;
+  pointer-events: none;
+  width:16px;
+  height:16px;
+  cursor:move;
+}
+
+/*!
+ * Aircon
+ */
+.aircon-temperature-img {
+  width: 176px;
+  height: 66px;
+}
+.aircon-temperature-text {
+  display: inline-block;
+  width: 161px;
+  height: 45px;
+  position: absolute;
+  top: 12px;
+  right: 0;
+  left: 20px;
+  border: 0;
+  margin: auto;
+  font-size: 32px;
+}
+
+.aircon-switch {
+  margin-top: 20px;
+}
+
+.aircon-switch button,
+.aircon-table button {
+  width: 121px;
+  height: 36px;
+  background-size: 100%;
+  border: 0px;
+}
+.aircon-table,
+.aircon-table table {
+  width: 260px;
+  height: 160px;
+}
+.aircon-table {
+  position: relative;
+  margin: auto;
+}
+.aircon-table table{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+/*!
+ * TV
+ */
+.tv-header {
+  margin-right: 80px;
+}
+.tv-power-icon {
+  margin-right: 40px;
+  width: 42px;
+  height: 42px;
+  background-size: 100%;
+  background-color: #FFF;
+  border: 0px;
+}
+.tv-mode-switch {
+ height: 50px;
+}
+.tv-mode-switch button {
+  width: 76px;
+  height: 30px;
+  background-size: 100%;
+  border: 0px;
+  border-radius: 6px;
+}
+.tv-table button {
+  width: 100px;
+  height: 40px;
+  background-size: 100%;
+  border: 0px;
+  border-radius: 6px;
+  background-repeat: no-repeat;
+}
+.tv-table,
+.tv-table table {
+  width: 340px;
+  height: 210px;
+}
+.tv-table {
+  position: relative;
+  margin: auto;
+}
+.tv-table table{
+  border-collapse: separate;
+  border-spacing: 10px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+.tv-updowns button {
+  width: 48px;
+  height: 48px;
+  background-size: 100%;
+  border: 0px;
+  background-color: #FFF;
+  border-radius: 0px;
+  background-repeat: no-repeat;
+}
+.tv-updowns {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+.tv-updowns > div {
+  display: inline-block;
+}
+.tv-updowns > div > * {
+  display: block;
+  margin: auto;
+}
+.tv-updowns > div > img {
+  display: block;
+  margin-bottom: 6px;
+}
+.tv-updowns img {
+ width: 40px;
+ height: 32px;
+}

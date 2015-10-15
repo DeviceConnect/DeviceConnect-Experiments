@@ -1,0 +1,18 @@
+<div ng-include="'html/navi.html'"></div>
+<content>
+  <div class="container">
+    <div class="setting-name">
+      <div class="row text-center setting-text"><span>機器名称</span></div>
+      <div class="row text-center"><input class="setting-input setting-text large text-center" type="text" ng-value="deviceName" ng-model="deviceName"></div>
+    </div>
+    <div class="setting-id">
+      <div class="row text-center setting-text small"><span>固有ID:<span>{{deviceId}}</span></span></div>
+    </div>
+    <div class="setting-meter">
+      <div class="row text-center setting-text"><span>電力量メータ</span></div>
+      <div class="row text-center">
+        <button class="btn setting-powermeter-btn setting-text large" ng-click="transitToPowerMeter()" >{{powerMeterName}}</button>
+      </div>
+    </div>
+  </div>
+</content>

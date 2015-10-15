@@ -1,0 +1,54 @@
+<div ng-include="'html/navi.html'"></div>
+<content>
+  <div class="simple-text">デバイス名 : {{deviceName}}</div>
+  <div class="tv-header text-center">
+    <button class="tv-power-icon" ng-click="pressPower()"/><div class="simple-text" style="display:inline-block">消費電力量<br>{{consumption}} Wh</div>
+  </div>
+  <div class="text-center tv-mode-switch">
+    <button ng-class="{selected:mode==='digital'}" class="icon tv-digital-icon" ng-click="pressDigital()"/>
+    <button ng-class="{selected:mode==='cs'}" class="icon tv-cs-icon" ng-click="pressCS()"/>
+    <button ng-class="{selected:mode==='bs'}" class="icon tv-bs-icon" ng-click="pressBS()"/>
+  </div>
+
+  <div class="text-center">
+    <div class="tv-table">
+      <table>
+        <tr>
+          <td><button class="icon tv-1-icon" ng-click="pressCh(1)"/></td>
+          <td><button class="icon tv-2-icon" ng-click="pressCh(2)"/></td>
+          <td><button class="icon tv-3-icon" ng-click="pressCh(3)"/></td>
+        </tr>
+        <tr>
+          <td><button class="icon tv-4-icon" ng-click="pressCh(4)"/></td>
+          <td><button class="icon tv-5-icon" ng-click="pressCh(5)"/></td>
+          <td><button class="icon tv-6-icon" ng-click="pressCh(6)"/></td>
+        </tr>
+        <tr>
+          <td><button class="icon tv-7-icon" ng-click="pressCh(7)"/></td>
+          <td><button class="icon tv-8-icon" ng-click="pressCh(8)"/></td>
+          <td><button class="icon tv-9-icon" ng-click="pressCh(9)"/></td>
+        </tr>
+        <tr>
+          <td><button class="icon tv-10-icon" ng-click="pressCh(10)"/></td>
+          <td><button class="icon tv-11-icon" ng-click="pressCh(11)"/></td>
+          <td><button class="icon tv-12-icon" ng-click="pressCh(12)"/></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-center tv-updowns">
+    <div>
+      <button class="icon tv-ch-up-icon" ng-click="pressChUp()"/>
+      <img ng-src="img/img_ch_01.png" />
+      <button class="icon tv-ch-down-icon" ng-click="pressChDown()"/>
+    </div>
+    <div style="margin-left:120px;"></div>
+    <div>
+      <button class="icon tv-vol-up-icon" ng-click="pressVolUp()"/>
+      <img ng-src="img/img_vol_01.png" />
+      <button class="icon tv-vol-down-icon" ng-click="pressVolDown()"/>
+    </div>
+  </div>
+
+</content>

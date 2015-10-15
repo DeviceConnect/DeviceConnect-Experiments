@@ -1,0 +1,97 @@
+/**
+ icons.css
+ Copyright (c) 2015 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
+
+.light-on-icon {background-image: url('../img/bt_08_on.png');}
+.light-on-icon:active {background-image: url('../img/bt_08_on_down.png');}
+.light-off-icon {background-image: url('../img/bt_09_on.png');}
+.light-off-icon:active {background-image: url('../img/bt_09_on_down.png');}
+.updown-decrement-icon {background-image: url("../img/img_control_02.png");}
+.updown-decrement-icon:active {background-image: url("../img/img_control_02_down.png");}
+.updown-increment-icon {background-image: url("../img/img_control_03.png");}
+.updown-increment-icon:active {background-image: url("../img/img_control_03_down.png");}
+
+.aircon-run-icon {background-image: url("../img/bt_01_off.png");}
+.aircon-run-icon:active {background-image: url("../img/bt_01_off_down.png");}
+.aircon-running-icon {background-image: url("../img/bt_01_on.png");}
+.aircon-running-icon:active {background-image: url("../img/bt_01_on_down.png");}
+.aircon-stop-icon {background-image: url("../img/bt_02_off.png");}
+.aircon-stop-icon:active {background-image: url("../img/bt_02_off_down.png");}
+.aircon-stopping-icon {background-image: url("../img/bt_02_on.png");}
+.aircon-stopping-icon:active {background-image: url("../img/bt_02_on_down.png");}
+.aircon-auto-icon {background-image: url("../img/bt_03_off.png");}
+.aircon-auto-icon:active {background-image: url("../img/bt_03_off_down.png");}
+.aircon-auto-icon.selected {background-image: url("../img/bt_03_on.png");}
+.aircon-auto-icon.selected:active {background-image: url("../img/bt_03_on_down.png");}
+.aircon-dry-icon {background-image: url("../img/bt_04_off.png");}
+.aircon-dry-icon:active {background-image: url("../img/bt_04_off_down.png");}
+.aircon-dry-icon.selected {background-image: url("../img/bt_04_on.png");}
+.aircon-dry-icon.selected:active {background-image: url("../img/bt_04_on_down.png");}
+.aircon-cool-icon {background-image: url("../img/bt_05_off.png");}
+.aircon-cool-icon:active {background-image: url("../img/bt_05_off_down.png");}
+.aircon-cool-icon.selected {background-image: url("../img/bt_05_on.png");}
+.aircon-cool-icon.selected:active {background-image: url("../img/bt_05_on_down.png");}
+.aircon-hot-icon {background-image: url("../img/bt_06_off.png");}
+.aircon-hot-icon:active {background-image: url("../img/bt_06_off_down.png");}
+.aircon-hot-icon.selected {background-image: url("../img/bt_06_on.png");}
+.aircon-hot-icon.selected:active {background-image: url("../img/bt_06_on_down.png");}
+.aircon-air-icon {background-image: url("../img/bt_07_off.png");}
+.aircon-air-icon:active {background-image: url("../img/bt_07_off_down.png");}
+.aircon-air-icon.selected {background-image: url("../img/bt_07_on.png");}
+.aircon-air-icon.selected:active {background-image: url("../img/bt_07_on_down.png");}
+
+.tv-analog-icon {background-image: url("../img/bt_TV_01_off.png");}
+.tv-analog-icon:active {background-image: url("../img/bt_TV_01_off_down.png");}
+.tv-analog-icon.selected {background-image: url("../img/bt_TV_01_on.png");}
+.tv-analog-icon.selected:active {background-image: url("../img/bt_TV_01_on_down.png");}
+.tv-digital-icon {background-image: url("../img/bt_TV_02_off.png");}
+.tv-digital-icon:active {background-image: url("../img/bt_TV_02_off_down.png");}
+.tv-digital-icon.selected {background-image: url("../img/bt_TV_02_on.png");}
+.tv-digital-icon.selected:active {background-image: url("../img/bt_TV_02_on_down.png");}
+.tv-cs-icon {background-image: url("../img/bt_TV_03_off.png");}
+.tv-cs-icon:active {background-image: url("../img/bt_TV_03_off_down.png");}
+.tv-cs-icon.selected {background-image: url("../img/bt_TV_03_on.png");}
+.tv-cs-icon.selected:active {background-image: url("../img/bt_TV_03_on_down.png");}
+.tv-bs-icon {background-image: url("../img/bt_TV_04_off.png");}
+.tv-bs-icon:active {background-image: url("../img/bt_TV_04_off_down.png");}
+.tv-bs-icon.selected {background-image: url("../img/bt_TV_04_on.png");}
+.tv-bs-icon.selected:active {background-image: url("../img/bt_TV_04_on_down.png");}
+.tv-1-icon {background-image: url("../img/bt_TV_05.png");}
+.tv-1-icon:active {background-image: url("../img/bt_TV_05_down.png");}
+.tv-2-icon {background-image: url("../img/bt_TV_06.png");}
+.tv-2-icon:active {background-image: url("../img/bt_TV_06_down.png");}
+.tv-3-icon {background-image: url("../img/bt_TV_07.png");}
+.tv-3-icon:active {background-image: url("../img/bt_TV_07_down.png");}
+.tv-4-icon {background-image: url("../img/bt_TV_08.png");}
+.tv-4-icon:active {background-image: url("../img/bt_TV_08_down.png");}
+.tv-5-icon {background-image: url("../img/bt_TV_09.png");}
+.tv-5-icon:active {background-image: url("../img/bt_TV_09_down.png");}
+.tv-6-icon {background-image: url("../img/bt_TV_10.png");}
+.tv-6-icon:active {background-image: url("../img/bt_TV_10_down.png");}
+.tv-7-icon {background-image: url("../img/bt_TV_11.png");}
+.tv-7-icon:active {background-image: url("../img/bt_TV_11_down.png");}
+.tv-8-icon {background-image: url("../img/bt_TV_12.png");}
+.tv-8-icon:active {background-image: url("../img/bt_TV_12_down.png");}
+.tv-9-icon {background-image: url("../img/bt_TV_13.png");}
+.tv-9-icon:active {background-image: url("../img/bt_TV_13_down.png");}
+.tv-10-icon {background-image: url("../img/bt_TV_14.png");}
+.tv-10-icon:active {background-image: url("../img/bt_TV_14_down.png");}
+.tv-11-icon {background-image: url("../img/bt_TV_15.png");}
+.tv-11-icon:active {background-image: url("../img/bt_TV_15_down.png");}
+.tv-12-icon {background-image: url("../img/bt_TV_16.png");}
+.tv-12-icon:active {background-image: url("../img/bt_TV_16_down.png");}
+.tv-ch-icon {background-image: url("../img/img_ch_01.png");}
+.tv-ch-up-icon {background-image: url("../img/img_ch_02.png");}
+.tv-ch-up-icon:active {background-image: url("../img/img_ch_02_down.png");}
+.tv-ch-down-icon {background-image: url("../img/img_ch_03.png");}
+.tv-ch-down-icon:active {background-image: url("../img/img_ch_03_down.png");}
+.tv-vol-icon {background-image: url("../img/img_vol_01.png");}
+.tv-vol-up-icon {background-image: url("../img/img_vol_02.png");}
+.tv-vol-up-icon:active {background-image: url("../img/img_vol_02_down.png");}
+.tv-vol-down-icon {background-image: url("../img/img_vol_03.png");}
+.tv-vol-down-icon:active {background-image: url("../img/img_vol_03_down.png");}
+.tv-power-icon {background-image: url("../img/bt_TV_power.png");}
+.tv-power-icon:active {background-image: url("../img/bt_TV_power_down.png");}

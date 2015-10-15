@@ -1,0 +1,23 @@
+<div ng-include="'html/navi.html'"></div>
+<content>
+  <div class="simple-text">デバイス名 : {{deviceName}}</div>
+  <div class="simple-text">消費電力量<br>{{consumption}} Wh</div>
+
+  <div class="text-center">
+    <button class="icon light-on-icon" ng-click="pressOn()"/>
+    <span style="margin-left:20px;"></span>
+    <button class="icon light-off-icon" ng-click="pressOff()"/>
+  </div>
+
+  <div ng-include="'html/updown-btn.html'" onload="onUpdownLoaded()"></div>
+
+  <div style="display: relative">
+    <div class="text-center light-canvas">
+      <canvas id="color-picker" class="light-canvas" width="320" height="320"></canvas>
+    </div>
+    <div id="color-cursor"><img src="./img/point.png" width="16"></div>
+  </div>
+
+  <div style="margin-top:50px"></div>
+
+</content>
