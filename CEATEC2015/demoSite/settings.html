@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+
+    <title>デモ設定</title>
+
+    <link href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/demo.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container header-title">
+          <h3>デモ設定</h3>
+      </div>
+    </nav>
+    <nav class="navbar navbar-inverse header-menu">
+      <div class="container">
+        <ul class="nav navbar-nav">
+          <li><a onclick="location.href='index.html'">戻る</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container" id="list-view">
+    <br>
+      <ul class="list-group">
+        <li class="list-group-item" style="line-height:32px;">
+          デバッグ機能 (静止画ズームボタン・ROI設定を表示)
+          <div class="btn-group pull-right" role="group">
+            <button id="debug-params-on" type="button" class="btn btn-default">ON</button>
+            <button id="debug-params-off" type="button" class="btn btn-default">OFF</button>
+          </div>
+        </li>
+        <li class="list-group-item" style="line-height:32px;">
+          自動ループ再生機能
+          <div class="btn-group pull-right" role="group">
+            <button id="debug-autoplay-on" type="button" class="btn btn-default">ON</button>
+            <button id="debug-autoplay-off" type="button" class="btn btn-default">OFF</button>
+          </div>
+        </li>
+      </ul>
+      <ul class="list-group">
+        <li class="list-group-item" style="line-height:32px;">
+          Device Connect Manager
+          <button class="btn btn-default pull-right" onclick="location.href='assets/apk/dConnectDeviceTheta.apk'">インストール</button>
+        </li>
+        <li class="list-group-item" style="line-height:32px;">
+          Theta デバイスプラグイン
+          <button class="btn btn-default pull-right" onclick="location.href='assets/apk/dConnectManager.apk'">インストール</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="libs/jquery-1.11.3.min.js"></script>
+    <script src="libs/jquery.cookie-1.4.1.min.js"></script>
+    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script>
+      var KEY_ENABLED_DEBUG_VIEW = 'enabled-debug-view';
+      var KEY_ENABLED_DEBUG_AUTOPLAY = 'enabled-debug-autoplay';
+      
+      function Switch(arg) {
+        arg.on.on('click', function() { change(true) });
+        arg.off.on('click', function() { change(false) });
+        show(arg.isOn);
+        
+        function change(isOn) {
+          arg.onchange(isOn);
+          show(isOn);
+        };
+        
+        function show(isOn) {
+          if (isOn) {
+            arg.on.addClass('btn-primary');
+            arg.off.removeClass('btn-primary');
+          } else {
+            arg.on.removeClass('btn-primary');
+            arg.off.addClass('btn-primary');
+          }
+        }
+      };
+      
+      function init() {
+        $.cookie.json = true;
+        
+        var demoSettings = $.cookie('demoSettings');
+        if (demoSettings === undefined) {
+          $.cookie('demoSettings', {
+            isEnabledDebugView: false,
+            isEnabledDebugAutoplay: true
+          }, { path: '/' });
+          demoSettings = $.cookie('demoSettings');
+          console.log('Cookie: demoSettings is created.', demoSettings);
+        } else {
+          if (typeof demoSettings === 'string') {
+             demoSettings = JSON.parse(demoSettings);
+          }
+          console.log('Cookie: demoSettings is loaded.', demoSettings);
+        }
+
+        new Switch({
+          on: $('#debug-params-on'),
+          off: $('#debug-params-off'),
+          isOn: demoSettings.isEnabledDebugView,
+          onchange: function(isOn) {
+            demoSettings.isEnabledDebugView = isOn;
+            $.cookie('demoSettings', demoSettings, { path: '/' });
+            console.log('Write Cookie: demoSettings', demoSettings);
+          }
+        });
+        new Switch({
+          on: $('#debug-autoplay-on'),
+          off: $('#debug-autoplay-off'),
+          isOn: demoSettings.isEnabledDebugAutoplay,
+          onchange: function(isOn) {
+            demoSettings.isEnabledDebugAutoplay = isOn;
+            $.cookie('demoSettings', demoSettings, { path: '/' });
+            console.log('Write Cookie: demoSettings', demoSettings);
+          }
+        });
+      }
+      
+      $(document).ready(function() {
+        init();
+      });
+    </script>
+  </body>
+</html>

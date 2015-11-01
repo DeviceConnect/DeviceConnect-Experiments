@@ -1,0 +1,212 @@
+/**
+ demo.css
+ Copyright (c) 2015 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
+
+.navbar {
+  background: #FFF;
+  color: #404040;
+  border: none;
+  margin: 0;
+}
+
+h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.header-menu {
+  background: #404040;
+  border-radius: 0;
+}
+
+a:link {
+  color: #404040;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #404040;
+  text-decoration: none;
+}
+
+.header-settings {
+  background: #E5E5E5;
+  border: none;
+  border-radius: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-right: 16px;
+  padding-left: 16px;
+  color: #404040;
+  font-size: 12px;
+  font-weight:bold;
+}
+
+.header-settings:hover {
+  background: #33AC00;
+  color: #FFF;
+}
+
+.header-settings:active {
+  background: #33AC00;
+  color: #FFF;
+}
+
+.content-list-view {
+  text-align: center;
+}
+
+.content-line {
+  border-top: 1px solid #ccc;
+  width: 260px;
+}
+
+.content {
+  position: relative;
+  text-align: center;
+  padding-top: 16px;
+  background: #FFF;
+}
+
+.content-image {
+  width: 240px;
+}
+
+.content-image:hover, .content-image:active {
+  filter: alpha(opacity=70);
+  -moz-opacity: 0.70;
+  opacity: 0.70;
+}
+
+div.content-text {
+}
+
+.play-image {
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 48px;
+  height: 48px;
+  background-image: url("../assets/img/play_normal.png");
+  background-size: 100%;
+}
+
+.play-image:hover {
+  background-image: url("../assets/img/play_normal.png");
+}
+
+.play-image:active {
+  background-image: url("../assets/img/play_push.png");
+}
+
+.content-text {
+  color: #666;
+  padding: 12px;
+}
+
+html, body {
+  height:100%;
+}
+
+.main {
+  width:100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+}
+
+.omni-image {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+#roi-content-main {
+  display: none;
+}
+
+#walk-content-main {
+  display: none;
+}
+
+#roi-overlay {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+#walk-overlay {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 0;
+  margin: 0px;
+  padding: 0px;
+}
+
+.arrow-btn {
+  width: 54px;
+  height: 54px;
+  margin: 16px;
+  background-size: 100%;
+}
+
+.arrow-btn.up {
+  background-image: url("../assets/img/UP_normal.png");
+  margin-bottom: 32px;
+}
+
+.arrow-btn.up:hover {
+  background-image: url("../assets/img/UP_hover.png");
+}
+
+.arrow-btn.up:active {
+  background-image: url("../assets/img/UP_push.png");
+}
+
+.arrow-btn.down {
+  background-image: url("../assets/img/down_normal.png");
+  margin-top: 32px;
+}
+
+.arrow-btn.down:hover {
+  background-image: url("../assets/img/down_hover.png");
+}
+
+.arrow-btn.down:active {
+  background-image: url("../assets/img/down_push.png");
+}
+
+.modal-header {
+  background: #404040;
+  color: #FFF;
+}
+
+.modal-body {
+  color: #404040;
+}
+
+.debug-params {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  font-size: 12pt;
+  padding: 6pt;
+  color: #000000;
+  background-color: #ffffff;
+  text-align: left;
+  
+  filter: alpha(opacity=70);
+  -moz-opacity: 0.70;
+  opacity: 0.70;
+}
