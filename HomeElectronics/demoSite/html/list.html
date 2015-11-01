@@ -1,0 +1,10 @@
+<content>
+  <table class="device-list">
+    <tbody>
+      <tr class="device-row" ng-repeat="device in devices | filter : {powermeter:false}" ng-click="transitToControl(device)">
+        <td class="device-icon" align="center"><img ng-src="{{device.icon}}"></td>
+        <td class="device-name">{{ device.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+</content>

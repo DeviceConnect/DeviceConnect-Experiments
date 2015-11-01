@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/app.css" />
+    <link rel="stylesheet" href="./css/icons.css" />
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="./lib/jquery.flot.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-sanitize.min.js"></script>
+    <script src="./lib/spin.js"></script>
+    <script src="./lib/angular-spinner.js"></script>
+    <script src="./lib/dconnectsdk-2.0.0.js"></script>
+    <script src="./lib/js.cookie.js"></script>
+
+    <script src="./js/module.js"></script>
+    <script src="./js/controller/controller-main.js"></script>
+    <script src="./js/controller/controller-device-list.js"></script>
+    <script src="./js/controller/controller-setting-list.js"></script>
+    <script src="./js/controller/controller-total-graph.js"></script>
+    <script src="./js/controller/controller-device-graph.js"></script>
+    <script src="./js/controller/controller-setting.js"></script>
+    <script src="./js/controller/controller-powermeter.js"></script>
+    <script src="./js/controller/controller-aircon.js"></script>
+    <script src="./js/controller/controller-tv.js"></script>
+    <script src="./js/controller/controller-light.js"></script>
+    <script src="./js/service/service-manager.js"></script>
+    <script src="./js/service/service-store.js"></script>
+    <script src="./js/service/service-devices.js"></script>
+    <script src="./js/service/service-powermeter.js"></script>
+    <script src="./js/service/service-light.js"></script>
+    <script src="./js/service/service-tv.js"></script>
+    <script src="./js/service/service-aircon.js"></script>
+    <script src="./js/dependencies/app.js"></script>
+    <script src="./js/dependencies/client.js"></script>
+    <script src="./js/dependencies/color-picker.js"></script>
+    <script src="./js/dependencies/preload.js"></script>
+    <script src="./js/constant/constants.js"></script>
+
+  </head>
+
+  <body ng-app="HomeDemo" ng-controller="MainController">
+    <div ng-view></div>
+    <span us-spinner ng-show="showSpinner"></span>
+    <div class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h4 class="modal-title">{{modalTitle}}</h4></div>
+          <div ng-bind-html="modalMessage" class="modal-body"></div>
+          <div class="modal-footer"><div style="text-align:left;">code:{{modalCode}}</div><button type="button" class="btn btn-default" data-dismiss="modal" ng-click="closeModal()">閉じる</button></div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>
