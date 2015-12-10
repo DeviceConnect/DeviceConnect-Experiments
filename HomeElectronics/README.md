@@ -50,7 +50,7 @@ Using ADB, install follow APK files in ```APK``` directory.
 
 If you using dConnectDeviceKadecot, you need install kadecot.
 
-* http://kadecot.net/
+* kadecot.apk
 
 If you using NexusPlayer as Android Device, you need install bellow.
 * BluetoothSPPSettings.apk
