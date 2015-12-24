@@ -3,7 +3,6 @@
 
 # Introduction
 This demo application shows operating a home electronics using "Device Connect". Power Meter that connected to each device will show electric power consumption. So you can confirm effects of reduction by your operations. This project is developed for home cooperation demonstration.
-For running, you need to install particular kadecot application to smart device.
 
 
 # Requirements
@@ -50,9 +49,9 @@ Using ADB, install follow APK files in ```APK``` directory.
 
 ```adb install -r dConnectManager.apk```
 
-If you using dConnectDeviceKadecot, you need install kadecot in ```APK``` directory.
+If you using dConnectDeviceKadecot, you need install kadecot.
 
-* kadecot.apk
+* http://kadecot.net/
 
 If you using NexusPlayer as Android Device, you need install bellow in ```APK``` directory.
 * BluetoothSPPSettings.apk
