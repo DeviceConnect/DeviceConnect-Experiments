@@ -1,0 +1,10 @@
+<content>
+  <button class="btn btn-danger" ng-click="pressBack()" style="margin-left:10px;margin-top:10px;">back</button>
+  <div class="row" style="margin:15px;">
+    <table class="process-list table-hover" style="border-collapse:collapse;width:100%;"><tbody>
+      <tr class="process-row" ng-repeat="process in processes" ng-click="pressProcess(process)" style="border-bottom:1px #eee solid;">
+        <td class="process-name list-item">{{ process.name }}</td>
+      </tr>
+    </tbody></table>
+  </div>
+</content>

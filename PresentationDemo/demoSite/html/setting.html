@@ -1,0 +1,82 @@
+<content ng-click="rootClick()">
+  <button class="btn btn-danger" ng-click="pressBack()" style="margin-left:10px;margin-top:10px;">back</button>
+
+  <div class="row text-info" style="margin:15px;">
+    表示先設定
+  </div>
+  <div class="row" style="margin:15px;">
+    <table class="player-list" style="border-spacing:5px; border-collapse:separate;"><tbody>
+      <tr class="player-row" ng-repeat="player in players">
+        <td class="player-name">
+          <img ng-src="img/remove.png" ng-click="pressRemovePlayer(player)" style="width:32px;height:32px;"/>表示先 : {{ player.id }} : <button class="btn btn-primary btn-sm" ng-click="pressPlayer(player)">{{ player.name }}</button>
+        </td>
+      </tr>
+    </tbody></table>
+    <img ng-src="img/add.png" ng-click="pressAddPlayer()" style="margin-left:15px;width:32px;height:32px;" />
+  </div>
+  <hr>
+  <div class="row text-info" style="margin:15px;">
+    タイマー動作設定
+  </div>
+  <div class="row" style="margin:15px;">
+    <table class="timer-list" style="border-spacing:5px; border-collapse:separate;"><tbody  id="timerlist">
+      <tr class="timer-row" ng-repeat="(tindex, timer) in timers">
+        <td class="timer-name">
+          <img ng-src="img/remove.png" ng-click="pressRemoveTimer(timer)" style="width:32px;height:32px;"/> タイマ : {{ timer.id }}<br>
+          <div style="margin-left:15px;">
+            起動時間 : 開始 <input type="number" ng-model="timer.delay" ng-value="timer.delay" min="0" ng-change="changeDelay(tindex, timer)" style="width:60px;"/> 分後
+          </div>
+          <div style="margin-left:15px;margin-top:6px;">
+            動作方法 : <button class="btn btn-primary btn-sm" ng-click="pressProcessType(timer)" >{{ timer.typeName }}</button>
+          </div>
+          <div style="margin-left:15px;margin-top:6px;">
+            動作対象 : <button class="btn btn-primary btn-sm" ng-click="pressProcessTarget(timer)">{{ timer.target }}</button>
+          </div>
+        </td>
+      </tr>
+    </tbody></table>
+    <img ng-src="img/add.png" ng-click="pressAddTimer()" style="margin-left:15px;width:32px;height:32px;" />
+  </div>
+
+  <hr>
+  <div class="row text-info" style="margin:15px;">
+    DeviceConnect設定
+  </div>
+  <div class="row" style="margin:15px;">
+    <div style="margin-left:10px;margin-bottom:5px;">Managerが動作しているかチェックします。ManagerのLocal OAuthのチェックは外してください。</div>
+    <span style="margin-left:10px;width:200px;display:inline-block;">ステータス : {{managerStatus}}</span>
+    <button class="btn btn-success" ng-click="pressCheckManager()" style="margin-left:5px;">check manager</button>
+  </div>
+  <div class="row" style="margin:15px;">
+    <span style="margin-left:10px;">HostName : </span>
+    <input class="setting-input setting-text small text-center" type="text" ng-value="hostName" ng-model="hostName" ng-change="changeHostName()">
+  </div>
+
+  <hr>
+  <div class="row text-info" style="margin:15px;">
+    SlideShare設定
+  </div>
+  <div class="row" style="margin:15px;">
+    <div>
+      <span style="margin-left:10px;">UserName : </span>
+      <input class="setting-input setting-text small text-center" type="text" ng-value="userName" ng-model="userName" ng-change="changeUserName()">
+    </div>
+    <div style="margin-top:6px;">
+      <span style="margin-left:10px;">slideName : </span>
+      <input class="setting-input setting-text small text-center" type="text" ng-value="slideName" ng-model="slideName" ng-change="changeSlideName()">
+    </div>
+    <div style="margin-top:6px;">
+      <span style="margin-left:10px;">slideSuffix : </span>
+      <input class="setting-input setting-text small text-center" type="text" ng-value="slideSuffix" ng-model="slideSuffix" ng-change="changeSlideSuffix()">
+    </div>
+  </div>
+
+  <hr>
+  <div class="row text-info" style="margin:15px;">
+    その他
+  </div>
+  <div class="row" style="margin:15px;">
+    <div style="margin-left:10px;margin-bottom:5px;">Cookieに保存されている設定情報を削除します。</div>
+    <button class="btn btn-danger" ng-click="pressClearCookie()" style="margin-left:15px;">clear cookie</button>
+  </div>
+</content>
