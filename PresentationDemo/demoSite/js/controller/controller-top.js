@@ -163,7 +163,7 @@
             startProcess(timer.typeName, target.serviceId, target.lightId);
           });
         });
-      }, timer.delay * 60 * 1000);
+      }, ((timer.delayMinute * 60) + timer.delaySecond) * 1000);
       return timeoutId;
     }
 

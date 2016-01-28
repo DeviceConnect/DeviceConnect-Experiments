@@ -24,7 +24,7 @@
         <td class="timer-name">
           <img ng-src="img/remove.png" ng-click="pressRemoveTimer(timer)" style="width:32px;height:32px;"/> タイマ : {{ timer.id }}<br>
           <div style="margin-left:15px;">
-            起動時間 : 開始 <input type="number" ng-model="timer.delay" ng-value="timer.delay" min="0" ng-change="changeDelay(tindex, timer)" style="width:60px;"/> 分後
+            起動時間 : 開始 <input type="number" ng-model="timer.delayMinute" ng-value="timer.delayMinute" min="0" ng-change="changeDelay(tindex, timer)" style="width:60px;"/> 分 : <input type="number" ng-model="timer.delaySecond" ng-value="timer.delaySecond" min="0" ng-change="changeDelay(tindex, timer)" style="width:60px;"/> 秒後
           </div>
           <div style="margin-left:15px;margin-top:6px;">
             動作方法 : <button class="btn btn-primary btn-sm" ng-click="pressProcessType(timer)" >{{ timer.typeName }}</button>

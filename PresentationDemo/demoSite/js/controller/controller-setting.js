@@ -107,7 +107,8 @@
         }
         $scope.timers.push({
           id:createTimerId(),
-          delay:0,
+          delayMinute:0,
+          delaySecond:0,
           typeName:process.name,
           target:'ALL',
           serviceId:undefined
@@ -152,12 +153,20 @@
     }
 
     function changeDelay(tindex, timer){
-      if(timer.delay === undefined || timer.delay === null){
-        timer.delay = 0;
-      }else{
+      if(timer.delayMinute === undefined || timer.delayMinute === null){
+        timer.delayMinute = 0;
+      } else{
         //Remove first digit when it is zero.
         var target = $("#timerlist").children()[tindex];
-        $(target).find('input').val(timer.delay);
+        $(target).find('input').first().val(timer.delayMinute);
+      }
+
+      if(timer.delaySecond === undefined || timer.delaySecond === null){
+        timer.delaySecond = 0;
+      } else{
+        //Remove first digit when it is zero.
+        var target = $("#timerlist").children()[tindex];
+        $(target).find('input').last().val(timer.delaySecond);
       }
       updateData();
     }
