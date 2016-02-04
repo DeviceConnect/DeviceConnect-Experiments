@@ -1,0 +1,54 @@
+/**
+ app.css
+ Copyright (c) 2016 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
+
+body {
+  color: #5a5a5a;
+  margin: 0;
+  padding: 0;
+}
+
+button:focus {
+  outline: none;
+}
+
+header {
+  width: 100%;
+  height: 40px;
+  background-color: #3DA4D3;
+  line-height: 40px;
+  font-size: 1.2em;
+  color: #FFF;
+}
+
+.icon {
+  border: 0 none;
+  border-radius: 12px;
+  padding: 0px;
+}
+
+.setting-input {
+   padding-left: 10px;
+   padding-right: 10px;
+   /*border-radius: 6px;
+   border: 1px #222222 solid;*/
+   width : 180px;
+   height : 40px;
+   /*background-color: #CCCCCC*/
+
+}
+
+.setting-text { font-size: 24px;}
+.setting-text.large { font-size: 28px;}
+.setting-text.small { font-size: 20px;}
+
+.row {
+  margin: 0;
+}
+
+.list-item {
+  font-size: 24px;
+}

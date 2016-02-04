@@ -1,0 +1,12 @@
+<content>
+  <button class="btn btn-danger" ng-click="pressBack()" style="margin-left:10px;margin-top:10px;">back</button>
+  <div class="row text-center" style="margin:15px;">
+    <div class="row text-center" style="display: flex; justify-content: center; align-items: center;">
+      <table class="device-list table-hover" style="border-collapse:collapse;width:100%;"><tbody>
+        <tr class="device-row" ng-repeat="device in devices" ng-click="pressDevice(device)" style="border-bottom:1px #eee solid;">
+          <td class="device-name list-item">{{ device.name }}</td>
+        </tr>
+      </tbody></table>
+    </div>
+  </div>
+</content>

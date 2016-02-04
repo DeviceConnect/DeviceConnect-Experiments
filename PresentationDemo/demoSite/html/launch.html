@@ -1,0 +1,34 @@
+<content>
+  <div class="row text-warning" style="margin:10px;">
+    Device Web API Managerとの通信ができませんでした。
+  </div>
+
+  <div class="row" style="margin:10px;" ng-show="isMobile">
+
+      <div><strong>Managerが端末にインストールされているかどうかを確認しますか?</strong></div>
+      <div style="margin-top:10px;">・インストールされている場合はManagerの設定画面が開きます。</div>
+      <div>ManagerをONにした後、本アプリをお使いください。</div>
+
+      <div style="margin-top:10px;">
+        ・インストールされていない場合は、
+        <span ng-show="isAndroid">Google Play Store</span>
+        <span ng-show="!isAndroid">App Store</span>
+        へ移動します。
+      </div>
+
+  </div>
+
+  <div class="row" style="margin:10px;" ng-show="!isMobile">
+    Managerが動作している端末のホスト名が正しく入力されているか、またはManagerがONになっているかどうかをご確認ください。
+    <div class="text-info" style="margin:10px;">Manager側で必要な設定</div>
+    <ul>
+      <li>外部IPを許可にチェック</li>
+      <li>Local OAuthのチェックを外す</li>
+    </ul>
+  </div>
+
+  <div class="row text-center" style="margin-top:10px;margin-bottom:10px;">
+    <button class="btn btn-danger" ng-click="pressClose()">閉じる</button>
+    <button class="btn btn-success" ng-click="pressCheck()" ng-show="isMobile" style="margin-left:15px;">確認する</button>
+  </div>
+</content>
