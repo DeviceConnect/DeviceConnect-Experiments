@@ -16,6 +16,7 @@
 
   <script src="js/dconnectsdk-2.0.0.js"></script>
   <script src="js/VideoChatDemo.js"></script>
+  <script src="js/AudioUtil.js"></script>
 </head>
 
 <body>
@@ -34,6 +35,32 @@
 
 <div class="container">
 
+  <div id="main-view" class="row mytext">
+
+    <div id="other" class="col-xs-12 col-sm-6 media-area">
+      <div class="video-header text-center">
+        <span>Other : </span> <span class="skyway-id">XXXXXX</span>
+      </div>
+      <div class="video-area mybg">
+        <canvas class="modify"></canvas>
+        <canvas class="original"></canvas>
+        <img src="" id="remote-video">
+      </div>
+    </div>
+
+    <div id="my" class="col-xs-12 col-sm-6 media-area">
+      <div class="video-header text-center">
+        <span>My : </span> <span class="skyway-id">XXXXXX</span>
+      </div>
+      <div class="video-area mybg">
+        <canvas class="modify"></canvas>
+        <canvas class="original"></canvas>
+        <img src="" id="local-video">
+      </div>
+    </div>
+  </div>
+
+
   <div class="row collapse-btn connector-btn">
     <div class="col-xs-12">
       <button type="button" class="btn btn-success" data-toggle="collapse" data-target=".controller.connect.myprofile">
@@ -48,15 +75,41 @@
     <button class="btn btn-success btn-sm" id="local-oauth"><i class="fa fa-undo"></i>&nbsp;&nbsp;&nbsp;LocalOAuth</button>
     <div class="form-horizontal">
       <div class="form-group">
-        <label class="col-xs-1 control-label" for="video-url">Video</label>
-        <div class="col-xs-11">
+        <label class="col-xs-4 control-label" for="video-url">Video</label>
+        <div class="col-xs-8">
           <input class="form-control" type="text" placeholder="Video URL" id="video-url">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-xs-1 control-label" for="audio-url">Audio</label>
-        <div class="col-xs-11">
+        <label class="col-xs-4 control-label" for="audio-url">Audio</label>
+        <div class="col-xs-8">
           <input class="form-control" type="text" placeholder="Audio URL" id="audio-url">
+        </div>
+        <label class="col-xs-4 control-label" for="audio-sampling-rate">Sampling Rate</label>
+        <div class="col-xs-8">
+          <select class="form-control" id="audio-sampling-rate">
+            <option>48000</option>
+            <option>44100</option>
+            <option>22050</option>
+            <option>16000</option>
+            <option>11025</option>
+            <option>8000</option>
+          </select>
+        </div>
+        <label class="col-xs-4 control-label" for="audio-bit-rate">Quantization Bit Rate</label>
+        <div class="col-xs-8">
+          <select class="form-control" id="audio-bit-rate">
+            <option>8BIT</option>
+            <option>16BIT</option>
+            <option>FLOAT</option>
+          </select>
+        </div>
+        <label class="col-xs-4 control-label" for="audio-channel">Channel</label>
+        <div class="col-xs-8">
+          <select class="form-control" id="audio-channel">
+            <option>MONO</option>
+            <option>STERO</option>
+          </select>
         </div>
       </div>
     </div>
@@ -73,7 +126,8 @@
   <div class="row controller connect mybg collapse">
     <input class="form-control" type="text" placeholder="Input other id" id="input-callee-id">
     <button class="btn btn-success btn-sm" id="get-list"><i class="fa fa-list"></i>&nbsp;&nbsp;&nbsp;Get List</button>
-    <button class="btn btn-success btn-sm" id="make-call"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;Call</button>
+    <button class="btn btn-success btn-sm" id="make-call-app"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;Call (app)</button>
+    <button class="btn btn-success btn-sm" id="make-call-host"><i class="fa fa-phone"></i>&nbsp;&nbsp;&nbsp;Call (host)</button>
     <button class="btn btn-danger btn-sm" id="end-call"><i class="fa fa-stop"></i>&nbsp;&nbsp;&nbsp;End call</button>
     <ul class="list-group" id="collees-list"></ul>
   </div>
