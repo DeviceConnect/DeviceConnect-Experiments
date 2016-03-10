@@ -109,6 +109,7 @@
       $('#my .skyway-id').text(json.addressId);
       registerEvent();
       registerOnCallEvent();
+      registerHangupEvent();
     };
     var errorCallback = function (errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to connect the skyway.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -268,6 +269,7 @@
           if (remote.video) {
               var uri = remote.video.uri;
               if (uri) {
+                 $('#remote-video').show();
                  $('#remote-video').attr("src", uri);
               }
           }
@@ -297,6 +299,23 @@
             }
         }
       }
+    };
+    var successCallback = function(json) {
+      console.log('Success to register event.');
+    };
+    var errorCallback = function(errorCode, errorMessage) {
+      showErrorDialog("Error", "Failed to register event.<br>errorCode: " + errorCode + "<br>" + errorMessage);
+    };
+    dConnect.addEventListener(builder.build(), eventCallback, successCallback, errorCallback);
+  }
+
+  function registerHangupEvent() {
+    var builder = createUriBuilder('hangup');
+    builder.addParameter('sessionKey', _sessionKey);
+    var eventCallback = function(message) {
+      console.log('Event-Message:' + message);
+      $('#other .skyway-id').text("XXXXXXXX");
+      $('#remote-video').hide();
     };
     var successCallback = function(json) {
       console.log('Success to register event.');
