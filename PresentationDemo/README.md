@@ -83,6 +83,9 @@ The app available.
 <center><img src="assets/top.png" alt="" width="400"/></center>
 
 For more detail, let's go to Setting.
+And read a manuals below.
+[manuals](manuals/)
+
 
 # Lisence
 This project is licensed under MIT license. See LICENSE.TXT for details.
