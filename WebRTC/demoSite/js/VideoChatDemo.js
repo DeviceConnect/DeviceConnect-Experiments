@@ -236,6 +236,7 @@
           if (local.video) {
             var uri = local.video.uri;
             if (uri) {
+               $('#local-video').show();
                $('#local-video').attr("src", uri);
             }
           }
@@ -316,6 +317,7 @@
       console.log('Event-Message:' + message);
       $('#other .skyway-id').text("XXXXXXXX");
       $('#remote-video').hide();
+      $('#local-video').hide();
     };
     var successCallback = function(json) {
       console.log('Success to register event.');
