@@ -7,6 +7,7 @@
   var _accessToken;
   var _serviceId;
   var _sessionKey = Math.random().toString(36).slice(-8);
+  var _audio;
 
   function createConfig() {
     return '{apiKey:"' + _skywayApiKey + '", domain:"' + _skywayDomain + '"}';
@@ -148,11 +149,11 @@
     var samplingRate = $('#audio-sampling-rate').val();
     var bitDepth = $('#audio-bit-rate').val();
     var channel = $('#audio-channel').val();
-    
+
     console.log("samplingRate=" + samplingRate);
     console.log("bitDepth=" + bitDepth);
     console.log("channel=" + channel);
-    
+
     var builder = createUriBuilder('call');
     builder.addParameter('addressId', addressId);
     builder.addParameter('video', videoUrl);
@@ -183,16 +184,28 @@
     dConnect.delete(builder.build(), null, successCallback, errorCallback);
   }
 
-  function answer() {
+  function answer(outputs) {
     var addressId = $('#input-callee-id').val();
     var videoUrl = $('#video-url').val();
     var audioUrl = $('#audio-url').val();
+    var samplingRate = $('#audio-sampling-rate').val();
+    var bitDepth = $('#audio-bit-rate').val();
+    var channel = $('#audio-channel').val();
+
+    console.log("samplingRate=" + samplingRate);
+    console.log("bitDepth=" + bitDepth);
+    console.log("channel=" + channel);
+
     var builder = createUriBuilder('call');
     builder.addParameter('addressId', addressId);
     builder.addParameter('video', videoUrl);
     builder.addParameter('audio', audioUrl);
+    builder.addParameter('audioSampleRate', samplingRate);
+    builder.addParameter('audioBitDepth', bitDepth);
+    builder.addParameter('audioChannel', channel);
+    builder.addParameter('outputs', outputs);
     var successCallback = function(json) {
-      console.log("Success to snswer.");
+      console.log("Success to answer.");
     };
     var errorCallback = function(errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to answer.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -240,30 +253,6 @@
                $('#local-video').attr("src", uri);
             }
           }
-          if (local.audio) {
-            var uri = local.audio.uri.replace('http', 'ws');
-            var samplingRate = local.audio.sampleRate;
-            var channels = local.audio.channels;
-            var sampleSize = local.audio.sampleSize;
-            var audioFormat = AudioUtil.AudioDevice.PCM_FLOAT;
-            if (sampleSize == 8) {
-                audioFormat = AudioUtil.AudioDevice.PCM_8BIT;
-            } else if (sampleSize == 16) {
-                audioFormat = AudioUtil.AudioDevice.PCM_16BIT;
-            }
-            var audio = new AudioUtil.AudioDevice();
-            audio.url(uri)
-              .channel(channels)
-              .sampleRate(samplingRate)
-              .audioFormat(audioFormat)
-              .onopen(function() {
-                    console.log("open local audio. uri=" + uri);
-                }).onerror(function() {
-                    console.log("error local audio");
-                }).onclose(function() {
-                    console.log("close local audio");
-                }).connect();
-          }
         }
 
         if (remote) {
@@ -285,8 +274,14 @@
               } else if (sampleSize == 16) {
                   audioFormat = AudioUtil.AudioDevice.PCM_16BIT;
               }
-              var audio = new AudioUtil.AudioDevice();
-              audio.url(uri)
+
+              console.log("channels: " + channels);
+              console.log("samplingRate: " + samplingRate);
+              console.log("audioFormat: " + audioFormat);
+              console.log("sampleSize: " + sampleSize);
+
+              _audio = new AudioUtil.AudioDevice();
+              _audio.url(uri)
                 .channel(channels)
                 .sampleRate(samplingRate)
                 .audioFormat(audioFormat)
@@ -316,8 +311,14 @@
     var eventCallback = function(message) {
       console.log('Event-Message:' + message);
       $('#other .skyway-id').text("XXXXXXXX");
+      $('#remote-video').attr("src", "");
       $('#remote-video').hide();
+      $('#local-video').attr("src", "");
       $('#local-video').hide();
+      if (_audio) {
+          _audio.close()
+          _audio = undefined;
+      }
     };
     var successCallback = function(json) {
       console.log('Success to register event.');
@@ -369,8 +370,12 @@
       endCall();
     });
     
-    $('#call-answer').on('click', function() {
-      answer();
+    $('#call-answer-app').on('click', function() {
+      answer('app');
+    });
+
+    $('#call-answer-host').on('click', function() {
+      answer('host');
     });
 
     openWebsocket();

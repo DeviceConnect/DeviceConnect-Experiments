@@ -10,6 +10,7 @@ var AudioUtil = AudioUtil || {};
         this._sampleRate = undefined;
         this._audioFormat = undefined;
         this._url = undefined;
+        this._ws = undefined;
     };
 
     AudioDevice.prototype.playChunk = function(audioSrc, scheduledTime) {
@@ -83,7 +84,18 @@ var AudioUtil = AudioUtil || {};
         return this;
     };
 
+    AudioDevice.prototype.close = function() {
+        if (this._ws) {
+            this._ws.close(4500, "Finished the AudioDevice.");
+        }
+        this._ws = undefined;
+    };
+
     AudioDevice.prototype.connect = function() {
+        if (this._ws) {
+            throw new Error("websocket is already opened."); 
+        }
+
         if (this._url == undefined) {
             throw new Error("url is not set."); 
         }
@@ -102,31 +114,31 @@ var AudioUtil = AudioUtil || {};
 
         var self = this;
 
-        var ws = new WebSocket(this._url);
-        ws.binaryType = "arraybuffer";
-        ws.onopen = function() {
+        this._ws = new WebSocket(this._url);
+        this._ws.binaryType = "arraybuffer";
+        this._ws.onopen = function() {
             if (typeof(self._onopen) == 'function') {
                 self._onopen();
             }
         };
 
-        ws.onerror = function(e) {
+        this._ws.onerror = function(e) {
             if (typeof(self._onerror) == 'function') {
                 self._onerror();
             }
         };
         
-        ws.onclose = function() {
+        this._ws.onclose = function() {
             if (typeof(self._onclose) == 'function') {
                 self._onclose();
             }
         };
 
-        ws.onmessage = function(evt) {
+        this._ws.onmessage = function(evt) {
             if (evt.data.constructor !== ArrayBuffer) {
                 throw "expecting ArrayBuffer";
             }
-    
+
             var audioFloat32;
             switch (self._audioFormat) {
             case audio.AudioDevice.PCM_8BIT: {
