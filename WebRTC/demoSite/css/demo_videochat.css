@@ -181,6 +181,23 @@ header .nav > li > a {
   color: #25799f;
 }
 
+#other .modify,
+#other .original,
+#other img,
+#other .video-area {
+  width: 266px;
+  height: 200px;
+}
+
+#my .modify,
+#my .original,
+#my img,
+#my .video-area {
+  width: 133px;
+  height: 100px;
+}
+
+
 /* xs */
 @media (max-width: 767px) {
   header .title {

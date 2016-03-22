@@ -49,6 +49,10 @@ $(function(){
       $('#other .skyway-id').text(calleePeerId);
       // setupOtherAnalyser(stream);
       showOtherVideo(stream);
+    },
+    onclose : function() {
+        $('#other .skyway-id').text('XXXXXX');
+        $('#other video').hide();
     }
   };
   webrtcManager = new WebRTCManager(callback);
@@ -62,6 +66,7 @@ $(function(){
   });
   $('#end-call').on('click',function(){
     $('#other .skyway-id').text('XXXXXX');
+    $('#other video').hide();
     webrtcManager.stop();
   });
   $('.nav-pills').on("shown.bs.tab", function (e) {
@@ -192,6 +197,7 @@ function showMyVideo () {
 }
 
 function showOtherVideo (stream) {
+  $('#other video').show();
   $('#other video').prop('src', URL.createObjectURL(stream));
 }
 

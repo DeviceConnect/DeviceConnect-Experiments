@@ -2,11 +2,12 @@
 
   var _skywayApiKey = "[ YOUR API KEY ]";
   var _skywayDomain = "[ YOUR DOMAIN ]";
- 
+
   var _ip;
   var _accessToken;
   var _serviceId;
   var _sessionKey = Math.random().toString(36).slice(-8);
+  var _audio;
 
   function createConfig() {
     return '{apiKey:"' + _skywayApiKey + '", domain:"' + _skywayDomain + '"}';
@@ -106,7 +107,10 @@
     var builder = createUriBuilder('profile');
     var successCallback = function (json) {
       $('#skyway-id').val(json.addressId);
+      $('#my .skyway-id').text(json.addressId);
       registerEvent();
+      registerOnCallEvent();
+      registerHangupEvent();
     };
     var errorCallback = function (errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to connect the skyway.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -138,15 +142,28 @@
     });
   }
 
-  function makeCall() {
+  function makeCall(outputs) {
     var addressId = $('#input-callee-id').val();
     var videoUrl = $('#video-url').val();
     var audioUrl = $('#audio-url').val();
+    var samplingRate = $('#audio-sampling-rate').val();
+    var bitDepth = $('#audio-bit-rate').val();
+    var channel = $('#audio-channel').val();
+
+    console.log("samplingRate=" + samplingRate);
+    console.log("bitDepth=" + bitDepth);
+    console.log("channel=" + channel);
+
     var builder = createUriBuilder('call');
     builder.addParameter('addressId', addressId);
     builder.addParameter('video', videoUrl);
     builder.addParameter('audio', audioUrl);
+    builder.addParameter('audioSampleRate', samplingRate);
+    builder.addParameter('audioBitDepth', bitDepth);
+    builder.addParameter('audioChannel', channel);
+    builder.addParameter('outputs', outputs);
     var successCallback = function(json) {
+      console.log("Success to make call.");
     };
     var errorCallback = function(errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to make call.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -159,6 +176,7 @@
     var builder = createUriBuilder('call');
     builder.addParameter('addressId', addressId);
     var successCallback = function(json) {
+        console.log("Success to end call.");
     };
     var errorCallback = function(errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to end call.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -166,15 +184,28 @@
     dConnect.delete(builder.build(), null, successCallback, errorCallback);
   }
 
-  function answer() {
+  function answer(outputs) {
     var addressId = $('#input-callee-id').val();
     var videoUrl = $('#video-url').val();
     var audioUrl = $('#audio-url').val();
+    var samplingRate = $('#audio-sampling-rate').val();
+    var bitDepth = $('#audio-bit-rate').val();
+    var channel = $('#audio-channel').val();
+
+    console.log("samplingRate=" + samplingRate);
+    console.log("bitDepth=" + bitDepth);
+    console.log("channel=" + channel);
+
     var builder = createUriBuilder('call');
     builder.addParameter('addressId', addressId);
     builder.addParameter('video', videoUrl);
     builder.addParameter('audio', audioUrl);
+    builder.addParameter('audioSampleRate', samplingRate);
+    builder.addParameter('audioBitDepth', bitDepth);
+    builder.addParameter('audioChannel', channel);
+    builder.addParameter('outputs', outputs);
     var successCallback = function(json) {
+      console.log("Success to answer.");
     };
     var errorCallback = function(errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to answer.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -196,6 +227,101 @@
       }
     };
     var successCallback = function(json) {
+      console.log('Success to register event.');
+    };
+    var errorCallback = function(errorCode, errorMessage) {
+      showErrorDialog("Error", "Failed to register event.<br>errorCode: " + errorCode + "<br>" + errorMessage);
+    };
+    dConnect.addEventListener(builder.build(), eventCallback, successCallback, errorCallback);
+  }
+
+  function registerOnCallEvent() {
+    var builder = createUriBuilder('oncall');
+    builder.addParameter('sessionKey', _sessionKey);
+    var eventCallback = function(message) {
+      console.log('Event-Message:' + message);
+      var json = JSON.parse(message);
+      if (json.oncall) {
+        var local = json.oncall[0].local;
+        var remote = json.oncall[0].remote;
+        $('#other .skyway-id').text(json.oncall[0].addressId);
+        if (local) {
+          if (local.video) {
+            var uri = local.video.uri;
+            if (uri) {
+               $('#local-video').show();
+               $('#local-video').attr("src", uri);
+            }
+          }
+        }
+
+        if (remote) {
+          if (remote.video) {
+              var uri = remote.video.uri;
+              if (uri) {
+                 $('#remote-video').show();
+                 $('#remote-video').attr("src", uri);
+              }
+          }
+          if (remote.audio) {
+              var uri = remote.audio.uri.replace('http', 'ws');
+              var samplingRate = remote.audio.sampleRate;
+              var channels = remote.audio.channels;
+              var sampleSize = remote.audio.sampleSize;
+              var audioFormat = AudioUtil.AudioDevice.PCM_FLOAT;
+              if (sampleSize == 8) {
+                  audioFormat = AudioUtil.AudioDevice.PCM_8BIT;
+              } else if (sampleSize == 16) {
+                  audioFormat = AudioUtil.AudioDevice.PCM_16BIT;
+              }
+
+              console.log("channels: " + channels);
+              console.log("samplingRate: " + samplingRate);
+              console.log("audioFormat: " + audioFormat);
+              console.log("sampleSize: " + sampleSize);
+
+              _audio = new AudioUtil.AudioDevice();
+              _audio.url(uri)
+                .channel(channels)
+                .sampleRate(samplingRate)
+                .audioFormat(audioFormat)
+                .onopen(function() {
+                    console.log("open remote audio. uri=" + uri);
+                  }).onerror(function() {
+                    console.log("error remote audio");
+                  }).onclose(function() {
+                    console.log("close remote audio");
+                  }).connect();
+            }
+        }
+      }
+    };
+    var successCallback = function(json) {
+      console.log('Success to register event.');
+    };
+    var errorCallback = function(errorCode, errorMessage) {
+      showErrorDialog("Error", "Failed to register event.<br>errorCode: " + errorCode + "<br>" + errorMessage);
+    };
+    dConnect.addEventListener(builder.build(), eventCallback, successCallback, errorCallback);
+  }
+
+  function registerHangupEvent() {
+    var builder = createUriBuilder('hangup');
+    builder.addParameter('sessionKey', _sessionKey);
+    var eventCallback = function(message) {
+      console.log('Event-Message:' + message);
+      $('#other .skyway-id').text("XXXXXXXX");
+      $('#remote-video').attr("src", "");
+      $('#remote-video').hide();
+      $('#local-video').attr("src", "");
+      $('#local-video').hide();
+      if (_audio) {
+          _audio.close()
+          _audio = undefined;
+      }
+    };
+    var successCallback = function(json) {
+      console.log('Success to register event.');
     };
     var errorCallback = function(errorCode, errorMessage) {
       showErrorDialog("Error", "Failed to register event.<br>errorCode: " + errorCode + "<br>" + errorMessage);
@@ -232,16 +358,24 @@
       getAddressList();
     });
 
-    $('#make-call').on('click',function() {
-      makeCall();
+    $('#make-call-app').on('click',function() {
+      makeCall('app');
+    });
+
+    $('#make-call-host').on('click',function() {
+      makeCall('host');
     });
 
     $('#end-call').on('click',function() {
       endCall();
     });
     
-    $('#call-answer').on('click', function() {
-      answer();
+    $('#call-answer-app').on('click', function() {
+      answer('app');
+    });
+
+    $('#call-answer-host').on('click', function() {
+      answer('host');
     });
 
     openWebsocket();
