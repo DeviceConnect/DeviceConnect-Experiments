@@ -22,6 +22,9 @@ WebRTCManager.prototype = {
       this.call = call;
       this.callback.incoming(call.peer);
     }.bind(this));
+    peer.on('close', function() {
+      this.callback.onclose();
+    }.bind(this));
     this.peer = peer;
   },
 
