@@ -1,0 +1,69 @@
+<nav class="navbar navbar-default">
+  <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{title}}</div>
+</nav>
+
+<content>
+  <table width="100%">
+    <tr ng-repeat="command in list.commands" class="row">
+      <td>{{command.name}}</td>
+      <td><button class="btn-operation" ng-click="removeCommand($index)">削除</button></td>
+    </tr>
+  </table>
+</content>
+
+<script type="text/ng-template" id="error-dialog-remoconn.html">
+  <div class="modal-header">
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+    {{message}}
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="confirm-dialog-remoconn.html">
+  <div class="modal-header">
+    <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+    {{message}}
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">はい</button>
+    <button class="btn btn-primary" ng-click="cancel()">いいえ</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="add-dialog-remoconn.html">
+  <div class="modal-header">
+    <h4 class="modal-title">コマンド追加</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="commandName">コマンド名</label>
+        <input type="text" class="form-control" id="commandName" placeholder="コマンド名">
+      </div>
+      <div class="form-group">
+        <label for="commandMessage">コマンドメッセージ</label>
+        <textarea class="form-control" id="commandMessage" rows="5" disabled>{{message}}</textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">追加</button>
+    <button class="btn btn-primary" ng-click="cancel()">キャンセル</button>
+  </div>
+</script>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="addCommand()">GET</td>
+    </tr>
+  </table>
+</footer>

@@ -1,0 +1,96 @@
+#bloodpressure-container {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#bloodpressure-search {
+  width:280px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  border-color: #49B4DC;
+}
+
+#bloodpressure-search:hover {
+  background-color: #FFFFFF;
+}
+
+#bloodpressure-search:active {
+  background-color: #C3E6F3;
+}
+
+#bloodpressure-footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0;
+  background-color: #4D4D4D;
+  width: 100%;
+  margin: 0px;
+  margin-top: 24px;
+}
+
+#bloodpressure-button {
+  width:240px;
+  margin: 16px;
+  padding: 16px;
+  background-color: #49B4DC;
+  border-color: #49B4DC;
+  color: #FFFFFF;
+}
+
+#bloodpressure-button:active {
+  background-color: #39A4D3;
+  border-color: #39A4D3;
+}
+
+#bloodpressure-main {
+  position: relative;
+  margin-top: 0px;
+  width: 320px;
+}
+
+#bloodpressure-spinner {
+  position: absolute;
+  display: none;
+  margin-top: 110px;
+}
+
+#bloodpressure-value {
+  position: absolute;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 30px;
+  margin-top: 5px;
+}
+
+#bloodpressure-systolic {
+  position: relative;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+  top: 40px;
+}
+
+#bloodpressure-diastolic {
+  position: relative;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+  top: 60px;
+}
+
+#bloodpressure-meanarterial {
+  position: relative;
+  width: 100%;
+  vertical-align: middle;
+  text-align: center;
+  top: 80px;
+}
+
+#degree {
+  margin-top: 50px;
+}
+

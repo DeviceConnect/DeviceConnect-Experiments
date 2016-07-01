@@ -1,0 +1,37 @@
+<nav class="navbar navbar-default">
+  <div class="navbar-title">{{ title }}</div>
+  <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+</nav>
+
+<content>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="device in list.devices">
+      <div class="list-radio">
+        <input class="radio" type="radio" name="list-radio"><label>{{device.name}}</label>
+      </div>
+    </li>
+  </ul>
+</content>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="cancel()" width="50%">Cancel</td>
+      <td class="button" ng-click="ok()" width="50%">OK</td>
+    </tr>
+  </table>
+</footer>
+
+  <script type="text/ng-template" id="error-dialog-device-radio.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+      <button class="btn btn-primary" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>

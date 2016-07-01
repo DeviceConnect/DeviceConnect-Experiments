@@ -1,0 +1,30 @@
+  <nav class="navbar navbar-default">
+    <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+    <img class="navbar-back" ng-click="back()" src="img/back.png">
+    <div class="navbar-title">{{title}}</div>
+  </nav>
+
+  <content>
+    <div id="weightscale-container" align="center">
+      <div id="weightscale-search" class="btn btn-default" ng-click="searchWeightscale()">{{deviceName}}</div>
+      <div id="weightscale-main">
+        <div class="modal-spinner-container" id="weightscale-spinner"><img class="spinner" src="img/spinner.png"></div>
+        <div id="weightscale-value"><div class="weightscale">{{weightscale}}</div></div>
+      </div>
+      <div id="weightscale-footer">
+        <div id="weightscale-button" class="btn btn-default" ng-click="clickWeightscale()">{{button}}</div>
+      </div>
+    </div>
+  </content>
+
+  <script type="text/ng-template" id="error-dialog-weightscale-select.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+  </script>

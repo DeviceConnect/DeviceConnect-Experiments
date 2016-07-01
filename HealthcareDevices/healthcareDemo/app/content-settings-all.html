@@ -1,0 +1,38 @@
+<nav class="navbar navbar-default">
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{ title }}</div>
+</nav>
+
+<content>
+  <table width="100%">
+    <tr ng-repeat="plugin in plugins" class="row">
+      <td>{{plugin.name}}</td>
+      <td><button class="btn-operation" ng-click="wakeup($index)">{{ plugin.operation }}</button></td>
+    </tr>
+  </table>
+</content>
+
+<script type="text/ng-template" id="progress.html">
+  <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+      <div>{{message}}</div>
+      <div class="modal-spinner-container"><img class="spinner" src="img/spinner.png"></div>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default" ng-click="cancel()">キャンセル</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="dialog.html">
+    <div class="modal-header">
+        <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+       {{message}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ok()">Google Playを開く</button>
+    </div>
+</script>

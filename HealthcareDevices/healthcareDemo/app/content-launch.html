@@ -1,0 +1,79 @@
+<nav class="navbar navbar-default">
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{ title }}</div>
+</nav>
+
+<content>
+  <div id="message_install_check" style="margin: 1em;" ng-bind-html="message"></div>
+</content>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="startManager()" width="50%">確認する</td>
+    </tr>
+  </table>
+</footer>
+
+<script type="text/ng-template" id="progress.html">
+  <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+      <div>{{message}}</div>
+      <div class="modal-spinner-container"><img class="spinner" src="img/spinner.png"></div>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default" ng-click="cancel()">キャンセル</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="retry-prompt-dialog.html">
+  <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+     {{message}}
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default" ng-click="cancel()">キャンセル</button>
+      <button class="btn btn-default" ng-click="ok()">再試行</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="update-prompt-dialog.html">
+  <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+     {{message}}
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default" ng-click="cancel()">キャンセル</button>
+      <button class="btn btn-default" ng-click="ok()">アップデート</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="confirm-dialog.html">
+  <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+  </div>
+  <div class="modal-body">
+     {{message}}
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default" ng-click="ok()">OK</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="dialog.html">
+    <div class="modal-header">
+        <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+       {{message}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ok()">Google Playを開く</button>
+    </div>
+</script>

@@ -1,0 +1,19 @@
+<nav class="navbar navbar-default">
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{ title }}</div>
+</nav>
+
+<content>
+  <div style="margin: 1em;">
+    <p>{{errorMessage}}</p>
+    <p>エラーコード: {{errorCode}}</p>
+  </div>
+</content>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="back()" width="50%">前に戻る</td>
+    </tr>
+  </table>
+</footer>

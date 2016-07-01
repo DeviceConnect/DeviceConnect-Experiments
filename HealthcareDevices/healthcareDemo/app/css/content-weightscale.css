@@ -1,0 +1,72 @@
+#weightscale-container {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#weightscale-search {
+  width:280px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  border-color: #49B4DC;
+}
+
+#weightscale-search:hover {
+  background-color: #FFFFFF;
+}
+
+#weightscale-search:active {
+  background-color: #C3E6F3;
+}
+
+#weightscale-footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0;
+  background-color: #4D4D4D;
+  width: 100%;
+  margin: 0px;
+  margin-top: 24px;
+}
+
+#weightscale-button {
+  width:240px;
+  margin: 16px;
+  padding: 16px;
+  background-color: #49B4DC;
+  border-color: #49B4DC;
+  color: #FFFFFF;
+}
+
+#weightscale-button:active {
+  background-color: #39A4D3;
+  border-color: #39A4D3;
+}
+
+#weightscale-main {
+  position: relative;
+  margin-top: 0px;
+  width: 320px;
+}
+
+#weightscale-spinner {
+  position: absolute;
+  display: none;
+  margin-top: 110px;
+}
+
+#weightscale-value {
+  position: absolute;
+  width: 100%;
+  vertical-align:middle;
+  text-align: center;
+  font-size:60px;
+  margin-top: 70px;
+}
+
+#degree {
+  margin-top: 50px;
+}
+
