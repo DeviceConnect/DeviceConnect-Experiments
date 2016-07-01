@@ -1,0 +1,46 @@
+  <nav class="navbar navbar-default">
+    <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+    <img class="navbar-back" ng-click="back()" src="img/back.png">
+    <div class="navbar-title">{{title}}</div>
+  </nav>
+
+  <content>
+    <div id="light-container" align="center">
+      <div id="search-light" class="btn btn-default" ng-click="discoverLight()">{{deviceName}}</div>
+      <div id="power-group">
+        <div class="btn-group" role="group" aria-label="power">
+          <button id="turn-off" type="button" class="btn btn-default" ng-click="turnOff()">{{lightOff}}</button>
+          <button id="turn-on" type="button" class="btn btn-default" ng-click="turnOn()">{{lightOn}}</button>
+        </div>
+      </div>
+      <div>
+        <canvas id="color-picker" width="320" height="320"></canvas>
+      </div>
+      <div id="color-cursor"><img src="./img/point.png" width="16"></div>
+      <table style="margin-top:16px">
+        <tr>
+          <td>
+            <img id="brightness-off" src="./img/light_off.png" width="48">
+          </td>
+          <td>
+            <input id="brightness-slider" type="text" data-slider-id="brightness-slider" />
+          </td>
+          <td>
+            <img id="brightness-on" src="./img/light_on.png" width="48">
+          </td>
+        </tr>
+      </table>
+    </div>
+  </content>
+
+  <script type="text/ng-template" id="error-dialog-light.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+         {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+  </script>

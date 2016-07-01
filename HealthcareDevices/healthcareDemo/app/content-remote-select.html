@@ -1,0 +1,15 @@
+<nav class="navbar navbar-default">
+  <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{title}}</div>
+</nav>
+
+<content>
+  <div id="remote-container">
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="device in list.devices" ng-click="selectDevice($index)">
+          {{device.name}}
+      </li>
+    </ul>
+  </div>
+</content>

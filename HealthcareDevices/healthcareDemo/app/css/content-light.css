@@ -1,0 +1,100 @@
+.modal-header {
+  color: #FFFFFF;
+  background-color: #49B4DC;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+   border-top-left-radius: 5px;
+   border-top-right-radius: 5px;
+}
+
+.navbar-brand:hover {
+  color: #FF0000;
+}
+
+.navbar-brand:active {
+  color: #FF0000;
+}
+
+#light-container {
+  margin-top: 24px;
+  z-index: -1;
+}
+
+#color-cursor {
+  position:absolute;
+  pointer-events: none;
+  width:16px;
+  height:16px;
+  cursor:move;
+}
+
+#brightness-slider {
+  width: 80%;
+  min-width: 160px;
+}
+
+#brightness-slider .slider-selection {
+  background: #2EA9D7;
+  height:2px;
+}
+
+#brightness-slider .slider-handle {
+  background: #2EA9D7;
+  margin-top:-9px;
+}
+
+#brightness-slider .slider-track {
+  background: #2EA9D7;
+  background-image: none;
+  box-shdow: none;
+  height:2px;
+  margin-top:0px;
+}
+
+img#brightness-off {
+  margin: 12px;
+  margin-top: 8px;
+}
+
+img#brightness-on {
+  margin: 14px;
+  margin-top: 2px;
+}
+
+div#search-light {
+  width: 75%;
+  max-width: 320px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 24px;
+  border-color: #49B4DC;
+}
+
+#device:hover {
+  background-color: #FFFFFF;
+}
+
+#device:active {
+  background-color: #C3E6F3;
+}
+
+#power-group {
+  margin-bottom: 32px;
+}
+
+button#turn-off {
+  width: 90px;
+  border-color: #49B4DC;
+  background-color: #49B4DC;
+  color: #FFFFFF;
+}
+
+button#turn-on {
+  width: 90px;
+  border-color: #49B4DC;
+  background-color: #FFFFFF;
+  color: #CCCCCC;
+}
+

@@ -1,0 +1,33 @@
+  <nav class="navbar navbar-default">
+    <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+    <img class="navbar-back" ng-click="back()" src="img/back.png">
+    <div class="navbar-title">{{title}}</div>
+  </nav>
+
+  <content>
+    <div id="heartrate-container" align="center">
+      <div id="heartrate-search" class="btn btn-default" ng-click="searchHeartRate()">{{deviceName}}</div>
+      <div id="heartrate-main">
+        <img id="heart-img" ng-src="{{heart_image}}" width="100%">
+        <div id="heartrate-value">
+          <div class="heartrate">{{heartrate}}</div>
+          <div class="bpm">bpm</div>
+        </div>
+      </div>
+      <div id="heartrate-footer">
+        <div id="heartrate-button" class="btn btn-default" ng-click="clickHeartRate()">{{button}}</div>
+      </div>
+    </div>
+  </content>
+
+  <script type="text/ng-template" id="error-dialog-heartrate-select.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+  </script>

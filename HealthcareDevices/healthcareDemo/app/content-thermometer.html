@@ -1,0 +1,31 @@
+  <nav class="navbar navbar-default">
+    <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+    <img class="navbar-back" ng-click="back()" src="img/back.png">
+    <div class="navbar-title">{{title}}</div>
+  </nav>
+
+  <content>
+    <div id="thermometer-container" align="center">
+      <div id="thermometer-search" class="btn btn-default" ng-click="searchThermometer()">{{deviceName}}</div>
+      <div id="thermometer-main">
+        <div class="modal-spinner-container" id="thermometer-spinner"><img class="spinner" src="img/spinner.png"></div>
+        <div id="thermometer-value" style="{{thermometer_color}}"><div class="thermometer">{{thermometer}}</div></div>
+        <img ng-src="img/thermometer/thermometer.png" width="100%">
+      </div>
+      <div id="thermometer-footer">
+        <div id="thermometer-button" class="btn btn-default" ng-click="clickThermometer()">{{button}}</div>
+      </div>
+    </div>
+  </content>
+
+  <script type="text/ng-template" id="error-dialog-thermometer-select.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+  </script>

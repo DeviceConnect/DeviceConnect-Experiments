@@ -1,0 +1,29 @@
+<nav class="navbar navbar-default">
+  <div class="navbar-title">{{ title }}</div>
+  <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+</nav>
+
+<content>
+  <div id="btn-group" align="center">
+    <div id="unregister" class="btn btn-default" ng-click="unregisterAll()">全解除</div>
+    <div id="register" class="btn btn-default" ng-click="registerAll()">全選択</div>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="device in list.devices">
+      <div class="list-checkbox">
+        <input class="checkbox" type="checkbox" name="list-checkbox"><label>{{device.name}}</label>
+      </div>
+    </li>
+  </ul>
+</content>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="cancel()" width="50%">いいえ</td>
+      <td class="button" ng-click="ok()" width="50%">はい</td>
+    </tr>
+  </table>
+</footer>
+

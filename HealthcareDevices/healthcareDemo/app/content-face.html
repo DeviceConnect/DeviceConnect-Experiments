@@ -1,0 +1,42 @@
+  <nav class="navbar navbar-default">
+    <div class="btn-settings" ng-click="settingAll()"><img src="img/Gear_off.png"></div>
+    <img class="navbar-back" ng-click="back()" src="img/back.png">
+    <div class="navbar-title">{{title}}</div>
+  </nav>
+
+  <content>
+    <div id="face-container" align="center">
+      <div id="face-search" class="btn btn-default" ng-click="searchFace()">{{deviceName}}</div>
+      <div id="face-main">
+        <canvas id="face-area"></canvas>
+      </div>
+      <div id="face-footer" align="center">
+        <div id="face-button" class="btn btn-default" ng-click="clickFace()">{{button}}</div>
+      </div>
+    </div>
+  </content>
+
+  <script type="text/ng-template" id="progress.html">
+    <div class="modal-header">
+        <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+        <div>{{message}}</div>
+        <div class="modal-spinner-container"><img class="spinner" src="img/spinner.png"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">キャンセル</button>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="error-dialog-face.html">
+    <div class="modal-header">
+      <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+      {{message}}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+  </script>

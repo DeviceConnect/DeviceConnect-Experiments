@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HealthCare(BLE)デバイスプラグイン</string>
+
+    <string name="summary_title">[1/3] デバイスプラグイン概要</string>
+    <string name="summary_body">このデバイスプラグインは、Bluetooth Low EnergyのHeart Rate Profile、Health Thermometer Profileに対応しているデバイスと接続し、デバイスからの情報を取得する機能を提供します。\n\n以下のデバイスと接続できることを確認しています。\n\n■心拍計\n・Mio Alpha\n・H7\n・BLUEHR\n・PULSENSE\n\n■体温計\n・UT-201BLE</string>
+    <string name="summary_eco_mode_outline">※バッテリー消費を抑える場合はエコモードを選択してください。登録済みデバイスの探索間隔が長くなるため、接続に時間がかかる場合があります。</string>
+    <string name="summary_eco_mode">エコモード設定</string>
+
+    <string name="summary_not_support_title">デバイスエラー</string>
+    <string name="summary_not_support_message">このデバイスはBluetooth Low Energyをサポートしていません</string>
+
+    <string name="mio_alpha_title">[2/3] デバイスへの接続準備</string>
+    <string name="instructions_body1">接続するデバイスをBluetoothLEで検索可能な状態としてください。</string>
+    <string name="instructions_body2">接続例：Mio Alphaの場合、図のように矢印の位置にあるボタンをFINDという文字列が点滅するまで長押してください。\n画面に心拍数が表示されれば準備完了になります。</string>
+
+    <string name="heart_rate_setting_title">[3/3] デバイス設定</string>
+    <string name="heart_rate_setting_bluetooth_settings">このデバイスプラグインでは、Bluetooth Low Energyを使用しますので、端末のBluetooth設定をONにしてください。</string>
+    <string name="heart_rate_setting_register">登録</string>
+    <string name="heart_rate_setting_unregister">解除</string>
+    <string name="heart_rate_setting_default_name">Unknown</string>
+    <string name="heart_rate_setting_default_address">Unknown</string>
+    <string name="heart_rate_setting_connecting_title">BLE接続</string>
+    <string name="heart_rate_setting_connecting_message">%1$sと接続中</string>
+    <string name="heart_rate_setting_dialog_positive">OK</string>
+    <string name="heart_rate_setting_dialog_error_title">BLE接続エラー</string>
+    <string name="heart_rate_setting_dialog_error_message">%1$sとの接続に失敗しました</string>
+    <string name="heart_rate_setting_dialog_need_auth">%1$sとの接続にはペアリングが必要です</string>
+    <string name="heart_rate_setting_online">[ONLINE]</string>
+    <string name="heart_rate_setting_offline">[OFFLINE]</string>
+
+    <string name="heart_rate_setting_button_start">スキャン実行</string>
+    <string name="heart_rate_setting_button_stop">スキャン停止</string>
+</resources>

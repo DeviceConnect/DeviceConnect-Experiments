@@ -1,0 +1,76 @@
+#heartrate-container {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#heartrate-search {
+  width:280px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  border-color: #49B4DC;
+}
+
+#heartrate-search:hover {
+  background-color: #FFFFFF;
+}
+
+#heartrate-search:active {
+  background-color: #C3E6F3;
+}
+
+#heartrate-footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0;
+  background-color: #4D4D4D;
+  width: 100%;
+  margin: 0px;
+  margin-top: 24px;
+}
+
+#heartrate-button {
+  width:240px;
+  margin: 16px;
+  padding: 16px;
+  background-color: #49B4DC;
+  border-color: #49B4DC;
+  color: #FFFFFF;
+}
+
+#heartrate-button:active {
+  background-color: #39A4D3;
+  border-color: #39A4D3;
+}
+
+#heartrate-value {
+  position: absolute;
+  top: 0px;
+  margin-top: 30px;
+  padding: 0px;
+  width: 100%;
+  text-align: center;
+}
+
+#heartrate-main {
+  position: relative;
+  width: 320px;
+}
+
+.heartrate {
+  font-size:120px;
+  color: #FFFFFF;
+  padding: 0px;
+  margin: 0px;
+}
+
+.bpm {
+  font-size:36px;
+  color: #FFFFFF;
+  padding: 0px;
+  margin: 0px;
+  margin-top: -38px;
+}
+

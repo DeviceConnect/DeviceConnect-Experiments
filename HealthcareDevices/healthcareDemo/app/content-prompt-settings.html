@@ -1,0 +1,19 @@
+<nav class="navbar navbar-default">
+  <img class="navbar-back" ng-click="back()" src="img/back.png">
+  <div class="navbar-title">{{ title }}</div>
+</nav>
+
+<content>
+  <div style="margin: 1em;">
+    <p>{{message}}</p>
+  </div>
+</content>
+
+<footer>
+  <table>
+    <tr>
+      <td class="button" ng-click="back()" width="50%">いいえ</td>
+      <td class="button" ng-click="next()" width="50%">はい</td>
+    </tr>
+  </table>
+</footer>

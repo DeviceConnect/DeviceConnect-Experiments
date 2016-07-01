@@ -1,0 +1,266 @@
+body {
+  color: #5a5a5a;
+  margin: 0;
+  padding: 0;
+}
+
+div.navbar-collapse.collapse {
+    display: block;
+    overflow: hidden;
+    max-height: 0px;
+    -webkit-transition: max-height .3s ease;
+    -moz-transition: max-height .3s ease;
+    -o-transition: max-height .3s ease;
+    transition: max-height .3s ease;
+}
+div.navbar-collapse.collapse.in {
+    max-height: 2000px;
+}
+
+.navbar {
+  background-color: #49B4DC;
+  border: 0;
+  margin-bottom: 0;
+  z-index: 0;
+}
+.navbar .navbar-title {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  text-align: center;
+
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+  color: #ffffff;
+  z-index: 1;
+}
+.navbar .navbar-back {
+  position: relative;
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  z-index: 2;
+}
+.navbar-back:hover, .navbar-back:active {
+  background-color: #39A4D3;
+}
+.navbar-title.navbar-title-small {
+  font-size: 16px;
+}
+
+table.demo-list {
+  border-collapse: separate;
+  border-spacing: 1px;
+  background-color: #49B4DC;
+  width: 100%; 
+}
+table.demo-list tr {
+  height: 150px;
+}
+table.demo-list td {
+  width: 50%;
+  text-align: center;
+}
+table.demo-list td.demo {
+  background-color: #FFFFFF;
+}
+table.demo-list td.demo:active {
+  background-color: #EEF8FB;
+}
+table.demo-list td.nodemo {
+  background-color: #F9F9F9;
+}
+.logo {
+  display: block;
+  height: 64px;
+  margin: 0 auto;
+}
+.demo-name {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+.btn-settings {
+  position: relative;
+  float: right;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 45px;
+  height: 100%;
+  z-index: 2;
+  text-align: center;
+}
+.btn-settings:hover, .btn-settings:active {
+  background-color: #39A4D3;
+}
+.btn-settings img {
+  width: 25px;
+  height: 25px;
+}
+
+.btn-operation {
+  position: relative;
+  float: right;
+  border: 1px solid #49B4DC;
+  background-color: transparent;
+  width: 120px;
+  padding: 5px 0px;
+}
+
+.btn-operation:hover, .btn-operation:active {
+  background-color: #39A4D3;
+}
+
+.rect {
+  display: block;
+  float: left;
+  background-color: #fff;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid #49B4DC;
+  width: 100px;
+  height: 100px;
+  color: #5a5a5a;
+}
+.rect:nth-child(even) {
+  border-left: 1px solid #49B4DC;
+}
+.rect:active {
+  background-color: #EEF8FB;
+}
+
+.row {
+  background-color: #FFF;
+  border-top: 1px solid #49B4DC;
+  border-bottom: 1px solid #49B4DC;
+  border-left: 0;
+  border-right: 0;
+}
+.row:first-child {
+  border-top: 0;
+}
+.row td {
+  padding: 10px;
+}
+
+.navbar {
+  position: fixed;
+  left: 0px;
+  top: 0;
+  width: 100%;
+  height: 50px;
+}
+
+content {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  z-index: -1;
+}
+
+footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+}
+footer table {
+  width: 100%;
+  height: 100%;
+}
+footer td.button {
+  background-color: #49B4DC;
+  color: #FFF;
+  text-align: center;
+}
+footer td.button:active {
+  background-color: #39A4D3;
+}
+
+.modal-spinner-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.75em;
+}
+
+
+
+.list-group-item:first-child {
+  border-radius: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+}
+
+.list-group {
+  margin:0px;
+  margin-bottom:48px;
+}
+
+.list-group-item {
+  border-color: #49B4DC #FFFFFF #49B4DC;
+}
+
+.list-radio {
+  margin: 0px;
+}
+
+.list-radio input {
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  width: 90%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.list-radio input[type="radio"] + label {
+  display: block;
+  background-image: url("../img/check_b_off.png");
+  background-size: 24px;
+  background-position: left center;
+  background-repeat: no-repeat;
+  padding: 4px 0px 4px 36px;
+  margin: 0px;
+  font-size: 18px;
+}
+
+.list-radio input[type=radio]:checked + label {
+    background-image: url("../img/check_b_on.png");
+}
+
+.list-checkbox {
+  margin: 0px;
+}
+
+.list-checkbox input {
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  width: 90%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+.list-checkbox input[type="checkbox"] + label {
+  display: block;
+  background-image: url("../img/check_a_off.png");
+  background-size: 24px;
+  background-position: left center;
+  background-repeat: no-repeat;
+  padding: 4px 0px 4px 36px;
+  margin: 0px;
+  font-size: 18px;
+}
+
+.list-checkbox input[type=checkbox]:checked + label {
+    background-image: url("../img/check_a_on.png");
+}
+
