@@ -17,15 +17,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
  - Wireless Connection Device with Android OS (Smartphone, STB etc...)
  - BLE Healthcare Devices. Following devices are just for your reference which were once checked their connectivity.
- |Category|Device Name|Device Vendor|Note|
- |----------|----------------|-----------------|------|
- |Hearr Rate|MIO Alpha|MIO Global||
- |Heart Rate|MIO FUSE|MIO Global||
- |Heart Rate|PULSENSE PS-100|EPSON||
- |Heart Rate|PULSENSE PS-500|EPSON||
- |Thermometer|UT-201BLE|A&D||
- |Blood Pressure|UA-651BLE|A&D||
- |Weight Scale|UC-352-BLE|A&D||
+ 
+ | Category | Device Name | Device Vendor | Note |
+ |------------|-----------------|------------------|-------|
+ | Hearr Rate | MIO Alpha | MIO Global | |
+ | Heart Rate | MIO FUSE | MIO Global | |
+ | Heart Rate| PULSENSE PS-100 | EPSON | |
+ | Heart Rate| PULSENSE PS-500 | EPSON | |
+ | Thermometer | UT-201BLE | A&D | |
+ | Blood Pressure | UA-651BLE | A&D | |
+ | Weight Scale | UC-352-BLE | A&D | |
 
 ## How To Use
 To demonstrate functionalities of healthcare plug-in, it is necessary to make preparation by setting up the environment in advance.
