@@ -1,0 +1,32 @@
+package {{invokerPackage}};
+
+import org.deviceconnect.android.localoauth.LocalOAuth2Main;
+import org.deviceconnect.android.message.DConnectMessageService;
+import org.deviceconnect.android.profile.SystemProfile;
+import org.deviceconnect.android.service.DConnectService;
+
+{{#supportedProfileClasses}}
+import {{profilePackage}}.{{name}};
+{{/supportedProfileClasses}}
+
+
+public class {{messageServiceClass}} extends DConnectMessageService {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        LocalOAuth2Main.initialize(getApplicationContext());
+
+        DConnectService service = new DConnectService("my_service_id");
+        service.setName("My Service");
+        {{#supportedProfileClasses}}
+        service.addProfile(new {{name}}());
+        {{/supportedProfileClasses}}
+        getServiceProvider().addService(service);
+    }
+
+    @Override
+    protected SystemProfile getSystemProfile() {
+        return null;
+    }
+}
