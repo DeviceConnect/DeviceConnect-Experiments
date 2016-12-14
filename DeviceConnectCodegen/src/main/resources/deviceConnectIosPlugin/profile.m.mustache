@@ -5,15 +5,15 @@
 - (instancetype) init
 {
     self = [super init];
-    if (self) {
-        __weak ExampleBatteryProfile *weakSelf = self;
-        {{#apiList}}
+    __weak ExampleBatteryProfile *weakSelf = self;
+    {{#apiList}}
 
-        [self add{{#getApi}}Get{{/getApi}}{{#postApi}}Post{{/postApi}}{{#putApi}}Put{{/putApi}}{{#deleteApi}}Delete{{/deleteApi}}Path:@"{{apiPath}}" api:^BOOL(DConnectRequestMessage *request, DConnectResponseMessage *response) {
-            return YES;
-        }];
-        {{/apiList}}
-    }
+    [self add{{#getApi}}Get{{/getApi}}{{#postApi}}Post{{/postApi}}{{#putApi}}Put{{/putApi}}{{#deleteApi}}Delete{{/deleteApi}}Path:@"{{apiPath}}" api:^BOOL(DConnectRequestMessage *request, DConnectResponseMessage *response) {
+        // TODO ここでAPIを実装してください.
+        [response setErrorToUnknownWithMessage:@"Not implemented yet."];
+        return YES;
+    }];
+    {{/apiList}}
     return self;
 }
 
