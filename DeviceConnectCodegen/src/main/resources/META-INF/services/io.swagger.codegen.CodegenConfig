@@ -1,1 +1,2 @@
 org.deviceconnect.codegen.languages.AndroidPluginCodegenConfig
+org.deviceconnect.codegen.languages.IosPluginCodegenConfig

@@ -9,14 +9,19 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class AbstractCodegenConfig extends DefaultCodegen implements CodegenConfig {
+public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements CodegenConfig {
+
+    protected final List<ProfileTemplate> profileTemplates = new ArrayList<>();
+
+    protected AbstractPluginCodegenConfig() {
+        additionalProperties.put("supportedProfileNames", new ArrayList<>());
+        additionalProperties.put("supportedProfileClasses", new ArrayList<>());
+    }
 
     @Override
     public void preprocessSwagger(Swagger swagger) {
@@ -42,6 +47,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements Co
                 String attributeName = getAttributeNameFromPath(pathName);
                 api.put("interface", interfaceName);
                 api.put("attribute", attributeName);
+                api.put("apiPath", createPath(interfaceName, attributeName));
                 switch (method) {
                     case GET:
                         api.put("getApi", true);
@@ -73,16 +79,18 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements Co
             Map<String, Object> profile = entry.getValue();
             try {
                 preprocessProfile(profileName, profile);
-                generateProfile(profileName, profile);
+                for (ProfileTemplate template : profileTemplates()) {
+                    generateProfile(template, profile);
+                }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to generate profile source code: profile = " + profileName, e);
             }
         }
     }
 
-    protected abstract String profileTemplateFile(String profileName);
-
-    protected abstract String profileFile(String profileName);
+    protected List<ProfileTemplate> profileTemplates() {
+        return profileTemplates;
+    }
 
     protected abstract String profileFileFolder();
 
@@ -90,19 +98,19 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements Co
 
     protected void postprocessProfiles() {}
 
-    private void generateProfile(String profileName, Map<String, Object> properties) throws IOException {
-        String templateFile = getFullTemplateFile(this, profileTemplateFile(profileName));
+    private void generateProfile(ProfileTemplate template, Map<String, Object> properties) throws IOException {
+        String templateFile = getFullTemplateFile(this, template.templateFile);
         Template tmpl = Mustache.compiler()
                 .withLoader(new Mustache.TemplateLoader() {
                     @Override
                     public Reader getTemplate(String name) {
-                        return getTemplateReader(getFullTemplateFile(AbstractCodegenConfig.this, name + ".mustache"));
+                        return getTemplateReader(getFullTemplateFile(AbstractPluginCodegenConfig.this, name + ".mustache"));
                     }
                 })
                 .defaultValue("")
                 .compile(readTemplate(templateFile));
 
-        String outputFileName = profileFileFolder() + File.separator + profileFile(profileName);
+        String outputFileName = profileFileFolder() + File.separator + template.outputFile;
         writeToFile(outputFileName, tmpl.execute(properties));
     }
 
@@ -133,6 +141,16 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements Co
         return null;
     }
 
+    private static String createPath(String interfaceName, String attributeName) {
+        String path = "/";
+        if (interfaceName != null) {
+            path += interfaceName + "/";
+        }
+        if (attributeName != null) {
+            path += attributeName;
+        }
+        return path;
+    }
     @SuppressWarnings("static-method")
     private File writeToFile(String filename, String contents) throws IOException {
         LOGGER.info("writing file " + filename);
@@ -225,5 +243,12 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements Co
             return name.replaceAll(Pattern.quote(File.separator), "/");
         }
         return name;
+    }
+
+    protected static String toUpperCapital(String str) {
+        StringBuffer buf = new StringBuffer(str.length());
+        buf.append(str.substring(0, 1).toUpperCase());
+        buf.append(str.substring(1).toLowerCase());
+        return buf.toString();
     }
 }

@@ -1,0 +1,20 @@
+#import "{{pluginClass}}.h"
+{{#supportedProfileClasses}}
+#import "{{name}}.h"
+{{/supportedProfileClasses}}
+
+@implementation {{pluginClass}}
+
+- (instancetype) init {
+    self = [super initWithObject: self];
+    if (self) {
+        DConnectService *service = [[DConnectService alloc] initWithServiceId:@"my_service_id" plugin:self];
+        {{#supportedProfileClasses}}
+        [service addProfile:[{{name}} new]];
+        {{/supportedProfileClasses}}
+        [self.serviceProvider addService:service];
+    }
+    return self;
+}
+
+@end

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AndroidPluginCodegenConfig extends AbstractCodegenConfig {
+public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     private final String pluginModuleFolder = "plugin";
     private final String projectFolder = pluginModuleFolder + "/src/main";
@@ -26,27 +26,13 @@ public class AndroidPluginCodegenConfig extends AbstractCodegenConfig {
     public AndroidPluginCodegenConfig() {
         super();
         additionalProperties.put("profilePackage", getProfilePackage());
-        additionalProperties.put("supportedProfileNames", new ArrayList<>());
-        additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
 
-    //----- AbstractCodegenConfig ----//
+    //----- AbstractPluginCodegenConfig ----//
 
     @Override
-    protected String profileTemplateFile(String profileName) {
-        return "profile.mustache";
-    }
-
-    @Override
-    protected String profileFile(String profileName) {
-        return "My" + toUpperCapital(profileName) + "Profile.java";
-    }
-
-    private static String toUpperCapital(String str) {
-        StringBuffer buf = new StringBuffer(str.length());
-        buf.append(str.substring(0, 1).toUpperCase());
-        buf.append(str.substring(1).toLowerCase());
-        return buf.toString();
+    protected List<ProfileTemplate> profileTemplates() {
+        return profileTemplates;
     }
 
     @Override
@@ -64,6 +50,11 @@ public class AndroidPluginCodegenConfig extends AbstractCodegenConfig {
 
         ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClass; });
+
+        ProfileTemplate template = new ProfileTemplate();
+        template.templateFile = "profile.mustache";
+        template.outputFile = "My" + toUpperCapital(profileName) + "Profile.java";
+        profileTemplates.add(template);
     }
 
     private String getProfilePackage() {
@@ -170,6 +161,9 @@ public class AndroidPluginCodegenConfig extends AbstractCodegenConfig {
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
         additionalProperties.put("messageServiceClass", messageServiceClass);
         additionalProperties.put("messageServiceProviderClass", messageServiceProviderClass);
+
+        // README
+        supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
         // ビルド設定ファイル
         supportingFiles.add(new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
