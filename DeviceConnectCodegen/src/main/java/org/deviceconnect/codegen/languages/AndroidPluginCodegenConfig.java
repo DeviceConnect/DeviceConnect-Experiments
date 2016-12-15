@@ -18,7 +18,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String projectFolder = pluginModuleFolder + "/src/main";
     private final String sourceFolder = projectFolder + "/java";
     private final String resFolder = projectFolder + "/res";
-    private final String invokerPackage = "org.deviceconnect.android.deviceplugin.example";
+    private String invokerPackage;
 
     private final String apiDocPath = "docs/";
     private final String modelDocPath = "docs/";
@@ -153,6 +153,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     public void processOpts() {
         super.processOpts();
+        invokerPackage = (String) additionalProperties.get("packageName");
         embeddedTemplateDir = templateDir = getName();
 
         final String classPrefix = getClassPrefix();

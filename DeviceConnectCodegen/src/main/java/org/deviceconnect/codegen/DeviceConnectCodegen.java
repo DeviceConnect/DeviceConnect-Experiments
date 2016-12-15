@@ -35,13 +35,14 @@ public class DeviceConnectCodegen {
         options.addOption("l", "lang", true, "client language to generate.\nAvailable languages include:\n\t[" + configString + "]");
         options.addOption("o", "output", true, "where to write the generated files");
         //options.addOption("i", "input-spec", true, "location of the swagger spec, as URL or file");
-        options.addOption("x", "input-spec-dir", true, "directory of the swagger specs");
+        options.addOption("s", "input-spec-dir", true, "directory of the swagger specs");
         options.addOption("t", "template-dir", true, "folder containing the template files");
         options.addOption("d", "debug-info", false, "prints additional info for debugging");
         //options.addOption("a", "auth", true, "adds authorization headers when fetching the swagger definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values");
         options.addOption("c", "config", true, "location of the configuration file");
+        options.addOption("p", "package-name", true, "package name (for deviceConnectAndroidPlugin only)");
         options.addOption("n", "display-name", true, "display name of the generated project");
-        options.addOption("p", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
+        options.addOption("x", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
@@ -79,9 +80,9 @@ public class DeviceConnectCodegen {
                 usage(options);
                 return;
             }
-            LOGGER.info("--input-spec-dir: " + cmd.getOptionValue("x"));
-            if (cmd.hasOption("x")) {
-                File dir = new File(cmd.getOptionValue("x"));
+            LOGGER.info("--input-spec-dir: " + cmd.getOptionValue("s"));
+            if (cmd.hasOption("s")) {
+                File dir = new File(cmd.getOptionValue("s"));
                 if (dir.isDirectory()) {
                     File[] files = dir.listFiles(new FilenameFilter() {
                         @Override
@@ -110,6 +111,12 @@ public class DeviceConnectCodegen {
             if (cmd.hasOption("t")) {
                 clientOpts.getProperties().put(CodegenConstants.TEMPLATE_DIR, String.valueOf(cmd.getOptionValue("t")));
             }
+            if (cmd.hasOption("p")) {
+                clientOpts.getProperties().put("packageName", cmd.getOptionValue("p"));
+            } else {
+                usage(options);
+                return;
+            }
             if (cmd.hasOption("n")) {
                 clientOpts.getProperties().put("displayName", cmd.getOptionValue("n"));
             } else {
@@ -117,8 +124,8 @@ public class DeviceConnectCodegen {
                 return;
             }
             String classPrefix;
-            if (cmd.hasOption("p")) {
-                classPrefix = cmd.getOptionValue("p");
+            if (cmd.hasOption("x")) {
+                classPrefix = cmd.getOptionValue("x");
             } else {
                 classPrefix = "My";
             }
