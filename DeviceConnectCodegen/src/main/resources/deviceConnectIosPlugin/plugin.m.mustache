@@ -8,7 +8,8 @@
 - (instancetype) init {
     self = [super initWithObject: self];
     if (self) {
-        DConnectService *service = [[DConnectService alloc] initWithServiceId:@"my_service_id" plugin:self];
+        DConnectService *service = [[DConnectService alloc] initWithServiceId:@"{{serviceId}}" plugin:self];
+        [service setName:@"{{serviceName}}"];
         {{#supportedProfileClasses}}
         [service addProfile:[{{name}} new]];
         {{/supportedProfileClasses}}

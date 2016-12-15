@@ -17,8 +17,8 @@ public class {{messageServiceClass}} extends DConnectMessageService {
         super.onCreate();
         LocalOAuth2Main.initialize(getApplicationContext());
 
-        DConnectService service = new DConnectService("my_service_id");
-        service.setName("My Service");
+        DConnectService service = new DConnectService("{{serviceId}}");
+        service.setName("{{serviceName}}");
         {{#supportedProfileClasses}}
         service.addProfile(new {{name}}());
         {{/supportedProfileClasses}}

@@ -23,6 +23,10 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
 
+    protected String getClassPrefix() {
+        return (String) additionalProperties.get("classPrefix");
+    }
+
     @Override
     public void preprocessSwagger(Swagger swagger) {
         Map<String, Map<String, Object>> profiles = new HashMap<>();

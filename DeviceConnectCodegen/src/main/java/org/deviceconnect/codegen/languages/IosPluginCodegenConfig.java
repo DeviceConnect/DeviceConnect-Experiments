@@ -16,7 +16,10 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         super.processOpts();
         embeddedTemplateDir = templateDir = getName();
 
-        String pluginClass = "MyDevicePlugin";
+        String classPrefix = getClassPrefix();
+        additionalProperties.put("serviceName", classPrefix + " Service");
+        additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
+        String pluginClass = classPrefix + "Plugin";
         additionalProperties.put("pluginClass", pluginClass);
         additionalProperties.put("basePluginClass", "DConnectDevicePlugin");
 
@@ -32,16 +35,16 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected void preprocessProfile(final String profileName, final Map<String, Object> properties) {
-        final String profileClass = "My" + toUpperCapital(profileName) + "Profile";
+        final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         properties.put("baseProfileClass", "DConnect" + toUpperCapital(profileName) + "Profile");
         properties.put("profileClass", profileClass);
 
         ProfileTemplate header = new ProfileTemplate();
         header.templateFile = "profile.h.mustache";
-        header.outputFile = "My" + toUpperCapital(profileName) + "Profile.h";
+        header.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.h";
         ProfileTemplate impl = new ProfileTemplate();
         impl.templateFile = "profile.m.mustache";
-        impl.outputFile = "My" + toUpperCapital(profileName) + "Profile.m";
+        impl.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.m";
         profileTemplates.add(impl);
 
         ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });

@@ -40,7 +40,8 @@ public class DeviceConnectCodegen {
         options.addOption("d", "debug-info", false, "prints additional info for debugging");
         //options.addOption("a", "auth", true, "adds authorization headers when fetching the swagger definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values");
         options.addOption("c", "config", true, "location of the configuration file");
-        options.addOption("n", "name", true, "name of the generated project");
+        options.addOption("n", "display-name", true, "display name of the generated project");
+        options.addOption("p", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
@@ -110,8 +111,18 @@ public class DeviceConnectCodegen {
                 clientOpts.getProperties().put(CodegenConstants.TEMPLATE_DIR, String.valueOf(cmd.getOptionValue("t")));
             }
             if (cmd.hasOption("n")) {
-                clientOpts.getProperties().put("projectName", cmd.getOptionValue("n"));
+                clientOpts.getProperties().put("displayName", cmd.getOptionValue("n"));
+            } else {
+                usage(options);
+                return;
             }
+            String classPrefix;
+            if (cmd.hasOption("p")) {
+                classPrefix = cmd.getOptionValue("p");
+            } else {
+                classPrefix = "My";
+            }
+            clientOpts.getProperties().put("classPrefix", classPrefix);
         } catch (Exception e) {
             e.printStackTrace();
             usage(options);

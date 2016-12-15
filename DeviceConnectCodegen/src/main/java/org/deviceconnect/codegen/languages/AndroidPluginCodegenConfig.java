@@ -43,7 +43,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected void preprocessProfile(final String profileName, final Map<String, Object> properties) {
-        final String profileClass = "My" + toUpperCapital(profileName) + "Profile";
+        final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         properties.put("baseProfileClass", toUpperCapital(profileName) + "Profile");
         properties.put("profileClass", profileClass);
         properties.put("profilePackage", getProfilePackage());
@@ -53,7 +53,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         ProfileTemplate template = new ProfileTemplate();
         template.templateFile = "profile.mustache";
-        template.outputFile = "My" + toUpperCapital(profileName) + "Profile.java";
+        template.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.java";
         profileTemplates.add(template);
     }
 
@@ -155,10 +155,12 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         super.processOpts();
         embeddedTemplateDir = templateDir = getName();
 
-        final String classPrefix = "My";
+        final String classPrefix = getClassPrefix();
         final String messageServiceClass = classPrefix + "MessageService";
         final String messageServiceProviderClass = classPrefix + "MessageServiceProvider";
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
+        additionalProperties.put("serviceName", classPrefix + " Service");
+        additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
         additionalProperties.put("messageServiceClass", messageServiceClass);
         additionalProperties.put("messageServiceProviderClass", messageServiceProviderClass);
 
