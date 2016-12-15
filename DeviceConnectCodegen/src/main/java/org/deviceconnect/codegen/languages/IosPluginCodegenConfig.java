@@ -31,7 +31,7 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
-    protected void preprocessProfile(String profileName, Map<String, Object> properties) {
+    protected void preprocessProfile(final String profileName, final Map<String, Object> properties) {
         final String profileClass = "My" + toUpperCapital(profileName) + "Profile";
         properties.put("baseProfileClass", "DConnect" + toUpperCapital(profileName) + "Profile");
         properties.put("profileClass", profileClass);
