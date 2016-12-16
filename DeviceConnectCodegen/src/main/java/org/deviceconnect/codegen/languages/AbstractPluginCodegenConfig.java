@@ -29,7 +29,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
     @Override
     public void preprocessSwagger(Swagger swagger) {
-        Map<String, Map<String, Object>> profiles = new HashMap<>();
+        Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
         for (Map.Entry<String, Path> pathEntry : swagger.getPaths().entrySet()) {
             String pathName = pathEntry.getKey();
             Path path = pathEntry.getValue();
