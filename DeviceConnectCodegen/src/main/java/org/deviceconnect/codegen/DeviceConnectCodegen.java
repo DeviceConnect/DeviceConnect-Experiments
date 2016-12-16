@@ -111,12 +111,6 @@ public class DeviceConnectCodegen {
             if (cmd.hasOption("t")) {
                 clientOpts.getProperties().put(CodegenConstants.TEMPLATE_DIR, String.valueOf(cmd.getOptionValue("t")));
             }
-            if (cmd.hasOption("p")) {
-                clientOpts.getProperties().put("packageName", cmd.getOptionValue("p"));
-            } else {
-                usage(options);
-                return;
-            }
             if (cmd.hasOption("n")) {
                 clientOpts.getProperties().put("displayName", cmd.getOptionValue("n"));
             } else {
@@ -130,6 +124,9 @@ public class DeviceConnectCodegen {
                 classPrefix = "My";
             }
             clientOpts.getProperties().put("classPrefix", classPrefix);
+            if (cmd.hasOption("p")) {
+                clientOpts.getProperties().put("packageName", cmd.getOptionValue("p"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             usage(options);

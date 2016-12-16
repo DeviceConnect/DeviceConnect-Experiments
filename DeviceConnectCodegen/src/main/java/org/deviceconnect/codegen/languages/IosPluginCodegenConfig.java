@@ -1,7 +1,6 @@
 package org.deviceconnect.codegen.languages;
 
 
-import io.swagger.codegen.CodegenConstants;
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
 
@@ -15,6 +14,9 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     public void processOpts() {
         super.processOpts();
         embeddedTemplateDir = templateDir = getName();
+
+        // README
+        supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
         String classPrefix = getClassPrefix();
         additionalProperties.put("serviceName", classPrefix + " Service");
@@ -42,6 +44,7 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         ProfileTemplate header = new ProfileTemplate();
         header.templateFile = "profile.h.mustache";
         header.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.h";
+        profileTemplates.add(header);
         ProfileTemplate impl = new ProfileTemplate();
         impl.templateFile = "profile.m.mustache";
         impl.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.m";
