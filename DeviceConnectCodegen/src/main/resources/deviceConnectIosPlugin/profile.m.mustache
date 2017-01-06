@@ -5,7 +5,6 @@
 - (instancetype) init
 {
     self = [super init];
-    __weak ExampleBatteryProfile *weakSelf = self;
     {{#apiList}}
 
     [self add{{#getApi}}Get{{/getApi}}{{#postApi}}Post{{/postApi}}{{#putApi}}Put{{/putApi}}{{#deleteApi}}Delete{{/deleteApi}}Path:@"{{apiPath}}" api:^BOOL(DConnectRequestMessage *request, DConnectResponseMessage *response) {
