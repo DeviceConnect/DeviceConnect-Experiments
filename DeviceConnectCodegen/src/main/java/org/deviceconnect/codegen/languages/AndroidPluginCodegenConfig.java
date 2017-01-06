@@ -25,7 +25,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     public AndroidPluginCodegenConfig() {
         super();
-        additionalProperties.put("profilePackage", getProfilePackage());
     }
 
     //----- AbstractPluginCodegenConfig ----//
@@ -155,6 +154,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         super.processOpts();
         invokerPackage = (String) additionalProperties.get("packageName");
         embeddedTemplateDir = templateDir = getName();
+        additionalProperties.put("profilePackage", getProfilePackage());
 
         final String classPrefix = getClassPrefix();
         final String messageServiceClass = classPrefix + "MessageService";

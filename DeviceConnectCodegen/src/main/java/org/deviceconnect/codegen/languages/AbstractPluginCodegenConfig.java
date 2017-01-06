@@ -74,7 +74,6 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
                 LOGGER.info("Parsed path: profile = " + profileName + ", interface = " + interfaceName + ", attribute = " + attributeName);
             }
-            postprocessProfiles();
         }
 
         // 各プロファイルのスケルトンコード生成
@@ -90,6 +89,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                 throw new RuntimeException("Failed to generate profile source code: profile = " + profileName, e);
             }
         }
+        postprocessProfiles();
     }
 
     protected List<ProfileTemplate> profileTemplates() {
