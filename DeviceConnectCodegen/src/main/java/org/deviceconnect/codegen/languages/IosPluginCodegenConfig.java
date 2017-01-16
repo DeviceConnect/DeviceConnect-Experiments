@@ -5,6 +5,7 @@ import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,8 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
-    protected void preprocessProfile(final String profileName, final Map<String, Object> properties) {
+    protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
+        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
         final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         properties.put("baseProfileClass", "DConnect" + toUpperCapital(profileName) + "Profile");
         properties.put("profileClass", profileClass);
@@ -52,6 +54,8 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClass; });
+
+        return profileTemplates;
     }
 
     @Override

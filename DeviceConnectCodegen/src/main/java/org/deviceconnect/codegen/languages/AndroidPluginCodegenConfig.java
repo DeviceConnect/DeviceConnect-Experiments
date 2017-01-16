@@ -30,18 +30,14 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     //----- AbstractPluginCodegenConfig ----//
 
     @Override
-    protected List<ProfileTemplate> profileTemplates() {
-        return profileTemplates;
-    }
-
-    @Override
     protected String profileFileFolder() {
         String separator = File.separator;
         return outputFolder + separator + sourceFolder + separator + getProfilePackage().replace('.', File.separatorChar);
     }
 
     @Override
-    protected void preprocessProfile(final String profileName, final Map<String, Object> properties) {
+    protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
+        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
         final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         properties.put("baseProfileClass", toUpperCapital(profileName) + "Profile");
         properties.put("profileClass", profileClass);
@@ -54,6 +50,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         template.templateFile = "profile.mustache";
         template.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.java";
         profileTemplates.add(template);
+        return profileTemplates;
     }
 
     private String getProfilePackage() {

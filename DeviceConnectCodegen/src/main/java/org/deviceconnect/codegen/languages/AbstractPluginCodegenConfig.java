@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements CodegenConfig {
 
-    protected final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-
     protected AbstractPluginCodegenConfig() {
         additionalProperties.put("supportedProfileNames", new ArrayList<>());
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
@@ -81,26 +79,19 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
             String profileName = entry.getKey();
             Map<String, Object> profile = entry.getValue();
             try {
-                preprocessProfile(profileName, profile);
-                for (ProfileTemplate template : profileTemplates()) {
+                List<ProfileTemplate> profileTemplates = prepareProfileTemplates(profileName, profile);
+                for (ProfileTemplate template : profileTemplates) {
                     generateProfile(template, profile);
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to generate profile source code: profile = " + profileName, e);
             }
         }
-        postprocessProfiles();
-    }
-
-    protected List<ProfileTemplate> profileTemplates() {
-        return profileTemplates;
     }
 
     protected abstract String profileFileFolder();
 
-    protected void preprocessProfile(String profileName, Map<String, Object> properties) {}
-
-    protected void postprocessProfiles() {}
+    protected abstract List<ProfileTemplate> prepareProfileTemplates(String profileName, Map<String, Object> properties);
 
     private void generateProfile(ProfileTemplate template, Map<String, Object> properties) throws IOException {
         String templateFile = getFullTemplateFile(this, template.templateFile);
