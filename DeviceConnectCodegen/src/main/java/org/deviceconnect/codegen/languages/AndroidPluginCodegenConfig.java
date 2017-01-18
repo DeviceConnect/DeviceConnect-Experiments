@@ -8,6 +8,7 @@ import io.swagger.models.properties.Property;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,29 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String apiDocPath = "docs/";
     private final String modelDocPath = "docs/";
 
+    private final String[] standardProfileClassNames;
+
     public AndroidPluginCodegenConfig() {
         super();
+        standardProfileClassNames = loadStandardProfileNames();
+    }
+
+    private String[] loadStandardProfileNames() {
+        try {
+            String resource = loadResourceFile(getName() + "/standardProfiles");
+            return resource.split("\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getStandardClassName(final String profileName) {
+        for (String standardName : standardProfileClassNames) {
+            if (standardName.equalsIgnoreCase(profileName)) {
+                return standardName;
+            }
+        }
+        return null;
     }
 
     //----- AbstractPluginCodegenConfig ----//
@@ -38,17 +60,29 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
         final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-        final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
-        properties.put("baseProfileClass", toUpperCapital(profileName) + "Profile");
-        properties.put("profileClass", profileClass);
+        String baseClassNamePrefix = getStandardClassName(profileName);
+        final String baseClassName;
+        final String profileClassName;
+        final boolean isStandardProfile = baseClassNamePrefix != null;
+        if (isStandardProfile) {
+            baseClassName = baseClassNamePrefix + "Profile";
+            profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
+        } else {
+            baseClassName = "DConnectProfile";
+            profileClassName = toUpperCapital(profileName) + "Profile";
+        }
+        properties.put("baseProfileClass", baseClassName);
+        properties.put("profileNameDefinition", profileName);
+        properties.put("profileClass", profileClassName);
         properties.put("profilePackage", getProfilePackage());
+        properties.put("isStandardProfile", isStandardProfile);
 
         ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
-        ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClass; });
+        ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName;});
 
         ProfileTemplate template = new ProfileTemplate();
         template.templateFile = "profile.mustache";
-        template.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.java";
+        template.outputFile = profileClassName + ".java";
         profileTemplates.add(template);
         return profileTemplates;
     }
@@ -152,6 +186,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         invokerPackage = (String) additionalProperties.get("packageName");
         embeddedTemplateDir = templateDir = getName();
         additionalProperties.put("profilePackage", getProfilePackage());
+        additionalProperties.put("pluginSdkVersion", "1.1.0");
 
         final String classPrefix = getClassPrefix();
         final String messageServiceClass = classPrefix + "MessageService";

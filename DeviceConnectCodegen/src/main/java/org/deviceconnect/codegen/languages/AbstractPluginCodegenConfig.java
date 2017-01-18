@@ -21,6 +21,18 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
 
+    protected String loadResourceFile(final String fileName) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream in = classLoader.getResourceAsStream(fileName);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int len;
+        byte[] buf = new byte[1024];
+        while ((len = in.read(buf)) > 0) {
+            baos.write(buf, 0, len);
+        }
+        return new String(baos.toByteArray(), "UTF-8");
+    }
+
     protected String getClassPrefix() {
         return (String) additionalProperties.get("classPrefix");
     }

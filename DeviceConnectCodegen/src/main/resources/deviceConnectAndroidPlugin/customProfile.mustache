@@ -1,0 +1,55 @@
+package {{profilePackage}};
+
+import android.content.Intent;
+
+import org.deviceconnect.android.message.MessageUtils;
+import org.deviceconnect.android.profile.DConnectProfile;
+{{#hasGetApi}}
+import org.deviceconnect.android.profile.api.GetApi;
+{{/hasGetApi}}
+{{#hasPostApi}}
+import org.deviceconnect.android.profile.api.PostApi;
+{{/hasPostApi}}
+{{#hasPutApi}}
+import org.deviceconnect.android.profile.api.PutApi;
+{{/hasPutApi}}
+{{#hasDeleteApi}}
+import org.deviceconnect.android.profile.api.DeleteApi;
+{{/hasDeleteApi}}
+
+public class {{profileClass}} extends DConnectProfile {
+
+    public {{profileClass}}() {
+
+        {{#apiList}}
+        addApi(new {{#getApi}}Get{{/getApi}}{{#postApi}}Post{{/postApi}}{{#putApi}}Put{{/putApi}}{{#deleteApi}}Delete{{/deleteApi}}Api() {
+            {{#interface}}
+            @Override
+            public String getInterface() {
+                return "{{interface}}";
+            }
+
+            {{/interface}}
+            {{#attribute}}
+            @Override
+            public String getAttribute() {
+                return "{{attribute}}";
+            }
+
+            {{/attribute}}
+            @Override
+            public boolean onRequest(final Intent request, final Intent response) {
+                // TODO ここでAPIを実装してください.
+                MessageUtils.setUnknownError(response, "Not implemented yet.");
+                return true;
+            }
+        });
+
+        {{/apiList}}
+    }
+
+    @Override
+    public String getProfileName() {
+        return "{{profileNameDefinition}}";
+    }
+}
