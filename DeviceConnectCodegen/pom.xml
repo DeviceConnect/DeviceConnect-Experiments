@@ -6,10 +6,31 @@
 
     <groupId>org.deviceconnect</groupId>
     <artifactId>deviceconnect-codegen-project</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
+
+    <packaging>pom</packaging>
 
     <modules>
         <module>modules/deviceconnect-codegen</module>
     </modules>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptor>assembly.xml</descriptor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

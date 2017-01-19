@@ -6,12 +6,12 @@
 
     <groupId>org.deviceconnect</groupId>
     <artifactId>deviceconnect-codegen</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
 
     <packaging>jar</packaging>
 
     <build>
-        <finalName>deviceconnect-codegen-cli</finalName>
+        <finalName>deviceconnect-codegen</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
