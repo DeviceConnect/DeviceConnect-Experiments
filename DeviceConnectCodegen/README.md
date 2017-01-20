@@ -1,11 +1,14 @@
+# DeviceConnect Codegen
+
+## はじめに
 DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグインおよびアプリケーションのスケルトンコードを生成するためのコマンドラインツールです。（以下、本ツールと呼びます）
 
 本ツールへの入力として、DeviceConnectプロファイルの定義ファイルを自前で用意しておく必要があります。標準プロファイルについては全API仕様を定義したファイルを提供しますので、適宜編集してください。
 
-## 前提知識
+### 前提知識
 - OpenAPI Specification 2.0
 
-## サポート範囲
+### サポート範囲
 本ツールで生成可能なスケルトンコードのタイプは下記のとおりです。
 
 - Androidプラグイン
@@ -25,14 +28,49 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/ios-plugin.sh|iOSプラグインのスケルトンコードを生成するシェルスクリプトのサンプル。|
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
-## 実行方法
+## Get Started
+[deviceconnect-codegen-project-0.1.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.1.0) をPC上の任意の場所にダウンロードし、解凍してください。
+
+解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
+
+生成後の手順については、各出力先のREADME.mdを参照してください。
+
+### Androidプラグインの場合
+```
+$ cd deviceconnect-codegen-project-x.x.x-dist/samples
+$ ./android-plugin.sh
+```
+
+出力先: samples/output/Android/MyPlugin
+
+### iOSプラグインの場合
+```
+$ cd deviceconnect-codegen-project-x.x.x-dist/samples
+$ ./ios-plugin.sh
+```
+
+出力先: samples/output/iOS/MyPlugin
+
+### Nodeプラグインの場合
+T.B.D.
+
+### HTMLアプリケーションの場合
+T.B.D.
+
+### DeviceConnectエミュレータの場合
+T.B.D.
+
+## リファレンス
+
+### 実行方法
 下記のようなJavaコマンドで実行してください。指定可能なオプションは次節参照。
 
 ```
 java -jar bin/deviceconnect-codegen.jar [オプション]
 ```
 
-## オプション仕様
+### オプション一覧
+
 <table>
 <thead><tr><th>オプション</th><th>説明</th><th>省略</th></tr></thead>
 <tbody>
@@ -107,40 +145,9 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tbody>
 </table>
 
-## Get Started
-[deviceconnect-codegen-project-0.1.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.1.0) をPC上の任意の場所にダウンロードし、解凍してください。
+## 開発環境
+### ビルドツール
+Apache Maven 3.3.9+
 
-解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
-
-生成後の手順については、各出力先のREADME.mdを参照してください。
-
-### Androidプラグインの場合
-```
-$ cd deviceconnect-codegen-project-x.x.x-dist/samples
-$ ./android-plugin.sh
-```
-
-出力先: samples/output/Android/MyPlugin
-
-### iOSプラグインの場合
-```
-$ cd deviceconnect-codegen-project-x.x.x-dist/samples
-$ ./ios-plugin.sh
-```
-
-出力先: samples/output/iOS/MyPlugin
-
-### Nodeプラグインの場合
-T.B.D.
-
-### HTMLアプリケーションの場合
-T.B.D.
-
-### DeviceConnectエミュレータの場合
-T.B.D.
-
-## 推奨開発環境
-IntelliJ IDEA
-
-## 参考
+## 参考リンク
 - [Swagger](http://swagger.io/)
