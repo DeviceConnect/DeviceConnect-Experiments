@@ -24,31 +24,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String apiDocPath = "docs/";
     private final String modelDocPath = "docs/";
 
-    private final String[] standardProfileClassNames;
-
-    public AndroidPluginCodegenConfig() {
-        super();
-        standardProfileClassNames = loadStandardProfileNames();
-    }
-
-    private String[] loadStandardProfileNames() {
-        try {
-            String resource = loadResourceFile(getName() + "/standardProfiles");
-            return resource.split("\n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getStandardClassName(final String profileName) {
-        for (String standardName : standardProfileClassNames) {
-            if (standardName.equalsIgnoreCase(profileName)) {
-                return standardName;
-            }
-        }
-        return null;
-    }
-
     //----- AbstractPluginCodegenConfig ----//
 
     @Override
@@ -72,8 +47,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             profileClassName = toUpperCapital(profileName) + "Profile";
         }
         properties.put("baseProfileClass", baseClassName);
-        properties.put("profileNameDefinition", profileName);
         properties.put("profileClass", profileClassName);
+        properties.put("profileNameDefinition", profileName);
         properties.put("profilePackage", getProfilePackage());
         properties.put("isStandardProfile", isStandardProfile);
 

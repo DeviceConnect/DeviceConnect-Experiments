@@ -16,7 +16,10 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements CodegenConfig {
 
+    private final String[] standardProfileClassNames;
+
     protected AbstractPluginCodegenConfig() {
+        standardProfileClassNames = loadStandardProfileNames();
         additionalProperties.put("supportedProfileNames", new ArrayList<>());
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
@@ -31,6 +34,24 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
             baos.write(buf, 0, len);
         }
         return new String(baos.toByteArray(), "UTF-8");
+    }
+
+    protected String[] loadStandardProfileNames() {
+        try {
+            String resource = loadResourceFile("standardProfiles");
+            return resource.split("\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected String getStandardClassName(final String profileName) {
+        for (String standardName : standardProfileClassNames) {
+            if (standardName.equalsIgnoreCase(profileName)) {
+                return standardName;
+            }
+        }
+        return null;
     }
 
     protected String getClassPrefix() {

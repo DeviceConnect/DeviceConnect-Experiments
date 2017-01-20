@@ -39,21 +39,33 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
         final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-        final String profileClass = getClassPrefix() + toUpperCapital(profileName) + "Profile";
-        properties.put("baseProfileClass", "DConnect" + toUpperCapital(profileName) + "Profile");
-        properties.put("profileClass", profileClass);
+        String baseClassNamePrefix = getStandardClassName(profileName);
+        final String baseClassName;
+        final String profileClassName;
+        final boolean isStandardProfile = baseClassNamePrefix != null;
+        if (isStandardProfile) {
+            baseClassName = baseClassNamePrefix + "Profile";
+            profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
+        } else {
+            baseClassName = "DConnectProfile";
+            profileClassName = toUpperCapital(profileName) + "Profile";
+        }
+        properties.put("baseProfileClass", "DConnect" + baseClassName);
+        properties.put("profileClass", profileClassName);
+        properties.put("profileNameDefinition", profileName);
+        properties.put("isStandardProfile", isStandardProfile);
 
         ProfileTemplate header = new ProfileTemplate();
         header.templateFile = "profile.h.mustache";
-        header.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.h";
+        header.outputFile = profileClassName + ".h";
         profileTemplates.add(header);
         ProfileTemplate impl = new ProfileTemplate();
         impl.templateFile = "profile.m.mustache";
-        impl.outputFile = getClassPrefix() + toUpperCapital(profileName) + "Profile.m";
+        impl.outputFile = profileClassName + ".m";
         profileTemplates.add(impl);
 
         ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
-        ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClass; });
+        ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName; });
 
         return profileTemplates;
     }
