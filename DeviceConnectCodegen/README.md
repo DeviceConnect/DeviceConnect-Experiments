@@ -37,7 +37,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 
 ### Androidプラグインの場合
 ```
-$ cd deviceconnect-codegen-project-x.x.x-dist/samples
+$ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
 $ ./android-plugin.sh
 ```
 
@@ -45,7 +45,7 @@ $ ./android-plugin.sh
 
 ### iOSプラグインの場合
 ```
-$ cd deviceconnect-codegen-project-x.x.x-dist/samples
+$ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
 $ ./ios-plugin.sh
 ```
 
@@ -148,6 +148,20 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 ## 開発環境
 ### ビルドツール
 Apache Maven 3.3.9+
+
+### ビルド方法
+DeviceConnectCodegenのルートディレクトリで下記のコマンドを実行すると、本ツールをビルドできます。
+
+```
+$ mvn package
+```
+
+ビルドを実行すると、本ツールのバイナリと[配布用zip](#ファイル構成)がそれぞれ下記の場所に出力されます。
+
+|項目|出力先|
+|:--|:--|
+|バイナリ|DeviceConnectCodegen/bin/deviceconnect-codegen.jar|
+|配布用zip|DeviceConnectCodegen/target/deviceconnect-codegen-project-X.Y.Z-dist.zip|
 
 ## 参考リンク
 - [Swagger](http://swagger.io/)
