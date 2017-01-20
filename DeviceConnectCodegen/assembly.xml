@@ -6,12 +6,27 @@
     </formats>
     <fileSets>
     	<fileSet>
-            <directory>scripts</directory>
-            <outputDirectory>.</outputDirectory>
+            <directory>samples</directory>
+            <outputDirectory>samples</outputDirectory>
     		<includes>
     			<include>*.sh</include>
     		</includes>
+            <fileMode>0744</fileMode>
     	</fileSet>
+        <fileSet>
+            <directory>samples/sample-profile-specs</directory>
+            <outputDirectory>samples/sample-profile-specs</outputDirectory>
+            <includes>
+                <include>*.json</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>standard-profile-specs</directory>
+            <outputDirectory>standard-profile-specs</outputDirectory>
+            <includes>
+                <include>*.json</include>
+            </includes>
+        </fileSet>
         <fileSet>
             <directory>modules/deviceconnect-codegen/target</directory>
             <outputDirectory>bin</outputDirectory>
