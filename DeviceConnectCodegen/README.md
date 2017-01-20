@@ -1,4 +1,4 @@
-DeviceConnect Codegenは、Device Connect システム上で動作するプラグインおよびアプリケーションのスケルトンコードを生成するためのコマンドラインツールです。（以下、本ツールと呼びます）
+DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグインおよびアプリケーションのスケルトンコードを生成するためのコマンドラインツールです。（以下、本ツールと呼びます）
 
 本ツールへの入力として、DeviceConnectプロファイルの定義ファイルを自前で用意しておく必要があります。標準プロファイルについては全API仕様を定義したファイルを提供しますので、適宜編集してください。
 
@@ -10,9 +10,9 @@ DeviceConnect Codegenは、Device Connect システム上で動作するプラ�
 
 - Androidプラグイン
 - iOSプラグイン
-- [未対応] NodeJSプラグイン
+- [未対応] Nodeプラグイン
 - [未対応] HTMLアプリケーション
-- [未対応] DeviceConnectシステムのエミュレータ
+- [未対応] DeviceConnectエミュレータ
 
 ## ファイル構成
 本ツールはzipで配布されます。圧縮されているファイルの構成は下記のとおりです。
@@ -20,8 +20,10 @@ DeviceConnect Codegenは、Device Connect システム上で動作するプラ�
 |ファイル名|説明|
 |:--|:--|
 |bin/deviceconnect-codegen.jar|本ツールのバイナリ。|
-|android-plugin.sh|Androidプラグインのスケルトンコードを生成するコマンドのサンプル。|
-|ios-plugin.sh|iOSプラグインのスケルトンコードを生成するコマンドのサンプル。|
+|standard-profile-specs/|DeviceConnect標準プロファイルの定義ファイル群。|
+|samples/android-plugin.sh|Androidプラグインのスケルトンコードを生成するシェルスクリプトのサンプル。|
+|samples/ios-plugin.sh|iOSプラグインのスケルトンコードを生成するシェルスクリプトのサンプル。|
+|samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## 実行方法
 下記のようなJavaコマンドで実行してください。指定可能なオプションは次節参照。
@@ -44,7 +46,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <li>iOSプラグイン: deviceConnectIosPlugin</li>
 <li>[未対応] NodeJSプラグイン: deviceConnectNodePlugin</li>
 <li>[未対応] HTMLアプリケーション: deviceConnectHtmlApp</li>
-<li>[未対応] エミュレータ: deviceConnectEmulator</li>
+<li>[未対応] DeviceConnectエミュレータ: deviceConnectEmulator</li>
 </ul>
 </td>
 <td valign="top">-</td>
@@ -104,6 +106,34 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 
 </tbody>
 </table>
+
+## Get Started
+[DeviceConnectCodegen]()をPC上の任意の場所にダウンロードし、解凍してください。解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。生成後の手順については、各出力先のREADME.mdを参照してください。
+
+### Androidプラグインの場合
+```
+$ cd deviceconnect-codegen-project-0.1.0-dist/samples
+$ ./android-plugin.sh
+```
+
+出力先: samples/output/Android/MyPlugin
+
+### iOSプラグインの場合
+```
+$ cd deviceconnect-codegen-project-0.1.0-dist/samples
+$ ./ios-plugin.sh
+```
+
+出力先: samples/output/iOS/MyPlugin
+
+### Nodeプラグインの場合
+T.B.D.
+
+### HTMLアプリケーションの場合
+T.B.D.
+
+### DeviceConnectエミュレータの場合
+T.B.D.
 
 ## 推奨開発環境
 IntelliJ IDEA
