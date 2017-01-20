@@ -15,11 +15,11 @@ public class {{messageServiceClass}} extends DConnectMessageService {
     @Override
     public void onCreate() {
         super.onCreate();
-        LocalOAuth2Main.initialize(getApplicationContext());
 
         // TODO 以降の処理では常駐型のサービスを生成しています. 要件に適さない場合は修正してください.
         DConnectService service = new DConnectService("{{serviceId}}");
         service.setName("{{serviceName}}");
+        service.setOnline(true);
         {{#supportedProfileClasses}}
         service.addProfile(new {{name}}());
         {{/supportedProfileClasses}}
