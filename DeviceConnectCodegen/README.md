@@ -108,11 +108,15 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </table>
 
 ## Get Started
-[DeviceConnectCodegen]()をPC上の任意の場所にダウンロードし、解凍してください。解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。生成後の手順については、各出力先のREADME.mdを参照してください。
+[deviceconnect-codegen-project-0.1.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.1.0) をPC上の任意の場所にダウンロードし、解凍してください。
+
+解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
+
+生成後の手順については、各出力先のREADME.mdを参照してください。
 
 ### Androidプラグインの場合
 ```
-$ cd deviceconnect-codegen-project-0.1.0-dist/samples
+$ cd deviceconnect-codegen-project-x.x.x-dist/samples
 $ ./android-plugin.sh
 ```
 
@@ -120,7 +124,7 @@ $ ./android-plugin.sh
 
 ### iOSプラグインの場合
 ```
-$ cd deviceconnect-codegen-project-0.1.0-dist/samples
+$ cd deviceconnect-codegen-project-x.x.x-dist/samples
 $ ./ios-plugin.sh
 ```
 
