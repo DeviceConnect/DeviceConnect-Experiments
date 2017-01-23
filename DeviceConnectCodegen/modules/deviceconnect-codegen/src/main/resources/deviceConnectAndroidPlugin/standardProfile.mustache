@@ -22,6 +22,7 @@ public class {{profileClass}} extends {{baseProfileClass}} {
     public {{profileClass}}() {
 
         {{#apiList}}
+        // {{apiId}}
         addApi(new {{#getApi}}Get{{/getApi}}{{#postApi}}Post{{/postApi}}{{#putApi}}Put{{/putApi}}{{#deleteApi}}Delete{{/deleteApi}}Api() {
             {{#interface}}
             @Override

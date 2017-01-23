@@ -80,9 +80,12 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                 Map<String, Object> api = new HashMap<>();
                 String interfaceName = getInterfaceNameFromPath(pathName);
                 String attributeName = getAttributeNameFromPath(pathName);
+                String apiPath = createApiPath(interfaceName, attributeName);
+                String apiId = createApiIdentifier(method, profileName, interfaceName, attributeName);
                 api.put("interface", interfaceName);
                 api.put("attribute", attributeName);
-                api.put("apiPath", createPath(interfaceName, attributeName));
+                api.put("apiPath", apiPath);
+                api.put("apiId", apiId);
                 switch (method) {
                     case GET:
                         api.put("getApi", true);
@@ -169,7 +172,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         return null;
     }
 
-    private static String createPath(String interfaceName, String attributeName) {
+    private static String createApiPath(String interfaceName, String attributeName) {
         String path = "/";
         if (interfaceName != null) {
             path += interfaceName + "/";
@@ -179,6 +182,12 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         }
         return path;
     }
+
+    private static String createApiIdentifier(HttpMethod method, String profileName,
+                                              String interfaceName, String attributeName) {
+        return method.name() + " /gotapi/" + profileName + createApiPath(interfaceName, attributeName);
+    }
+
     @SuppressWarnings("static-method")
     private File writeToFile(String filename, String contents) throws IOException {
         LOGGER.info("writing file " + filename);
