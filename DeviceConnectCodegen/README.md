@@ -99,7 +99,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top">--outputdir-dir</td>
+<td valign="top">--output</td>
 <td valign="top">
 スケルトンコードの出力先の指定。PC上の任意のディレクトリへの絶対パスまたは相対パスを引数とする。<br>
 <br>
