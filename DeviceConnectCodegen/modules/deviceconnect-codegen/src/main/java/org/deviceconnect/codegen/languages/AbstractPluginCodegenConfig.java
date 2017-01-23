@@ -9,6 +9,10 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.properties.Property;
 
 import java.io.*;
 import java.util.*;
@@ -76,6 +80,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
             for (Map.Entry<HttpMethod, Operation> operationEntry : path.getOperationMap().entrySet()) {
                 HttpMethod method = operationEntry.getKey();
+                Operation operation = operationEntry.getValue();
 
                 Map<String, Object> api = new HashMap<>();
                 String interfaceName = getInterfaceNameFromPath(pathName);
@@ -104,6 +109,18 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                         profile.put("hasDeleteApi", true);
                         break;
                 }
+                List<Object> paramList = new ArrayList<>();
+                for (final Parameter param : operation.getParameters()) {
+                    paramList.add(new Object() {
+                        String name = param.getName();
+                        String className = getLanguageSpecificClass(param);
+                        boolean isNumber() {
+                            return "Long".equals(className) || "Integer".equals(className)
+                                || "Double".equals(className) || "Float".equals(className);
+                        }
+                    });
+                }
+                api.put("paramList", paramList);
                 apiList.add(api);
 
                 LOGGER.info("Parsed path: profile = " + profileName + ", interface = " + interfaceName + ", attribute = " + attributeName);
@@ -124,6 +141,39 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
             }
         }
     }
+
+    protected String getLanguageSpecificClass(Parameter param) {
+        String type;
+        String format;
+        Property items;
+        if (param instanceof QueryParameter) {
+            type = ((QueryParameter) param).getType();
+            format = ((QueryParameter) param).getFormat();
+            items = ((QueryParameter) param).getItems();
+        } else if (param instanceof FormParameter) {
+            type = ((FormParameter) param).getType();
+            format = ((FormParameter) param).getFormat();
+            items = ((FormParameter) param).getItems();
+        } else {
+            return null;
+        }
+        if ("array".equals(type)) {
+            if (items == null) {
+                return null;
+            }
+            type = items.getType();
+            format = items.getFormat();
+            String className = getLanguageSpecificClass(type, format);
+            return className + "[]";
+        }
+        String className = getLanguageSpecificClass(type, format);
+        if (className == null) {
+            return "Object";
+        }
+        return className;
+    }
+
+    protected abstract String getLanguageSpecificClass(String type, String format);
 
     protected abstract String profileFileFolder();
 

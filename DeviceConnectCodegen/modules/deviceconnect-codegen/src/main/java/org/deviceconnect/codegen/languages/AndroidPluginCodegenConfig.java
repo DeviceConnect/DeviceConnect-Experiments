@@ -8,7 +8,6 @@ import io.swagger.models.properties.Property;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,28 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     protected String profileFileFolder() {
         String separator = File.separator;
         return outputFolder + separator + sourceFolder + separator + getProfilePackage().replace('.', File.separatorChar);
+    }
+
+    @Override
+    protected String getLanguageSpecificClass(final String type, final String format) {
+        if ("string".equals(type)) {
+            return "String";
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "Double";
+            }
+            return "Float";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "Long";
+            }
+            return "Integer";
+        } else if ("boolean".equals(type)) {
+            return "Boolean";
+        } else if ("file".equals(type)) {
+            return "byte[]";
+        }
+        return null;
     }
 
     @Override

@@ -1,0 +1,7 @@
+                {{#paramList}}
+                {{#isNumber}}{{className}} {{name}} = parse{{className}}(request, "{{name}}");{{/isNumber}}{{^isNumber}}{{className}} {{name}} = ({{className}}) request.getExtras().get("{{name}}");{{/isNumber}}
+                {{/paramList}}
+
+                // TODO ここでAPIを実装してください.
+                MessageUtils.setUnknownError(response, "Not implemented yet.");
+                return true;

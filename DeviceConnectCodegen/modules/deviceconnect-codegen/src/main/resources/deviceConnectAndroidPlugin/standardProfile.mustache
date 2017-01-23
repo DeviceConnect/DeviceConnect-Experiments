@@ -40,9 +40,7 @@ public class {{profileClass}} extends {{baseProfileClass}} {
             {{/attribute}}
             @Override
             public boolean onRequest(final Intent request, final Intent response) {
-                // TODO ここでAPIを実装してください.
-                MessageUtils.setUnknownError(response, "Not implemented yet.");
-                return true;
+{{> api}}
             }
         });
 

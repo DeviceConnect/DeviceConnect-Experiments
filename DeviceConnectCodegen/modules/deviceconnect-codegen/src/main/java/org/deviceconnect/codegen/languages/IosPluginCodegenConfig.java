@@ -37,6 +37,26 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
+    protected String getLanguageSpecificClass(final String type, final String format) {
+        if ("string".equals(type)) {
+            return "NSString*";
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "double";
+            }
+            return "float";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "long";
+            }
+            return "int";
+        } else if ("boolean".equals(type)) {
+            return "BOOL";
+        }
+        return null;
+    }
+
+    @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
         final List<ProfileTemplate> profileTemplates = new ArrayList<>();
         String baseClassNamePrefix = getStandardClassName(profileName);
