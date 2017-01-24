@@ -8,6 +8,9 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 ### 前提知識
 - OpenAPI Specification 2.0
 
+### 特記事項
+- DeviceConnectではプロファイルごとにAPIセットを定義します。よって、1つまたは複数のJSONファイルを含んだディレクトリを入力とします。ただ1つのJSONを入力とする Swagger Codegen とは異なりますので、ご注意ください。
+
 ### サポート範囲
 本ツールで生成可能なスケルトンコードのタイプは下記のとおりです。
 
