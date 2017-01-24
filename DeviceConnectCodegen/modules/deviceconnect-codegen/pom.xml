@@ -25,7 +25,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.deviceconnect.codegen.DeviceConnectCodegen</mainClass>
+                            <mainClass>org.deviceconnect.codegen.DConnectCodegen</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

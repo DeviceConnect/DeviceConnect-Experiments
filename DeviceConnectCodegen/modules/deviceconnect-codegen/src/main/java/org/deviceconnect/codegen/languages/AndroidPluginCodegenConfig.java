@@ -18,6 +18,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String projectFolder = pluginModuleFolder + "/src/main";
     private final String sourceFolder = projectFolder + "/java";
     private final String resFolder = projectFolder + "/res";
+    private final String profileSpecFolder = projectFolder + "/assets/api";
     private String invokerPackage;
 
     private final String apiDocPath = "docs/";
@@ -29,6 +30,12 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     protected String profileFileFolder() {
         String separator = File.separator;
         return outputFolder + separator + sourceFolder + separator + getProfilePackage().replace('.', File.separatorChar);
+    }
+
+    @Override
+    protected String getProfileSpecFolder() {
+        String separator = File.separator;
+        return outputFolder + separator + profileSpecFolder;
     }
 
     @Override

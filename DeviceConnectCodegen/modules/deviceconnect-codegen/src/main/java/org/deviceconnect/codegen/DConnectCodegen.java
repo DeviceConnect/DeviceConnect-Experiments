@@ -15,11 +15,11 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
-public class DeviceConnectCodegen {
+public class DConnectCodegen {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Codegen.class);
 
-    static Map<String, CodegenConfig> configs = new HashMap<String, CodegenConfig>();
+    static Map<String, DConnectCodegenConfig> configs = new HashMap<String, DConnectCodegenConfig>();
     static String configString;
     static String debugInfoOptions = "\nThe following additional debug options are available for all codegen targets:" +
             "\n -DdebugSwagger prints the swagger specification as interpreted by the codegen" +
@@ -46,12 +46,12 @@ public class DeviceConnectCodegen {
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
-        Map<String, Swagger> swaggerMap = new HashMap<>();
+        File[] specFiles;
 
-        CommandLine cmd = null;
+        CommandLine cmd;
         try {
             CommandLineParser parser = new BasicParser();
-            CodegenConfig config = null;
+            DConnectCodegenConfig config;
 
             cmd = parser.parse(options, args);
             if (cmd.hasOption("d")) {
@@ -59,47 +59,54 @@ public class DeviceConnectCodegen {
                 System.out.println(debugInfoOptions);
                 return;
             }
+            if (cmd.hasOption("h")) {
+                config = getConfig(cmd.getOptionValue("l"));
+                if (config != null) {
+                    options.addOption("h", "help", true, config.getHelp());
+                    usage(options);
+                    return;
+                }
+                usage(options);
+                return;
+            }
             if (cmd.hasOption("l")) {
-                clientOptInput.setConfig(getConfig(cmd.getOptionValue("l")));
+                config = getConfig(cmd.getOptionValue("l"));
+                clientOptInput.setConfig(config);
             } else {
                 usage(options);
                 return;
             }
             if (cmd.hasOption("o")) {
-                clientOptInput.getConfig().setOutputDir(cmd.getOptionValue("o"));
+                config.setOutputDir(cmd.getOptionValue("o"));
             }
-            if (cmd.hasOption("h")) {
-                if (cmd.hasOption("l")) {
-                    config = getConfig(String.valueOf(cmd.getOptionValue("l")));
-                    if (config != null) {
-                        options.addOption("h", "help", true, config.getHelp());
-                        usage(options);
-                        return;
-                    }
-                }
-                usage(options);
-                return;
-            }
-            LOGGER.info("--input-spec-dir: " + cmd.getOptionValue("s"));
             if (cmd.hasOption("s")) {
                 File dir = new File(cmd.getOptionValue("s"));
                 if (dir.isDirectory()) {
-                    File[] files = dir.listFiles(new FilenameFilter() {
+                    specFiles = dir.listFiles(new FilenameFilter() {
                         @Override
-                        public boolean accept(File dir, String name) {
+                        public boolean accept(final File dir, final String name) {
                             return name.endsWith(".json");
                         }
                     });
-                    for (File file : files) {
+                    config.setInputSpecFiles(specFiles);
+
+                    Map<String, Swagger> swaggerMap = new HashMap<>();
+                    for (File file : specFiles) {
                         String profileName = parseProfileNameFromFileName(file.getName());
                         swaggerMap.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
                     }
+                    clientOptInput.swagger(mergeSwaggers(swaggerMap));
+                } else {
+                    usage(options);
+                    return;
                 }
+            } else {
+                usage(options);
+                return;
             }
             if (cmd.hasOption("c")) {
                 String configFile = cmd.getOptionValue("c");
                 Config genConfig = ConfigParser.read(configFile);
-                config = clientOptInput.getConfig();
                 if (null != genConfig && null != config) {
                     for (CliOption langCliOption : config.cliOptions()) {
                         if (genConfig.hasOption(langCliOption.getOpt())) {
@@ -133,8 +140,7 @@ public class DeviceConnectCodegen {
             return;
         }
         try {
-            clientOptInput.opts(clientOpts).swagger(mergeSwaggers(swaggerMap));
-            new Codegen().opts(clientOptInput).generate();
+            new Codegen().opts(clientOptInput.opts(clientOpts)).generate();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -160,10 +166,10 @@ public class DeviceConnectCodegen {
         return merged;
     }
 
-    public static List<CodegenConfig> getExtensions() {
-        ServiceLoader<CodegenConfig> loader = ServiceLoader.load(CodegenConfig.class);
-        List<CodegenConfig> output = new ArrayList<CodegenConfig>();
-        for (CodegenConfig aLoader : loader) {
+    public static List<DConnectCodegenConfig> getExtensions() {
+        ServiceLoader<DConnectCodegenConfig> loader = ServiceLoader.load(DConnectCodegenConfig.class);
+        List<DConnectCodegenConfig> output = new ArrayList<DConnectCodegenConfig>();
+        for (DConnectCodegenConfig aLoader : loader) {
             output.add(aLoader);
         }
         return output;
@@ -171,10 +177,10 @@ public class DeviceConnectCodegen {
 
     static void usage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("DeviceConnectCodegen", options);
+        formatter.printHelp("DConnectCodegen", options);
     }
 
-    public static CodegenConfig getConfig(String name) {
+    public static DConnectCodegenConfig getConfig(String name) {
         if (configs.containsKey(name)) {
             return configs.get(name);
         } else {
@@ -183,7 +189,7 @@ public class DeviceConnectCodegen {
                 LOGGER.debug("loading class " + name);
                 Class<?> customClass = Class.forName(name);
                 LOGGER.debug("loaded");
-                return (CodegenConfig) customClass.newInstance();
+                return (DConnectCodegenConfig) customClass.newInstance();
             } catch (Exception e) {
                 throw new RuntimeException("can't load class " + name);
             }
@@ -191,10 +197,10 @@ public class DeviceConnectCodegen {
     }
 
     static {
-        List<CodegenConfig> extensions = getExtensions();
+        List<DConnectCodegenConfig> extensions = getExtensions();
         StringBuilder sb = new StringBuilder();
 
-        for (CodegenConfig config : extensions) {
+        for (DConnectCodegenConfig config : extensions) {
             if (sb.toString().length() != 0) {
                 sb.append(", ");
             }

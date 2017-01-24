@@ -37,6 +37,11 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
+    protected String getProfileSpecFolder() {
+        return null;
+    }
+
+    @Override
     protected String getLanguageSpecificClass(final String type, final String format) {
         if ("string".equals(type)) {
             return "NSString*";

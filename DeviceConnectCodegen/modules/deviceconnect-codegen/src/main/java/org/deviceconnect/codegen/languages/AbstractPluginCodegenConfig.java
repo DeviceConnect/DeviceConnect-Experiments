@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements CodegenConfig {
+public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen {
 
     private final String[] standardProfileClassNames;
 
@@ -140,6 +140,13 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                 throw new RuntimeException("Failed to generate profile source code: profile = " + profileName, e);
             }
         }
+
+        // プロファイル定義ファイルのコピー
+        try {
+            copyProfileSpecFiles();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to copy profile spec file.", e);
+        }
     }
 
     protected String getLanguageSpecificClass(Parameter param) {
@@ -236,6 +243,58 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
     private static String createApiIdentifier(HttpMethod method, String profileName,
                                               String interfaceName, String attributeName) {
         return method.name() + " /gotapi/" + profileName + createApiPath(interfaceName, attributeName);
+    }
+
+    protected abstract String getProfileSpecFolder();
+
+    private void copyProfileSpecFiles() throws IOException {
+        String dirPath = getProfileSpecFolder();
+        if (dirPath == null) {
+            return;
+        }
+        File dir = new File(dirPath);
+        if (!dir.mkdirs()) {
+            throw new IOException("Failed to copy profile spec directory: " + dirPath);
+        }
+        for (File specFile : getInputSpecFiles()) {
+            File copy = new File(dirPath, specFile.getName());
+            LOGGER.info("writing file " + copy.getAbsolutePath());
+            copyFile(specFile, copy);
+        }
+    }
+
+    private void copyFile(final File source, final File destination) throws IOException {
+        if (!source.exists()) {
+            throw new IOException("Profile Spec File is not found: " + source.getAbsolutePath());
+        }
+        if (destination.exists()) {
+            throw new IOException("Profile Spec File is already created: " + destination.getAbsolutePath());
+        }
+        if (!destination.createNewFile()) {
+            throw new IOException("Failed to create Profile Spec File: " + destination.getAbsolutePath());
+        }
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        int len;
+        byte[] buf = new byte[1024];
+        try {
+            in = new FileInputStream(source);
+            out = new FileOutputStream(destination);
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            out.flush();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
+        }
     }
 
     @SuppressWarnings("static-method")

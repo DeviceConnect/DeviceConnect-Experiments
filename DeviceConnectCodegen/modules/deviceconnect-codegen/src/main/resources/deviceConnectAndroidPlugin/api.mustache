@@ -1,5 +1,5 @@
                 {{#paramList}}
-                {{#isNumber}}{{className}} {{name}} = parse{{className}}(request, "{{name}}");{{/isNumber}}{{^isNumber}}{{className}} {{name}} = ({{className}}) request.getExtras().get("{{name}}");{{/isNumber}}
+                {{#isNumber}}final {{className}} {{name}} = parse{{className}}(request, "{{name}}");{{/isNumber}}{{^isNumber}}final {{className}} {{name}} = ({{className}}) request.getExtras().get("{{name}}");{{/isNumber}}
                 {{/paramList}}
 
                 // TODO ここでAPIを実装してください.
