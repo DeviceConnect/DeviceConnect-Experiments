@@ -206,7 +206,10 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("string.xml.mustache", resFolder + "/values", "string.xml"));
 
         // アプリアイコン画像
-        supportingFiles.add(new SupportingFile("ic_launcher.png", resFolder + "/drawable", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-mdpi/ic_launcher.png", resFolder + "/drawable-mdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-hdpi/ic_launcher.png", resFolder + "/drawable-hdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", resFolder + "/drawable-xhdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", resFolder + "/drawable-xxhdpi/", "ic_launcher.png"));
 
         // 実装ファイル
         final String packageFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
