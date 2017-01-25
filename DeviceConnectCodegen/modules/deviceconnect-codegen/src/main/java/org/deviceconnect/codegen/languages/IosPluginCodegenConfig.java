@@ -69,13 +69,13 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         final String profileClassName;
         final boolean isStandardProfile = baseClassNamePrefix != null;
         if (isStandardProfile) {
-            baseClassName = baseClassNamePrefix + "Profile";
+            baseClassName = "DConnect" + baseClassNamePrefix + "Profile";
             profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
         } else {
             baseClassName = "DConnectProfile";
             profileClassName = toUpperCapital(profileName) + "Profile";
         }
-        properties.put("baseProfileClass", "DConnect" + baseClassName);
+        properties.put("baseProfileClass", baseClassName);
         properties.put("profileClass", profileClassName);
         properties.put("profileNameDefinition", profileName);
         properties.put("isStandardProfile", isStandardProfile);
