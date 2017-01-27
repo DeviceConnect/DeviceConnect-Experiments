@@ -112,12 +112,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                 List<Object> paramList = new ArrayList<>();
                 for (final Parameter param : operation.getParameters()) {
                     paramList.add(new Object() {
-                        String name = param.getName();
-                        String className = getLanguageSpecificClass(param);
-                        boolean isNumber() {
-                            return "Long".equals(className) || "Integer".equals(className)
-                                || "Double".equals(className) || "Float".equals(className);
-                        }
+                        String declaration = getDeclaration(param);
                     });
                 }
                 api.put("paramList", paramList);
@@ -149,38 +144,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
         }
     }
 
-    protected String getLanguageSpecificClass(Parameter param) {
-        String type;
-        String format;
-        Property items;
-        if (param instanceof QueryParameter) {
-            type = ((QueryParameter) param).getType();
-            format = ((QueryParameter) param).getFormat();
-            items = ((QueryParameter) param).getItems();
-        } else if (param instanceof FormParameter) {
-            type = ((FormParameter) param).getType();
-            format = ((FormParameter) param).getFormat();
-            items = ((FormParameter) param).getItems();
-        } else {
-            return null;
-        }
-        if ("array".equals(type)) {
-            if (items == null) {
-                return null;
-            }
-            type = items.getType();
-            format = items.getFormat();
-            String className = getLanguageSpecificClass(type, format);
-            return className + "[]";
-        }
-        String className = getLanguageSpecificClass(type, format);
-        if (className == null) {
-            return "Object";
-        }
-        return className;
-    }
-
-    protected abstract String getLanguageSpecificClass(String type, String format);
+    protected abstract String getDeclaration(Parameter p);
 
     protected abstract String profileFileFolder();
 

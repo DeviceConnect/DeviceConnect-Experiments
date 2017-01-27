@@ -3,6 +3,9 @@ package org.deviceconnect.codegen.languages;
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,23 +45,57 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
-    protected String getLanguageSpecificClass(final String type, final String format) {
-        if ("string".equals(type)) {
-            return "NSString*";
-        } else if ("number".equals(type)) {
+    protected String getDeclaration(final Parameter p) {
+        String type;
+        String format;
+        if (p instanceof QueryParameter) {
+            type = ((QueryParameter) p).getType();
+            format = ((QueryParameter) p).getFormat();
+        } else if (p instanceof FormParameter) {
+            type = ((FormParameter) p).getType();
+            format = ((FormParameter) p).getFormat();
+        } else {
+            return null;
+        }
+
+        String varName = p.getName();
+        String typeName;
+        String parserPrefix;
+        boolean usesPointer = false;
+        if ("number".equals(type)) {
             if ("double".equals(format)) {
-                return "double";
+                typeName = "double";
+                parserPrefix = "double";
+            } else {
+                typeName = "float";
+                parserPrefix = "float";
             }
-            return "float";
         } else if ("integer".equals(type)) {
             if ("int64".equals(format)) {
-                return "long";
+                typeName = "long long";
+                parserPrefix = "longLong";
+            } else {
+                typeName = "int";
+                parserPrefix = "integer";
             }
-            return "int";
         } else if ("boolean".equals(type)) {
-            return "BOOL";
+            typeName = "BOOL";
+            parserPrefix = "bool";
+        } else if ("string".equals(type) || "array".equals(type)) {
+            typeName = "NSString";
+            parserPrefix = "string";
+            usesPointer = true;
+        } else if ("file".equals(type)) {
+            typeName = "NSData";
+            parserPrefix = "data";
+            usesPointer = true;
+        } else {
+            typeName = "id";
+            parserPrefix = "object";
         }
-        return null;
+        String leftOperand = usesPointer ? (typeName + " *" + varName) : (typeName + " " + varName);
+        String rightOperand = "[request " + parserPrefix + "ForKey:@\"" + varName + "\"]";
+        return leftOperand + " = " + rightOperand + ";";
     }
 
     @Override

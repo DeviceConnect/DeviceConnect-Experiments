@@ -2,6 +2,9 @@ package org.deviceconnect.codegen.languages;
 
 
 import io.swagger.codegen.*;
+import io.swagger.models.parameters.FormParameter;
+import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
@@ -36,28 +39,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     protected String getProfileSpecFolder() {
         String separator = File.separator;
         return outputFolder + separator + profileSpecFolder;
-    }
-
-    @Override
-    protected String getLanguageSpecificClass(final String type, final String format) {
-        if ("string".equals(type)) {
-            return "String";
-        } else if ("number".equals(type)) {
-            if ("double".equals(format)) {
-                return "Double";
-            }
-            return "Float";
-        } else if ("integer".equals(type)) {
-            if ("int64".equals(format)) {
-                return "Long";
-            }
-            return "Integer";
-        } else if ("boolean".equals(type)) {
-            return "Boolean";
-        } else if ("file".equals(type)) {
-            return "byte[]";
-        }
-        return null;
     }
 
     @Override
@@ -370,6 +351,60 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
 
         return operationId;
+    }
+
+    @Override
+    protected String getDeclaration(final Parameter p) {
+        String type;
+        String format;
+        if (p instanceof QueryParameter) {
+            type = ((QueryParameter) p).getType();
+            format = ((QueryParameter) p).getFormat();
+        } else if (p instanceof FormParameter) {
+            type = ((FormParameter) p).getType();
+            format = ((FormParameter) p).getFormat();
+        } else {
+            return null;
+        }
+
+        String varName = p.getName();
+        String typeName;
+        boolean hasParser;
+        if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                typeName = "Double";
+            } else {
+                typeName = "Float";
+            }
+            hasParser = true;
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                typeName = "Long";
+            } else {
+                typeName = "Integer";
+            }
+            hasParser = true;
+        } else if ("boolean".equals(type)) {
+            typeName = "Boolean";
+            hasParser = true;
+        } else if ("string".equals(type) || "array".equals(type)) {
+            typeName = "String";
+            hasParser = false;
+        } else if ("file".equals(type)) {
+            typeName = "byte[]";
+            hasParser = false;
+        } else {
+            typeName = "Object";
+            hasParser = false;
+        }
+        String leftOperand = typeName + " " + varName;
+        String rightOperand;
+        if (hasParser) {
+            rightOperand = "parse" + typeName + "(request, \"" + varName + "\")";
+        } else {
+            rightOperand = "(" + typeName + ") request.getExtras().get(\"" + varName + "\")";
+        }
+        return leftOperand + " = " + rightOperand + ";";
     }
 
 }
