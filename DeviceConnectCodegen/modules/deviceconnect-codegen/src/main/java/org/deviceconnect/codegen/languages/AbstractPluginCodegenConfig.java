@@ -5,14 +5,12 @@ import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.CodegenConfig;
 import io.swagger.codegen.DefaultCodegen;
-import io.swagger.models.HttpMethod;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.Property;
+import org.deviceconnect.codegen.models.DConnectEventFormat;
 
 import java.io.*;
 import java.util.*;
@@ -63,7 +61,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
     }
 
     @Override
-    public void preprocessSwagger(Swagger swagger) {
+    public void preprocessSwagger(final Swagger swagger) {
         Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
         for (Map.Entry<String, Path> pathEntry : swagger.getPaths().entrySet()) {
             String pathName = pathEntry.getKey();
@@ -109,6 +107,8 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                         profile.put("hasDeleteApi", true);
                         break;
                 }
+
+                // Parameter declarations
                 List<Object> paramList = new ArrayList<>();
                 for (final Parameter param : operation.getParameters()) {
                     paramList.add(new Object() {
@@ -116,6 +116,17 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                     });
                 }
                 api.put("paramList", paramList);
+
+                // Response creation
+                Map<String, Response> responses = operation.getResponses();
+                for (Map.Entry<String, Response> entity : responses.entrySet()) {
+                    String httpCode = entity.getKey();
+                    if ("200".equals(httpCode)) {
+                        Response responseModel = entity.getValue();
+                        api.put("responses", getResponseCreation(swagger, responseModel));
+                        break;
+                    }
+                }
                 apiList.add(api);
 
                 LOGGER.info("Parsed path: profile = " + profileName + ", interface = " + interfaceName + ", attribute = " + attributeName);
@@ -145,6 +156,8 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
     }
 
     protected abstract String getDeclaration(Parameter p);
+
+    protected abstract List<String> getResponseCreation(Swagger swagger, Response response);
 
     protected abstract String profileFileFolder();
 

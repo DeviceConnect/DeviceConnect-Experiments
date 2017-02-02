@@ -1,6 +1,7 @@
 package {{profilePackage}};
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import org.deviceconnect.android.message.MessageUtils;
 import org.deviceconnect.android.profile.DConnectProfile;
@@ -16,6 +17,7 @@ import org.deviceconnect.android.profile.api.PutApi;
 {{#hasDeleteApi}}
 import org.deviceconnect.android.profile.api.DeleteApi;
 {{/hasDeleteApi}}
+import org.deviceconnect.message.DConnectMessage;
 
 public class {{profileClass}} extends DConnectProfile {
 
@@ -44,8 +46,11 @@ public class {{profileClass}} extends DConnectProfile {
                 {{{declaration}}}
                 {{/paramList}}
 
-                // TODO ここでAPIを実装してください.
-                MessageUtils.setUnknownError(response, "Not implemented yet.");
+                // TODO ここでAPIを実装してください. 以下はサンプルのレスポンス作成処理です.
+                setResult(response, DConnectMessage.RESULT_OK);
+                {{#responses}}
+                {{{.}}}
+                {{/responses}}
                 return true;
             }
         });

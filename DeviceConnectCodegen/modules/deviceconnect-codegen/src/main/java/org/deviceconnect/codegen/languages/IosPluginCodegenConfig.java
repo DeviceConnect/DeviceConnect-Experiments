@@ -3,6 +3,8 @@ package org.deviceconnect.codegen.languages;
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
+import io.swagger.models.Response;
+import io.swagger.models.Swagger;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
@@ -96,6 +98,11 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         String leftOperand = usesPointer ? (typeName + " *" + varName) : (typeName + " " + varName);
         String rightOperand = "[request " + parserPrefix + "ForKey:@\"" + varName + "\"]";
         return leftOperand + " = " + rightOperand + ";";
+    }
+
+    @Override
+    protected List<String> getResponseCreation(final Swagger swagger, final Response response) {
+        return null;
     }
 
     @Override

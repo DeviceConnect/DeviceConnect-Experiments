@@ -1,19 +1,17 @@
 package org.deviceconnect.codegen.languages;
 
 
+import com.sun.javafx.sg.prism.NGShape;
 import io.swagger.codegen.*;
+import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
+import io.swagger.models.properties.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
@@ -407,4 +405,179 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         return leftOperand + " = " + rightOperand + ";";
     }
 
+    @Override
+    protected List<String> getResponseCreation(final Swagger swagger, final Response response) {
+        List<String> lines = new ArrayList<>();
+        Property schema = response.getSchema();
+
+        ObjectProperty root;
+        if (schema instanceof ObjectProperty) {
+            root = (ObjectProperty) schema;
+        } else if (schema instanceof RefProperty) {
+            RefProperty ref = (RefProperty) schema;
+            if (isIgnoredDefinition(ref.getName())) {
+                return lines;
+            }
+            Model model = findDefinition(swagger, ref.getSimpleRef());
+            Map<String, Property> properties;
+            if (model instanceof ComposedModel) {
+                properties = getProperties(swagger, (ComposedModel) model);
+            } else if (model instanceof ModelImpl) {
+                properties = model.getProperties();
+            } else {
+                lines.add("// WARNING: レスポンスの定義が不正です.");
+                return lines;
+            }
+            if (properties == null) {
+                lines.add("// WARNING: レスポンスの定義が見つかりませんでした.");
+                return lines;
+            }
+            root =  new ObjectProperty();
+            root.setProperties(properties);
+        } else {
+            lines.add("// WARNING: レスポンスの定義が不正です.");
+            return lines;
+        }
+
+        writeSampleResponse(root, "root", lines, true);
+        return lines;
+    }
+
+    private boolean isIgnoredDefinition(final String refName) {
+        return "CommonResponse".equals(refName) || "CommonEvent".equals(refName);
+    }
+
+    private Map<String, Property> getProperties(final Swagger swagger, final ComposedModel parent) {
+        Map<String, Property> result = new HashMap<>();
+        Stack<ComposedModel> stack = new Stack<>();
+        stack.push(parent);
+        do {
+            ComposedModel model = stack.pop();
+            List<Model> children = model.getAllOf();
+            for (Model child : children) {
+                if (child instanceof ModelImpl) {
+                    if (child.getProperties() != null) {
+                        result.putAll(child.getProperties());
+                    }
+                } else if (child instanceof ComposedModel) {
+                    stack.push((ComposedModel) child);
+                } else if (child instanceof RefModel) {
+                    String refName = ((RefModel) child).getSimpleRef();
+                    if (isIgnoredDefinition(refName)) {
+                        continue;
+                    }
+                    Model m = findDefinition(swagger, refName);
+                    if (m == null) {
+                        continue;
+                    }
+                    if (m.getProperties() != null) {
+                        result.putAll(m.getProperties());
+                    }
+                }
+            }
+        } while (!stack.empty());
+        return result;
+    }
+
+    private Model findDefinition(final Swagger swagger, final String simpleRef) {
+        Map<String, Model> definitions = swagger.getDefinitions();
+        if (definitions == null) {
+            return null;
+        }
+        return definitions.get(simpleRef);
+    }
+
+    private void writeSampleResponse(final ObjectProperty root, final String rootName,
+                                     final List<String> lines, final boolean isRoot) {
+        Map<String, Property> props = root.getProperties();
+        if (props == null) {
+            return;
+        }
+        if (isRoot) {
+            lines.add("Bundle " + rootName + " = response.getExtras();");
+        }
+        for (Map.Entry<String, Property> propEntry : props.entrySet()) {
+            String propName = propEntry.getKey();
+            Property prop = propEntry.getValue();
+
+            String type = prop.getType();
+            String format = prop.getFormat();
+            if ("array".equals(type)) {
+                ArrayProperty arrayProp;
+                if (!(prop instanceof  ArrayProperty)) {
+                    continue;
+                }
+                arrayProp = (ArrayProperty) prop;
+                Property itemsProp = arrayProp.getItems();
+                String setterName = getSetterName(itemsProp.getType(), itemsProp.getFormat());
+                if (setterName == null) {
+                    continue;
+                }
+                lines.add(rootName + "." + setterName +  "Array(\"" + propName + "\", );"); // TODO パラメータ値の設定
+            } else if ("object".equals(type)) {
+                ObjectProperty objectProp;
+                if (!(prop instanceof ObjectProperty)) {
+                    continue;
+                }
+                objectProp = (ObjectProperty) prop;
+                lines.add("Bundle " + propName + " = new Bundle();");
+                writeSampleResponse(objectProp, propName, lines, false);
+                lines.add(rootName  + ".putBundle(\"" + propName + "\", " + propName + ");");
+            } else {
+                String setterName = getSetterName(type, format);
+                if (setterName == null) {
+                    continue;
+                }
+                lines.add(rootName + "." + setterName +  "(\""+ propName + "\", " + getExampleValue(type, format) + ");");
+            }
+        }
+    }
+
+    private String getSetterName(final String type, final String format) {
+        if ("boolean".equals(type)) {
+            return "putBoolean";
+        } else if ("string".equals(type)) {
+            return "putString";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "putLong";
+            } else {
+                return "putInt";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "putDouble";
+            } else {
+                return "putFloat";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
+    private String getExampleValue(final String type, final String format) {
+        if ("boolean".equals(type)) {
+            return "false";
+        } else if ("string".equals(type)) {
+            return "null";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "0L";
+            } else {
+                return "0";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "0.0d";
+            } else {
+                return "0.0f";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
 }

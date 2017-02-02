@@ -4,6 +4,7 @@ package org.deviceconnect.codegen;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
+import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -155,6 +156,8 @@ public class DConnectCodegen {
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
         Swagger merged = new Swagger();
+
+        // paths
         Map<String, Path> paths = new HashMap<>();
         for (Map.Entry<String, Swagger> swagger : swaggerMap.entrySet()) {
             String profileName = swagger.getKey();
@@ -163,6 +166,16 @@ public class DConnectCodegen {
             }
         }
         merged.paths(paths);
+
+        // definitions
+        Map<String, Model> definitions = new HashMap<>();
+        for (Map.Entry<String, Swagger> swagger : swaggerMap.entrySet()) {
+            if (swagger.getValue().getDefinitions() != null) {
+                definitions.putAll(swagger.getValue().getDefinitions());
+            }
+        }
+        merged.setDefinitions(definitions);
+
         return merged;
     }
 
