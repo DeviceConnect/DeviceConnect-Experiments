@@ -10,7 +10,7 @@
         "/": {
             "get": {
                 "x-type": "one-shot",
-                "summary": "",
+                "summary": "スマートデバイスのバッテリー情報を取得する。",
                 "description": "",
                 "parameters": [
                     {
@@ -22,7 +22,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/AllResponse"
+                        }
                     }
                 }
             }
@@ -30,7 +33,7 @@
         "/charging": {
             "get": {
                 "x-type": "one-shot",
-                "summary": "",
+                "summary": "スマートデバイスの充電状態フラグを取得する。",
                 "description": "",
                 "parameters": [
                     {
@@ -42,7 +45,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ChargingResponse"
+                        }
                     }
                 }
             }
@@ -50,7 +56,7 @@
         "/chargingTime": {
             "get": {
                 "x-type": "one-shot",
-                "summary": "",
+                "summary": "スマートデバイスの充電完了時間を取得する。",
                 "description": "",
                 "parameters": [
                     {
@@ -62,7 +68,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ChargingTimeResponse"
+                        }
                     }
                 }
             }
@@ -70,7 +79,7 @@
         "/dischargingTime": {
             "get": {
                 "x-type": "one-shot",
-                "summary": "",
+                "summary": "スマートデバイスの放電完了時間を取得する。",
                 "description": "",
                 "parameters": [
                     {
@@ -82,7 +91,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DischargingTimeResponse"
+                        }
                     }
                 }
             }
@@ -90,7 +102,7 @@
         "/level": {
             "get": {
                 "x-type": "one-shot",
-                "summary": "",
+                "summary": "スマートデバイスのバッテリー残量を取得する。",
                 "description": "",
                 "parameters": [
                     {
@@ -102,7 +114,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LevelResponse"
+                        }
                     }
                 }
             }
@@ -147,7 +162,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
                     }
                 }
             },
@@ -165,7 +183,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/OnBatteryChangeEvent"
                     }
                 }
             }
@@ -210,7 +236,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/OnChargingChangeEvent"
                     }
                 }
             },
@@ -228,8 +262,257 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "AllResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "charging"
+                    ],
+                    "properties": {
+                        "charging": {
+                            "type": "boolean",
+                            "description": "充電状態フラグ。<br>充電中:true<br>非充電中:false"
+                        },
+                        "chargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "完全充電までの時間(秒)。<br>満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        },
+                        "dischargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "完全放電までの時間(秒)。<br>充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE"
+                        },
+                        "level": {
+                            "type": "number",
+                            "description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
+                        }
+                    }
+                }
+            ]
+        },
+        "ChargingResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "charging"
+                    ],
+                    "properties": {
+                        "charging": {
+                            "type": "boolean",
+                            "description": "充電状態フラグ<br>充電中:true<br>非充電中:false"
+                        }
+                    }
+                }
+            ]
+        },
+        "ChargingTimeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "chargingTime"
+                    ],
+                    "properties": {
+                        "chargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "完全充電までの時間(秒)。満充電、または非充電中の場合は0。システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        }
+                    }
+                }
+            ]
+        },
+        "DischargingTimeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "dischargingTime"
+                    ],
+                    "properties": {
+                        "dischargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "完全放電までの時間(秒)。充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        }
+                    }
+                }
+            ]
+        },
+        "LevelResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "level"
+                    ],
+                    "properties": {
+                        "level": {
+                            "type": "number",
+                            "description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
+                        }
+                    }
+                }
+            ]
+        },
+        "OnChargingChangeEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "required": [
+                                "charging"
+                            ],
+                            "properties": {
+                                "charging": {
+                                    "type": "boolean",
+                                    "description": "充電状態フラグ<br>充電中:true<br>非充電中:false"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OnBatteryChangeEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "required": [
+                                "chargingTime",
+                                "dischargingTime",
+                                "level"
+                            ],
+                            "properties": {
+                                "chargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "完全充電までの時間(秒)。<br>満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "dischargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "完全放電までの時間(秒)。<br>充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "level": {
+                                    "type": "number",
+                                    "description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "description": ""
+                },
+                "errorCode": {
+                    "type": "string",
+                    "description": ""
+                },
+                "errorMessage": {
+                    "type": "string",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "description": ""
+                }
+            }
+        },
+        "CommonEvent": {
+            "type": "object",
+            "required": [
+                "serviceId",
+                "profile",
+                "interface",
+                "attribute"
+            ],
+            "properties": {
+                "serviceId": {
+                    "type": "string",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "profile": {
+                    "type": "string",
+                    "description": ""
+                },
+                "interface": {
+                    "type": "string",
+                    "description": ""
+                },
+                "attribute": {
+                    "type": "string",
+                    "description": ""
                 }
             }
         }
