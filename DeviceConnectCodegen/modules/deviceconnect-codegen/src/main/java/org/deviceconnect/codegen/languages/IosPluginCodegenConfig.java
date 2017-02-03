@@ -3,6 +3,7 @@ package org.deviceconnect.codegen.languages;
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
+import io.swagger.models.Model;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.FormParameter;
@@ -102,6 +103,11 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected List<String> getResponseCreation(final Swagger swagger, final Response response) {
+        return null;
+    }
+
+    @Override
+    protected List<String> getEventCreation(final Swagger swagger, final Response event) {
         return null;
     }
 

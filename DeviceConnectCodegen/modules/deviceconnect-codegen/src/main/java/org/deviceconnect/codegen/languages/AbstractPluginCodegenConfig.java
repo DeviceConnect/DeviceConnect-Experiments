@@ -4,13 +4,9 @@ package org.deviceconnect.codegen.languages;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.CodegenConfig;
-import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.*;
-import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.Property;
-import org.deviceconnect.codegen.models.DConnectEventFormat;
+import org.deviceconnect.codegen.models.DConnectOperation;
 
 import java.io.*;
 import java.util.*;
@@ -78,13 +74,14 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
 
             for (Map.Entry<HttpMethod, Operation> operationEntry : path.getOperationMap().entrySet()) {
                 HttpMethod method = operationEntry.getKey();
-                Operation operation = operationEntry.getValue();
+                DConnectOperation operation = DConnectOperation.parse(swagger, operationEntry.getValue());
 
                 Map<String, Object> api = new HashMap<>();
                 String interfaceName = getInterfaceNameFromPath(pathName);
                 String attributeName = getAttributeNameFromPath(pathName);
                 String apiPath = createApiPath(interfaceName, attributeName);
                 String apiId = createApiIdentifier(method, profileName, interfaceName, attributeName);
+
                 api.put("interface", interfaceName);
                 api.put("attribute", attributeName);
                 api.put("apiPath", apiPath);
@@ -107,6 +104,36 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                         profile.put("hasDeleteApi", true);
                         break;
                 }
+                switch (operation.getType()) {
+                    case ONE_SHOT:
+                        api.put("isOneShotApi", true);
+                        profile.put("hasOneShotApi", true);
+
+                        // Response data creation
+                        for (Map.Entry<String, Response> entity : operation.getResponses().entrySet()) {
+                            if ("200".equals(entity.getKey())) { // HTTP Code
+                                api.put("responses", getResponseCreation(swagger, entity.getValue()));
+                                break;
+                            }
+                        }
+                        break;
+                    case EVENT:
+                        api.put("isEventApi", true);
+                        profile.put("hasEventApi", true);
+
+                        // Event data creation
+                        if (method == HttpMethod.PUT) {
+                            Response event = operation.getEventModel();
+                            if (event != null) {
+                                api.put("events", getEventCreation(swagger, event));
+                            }
+                        }
+                        break;
+                    case STREAMING:
+                        api.put("isStreamingApi", true);
+                        profile.put("hasStreamingApi", true);
+                        break;
+                }
 
                 // Parameter declarations
                 List<Object> paramList = new ArrayList<>();
@@ -116,17 +143,6 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                     });
                 }
                 api.put("paramList", paramList);
-
-                // Response creation
-                Map<String, Response> responses = operation.getResponses();
-                for (Map.Entry<String, Response> entity : responses.entrySet()) {
-                    String httpCode = entity.getKey();
-                    if ("200".equals(httpCode)) {
-                        Response responseModel = entity.getValue();
-                        api.put("responses", getResponseCreation(swagger, responseModel));
-                        break;
-                    }
-                }
                 apiList.add(api);
 
                 LOGGER.info("Parsed path: profile = " + profileName + ", interface = " + interfaceName + ", attribute = " + attributeName);
@@ -158,6 +174,8 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
     protected abstract String getDeclaration(Parameter p);
 
     protected abstract List<String> getResponseCreation(Swagger swagger, Response response);
+
+    protected abstract List<String> getEventCreation(Swagger swagger, Response event);
 
     protected abstract String profileFileFolder();
 

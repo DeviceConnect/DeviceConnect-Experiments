@@ -439,7 +439,45 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             return lines;
         }
 
-        writeSampleResponse(root, "root", lines, true);
+        writeExampleResponse(root, "root", lines);
+        return lines;
+    }
+
+    @Override
+    protected List<String> getEventCreation(final Swagger swagger, final Response event) {
+        List<String> lines = new ArrayList<>();
+        Property schema = event.getSchema();
+
+        ObjectProperty root;
+        if (schema instanceof ObjectProperty) {
+            root = (ObjectProperty) schema;
+        } else if (schema instanceof RefProperty) {
+            RefProperty ref = (RefProperty) schema;
+            if (isIgnoredDefinition(ref.getName())) {
+                return lines;
+            }
+            Model model = findDefinition(swagger, ref.getSimpleRef());
+            Map<String, Property> properties;
+            if (model instanceof ComposedModel) {
+                properties = getProperties(swagger, (ComposedModel) model);
+            } else if (model instanceof ModelImpl) {
+                properties = model.getProperties();
+            } else {
+                lines.add("// WARNING: イベントの定義が不正です.");
+                return lines;
+            }
+            if (properties == null) {
+                lines.add("// WARNING: イベントの定義が見つかりませんでした.");
+                return lines;
+            }
+            root =  new ObjectProperty();
+            root.setProperties(properties);
+        } else {
+            lines.add("// WARNING: イベントの定義が不正です.");
+            return lines;
+        }
+
+        writeExampleEvent(root, "root", lines);
         return lines;
     }
 
@@ -487,14 +525,25 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         return definitions.get(simpleRef);
     }
 
-    private void writeSampleResponse(final ObjectProperty root, final String rootName,
-                                     final List<String> lines, final boolean isRoot) {
+    private void writeExampleResponse(final ObjectProperty root, final String rootName,
+                                      final List<String> lines) {
+        lines.add("Bundle " + rootName + " = response.getExtras();");
+        writeExampleMessage(root, rootName, lines);
+        lines.add("response.putExtras(" + rootName + ");");
+    }
+
+    private void writeExampleEvent(final ObjectProperty root, final String rootName,
+                                   final List<String> lines) {
+        lines.add("Bundle " + rootName + " = message.getExtras();");
+        writeExampleMessage(root, rootName, lines);
+        lines.add("message.putExtras(" + rootName + ");");
+    }
+
+    private void writeExampleMessage(final ObjectProperty root, final String rootName,
+                                     final List<String> lines) {
         Map<String, Property> props = root.getProperties();
         if (props == null) {
             return;
-        }
-        if (isRoot) {
-            lines.add("Bundle " + rootName + " = response.getExtras();");
         }
         for (Map.Entry<String, Property> propEntry : props.entrySet()) {
             String propName = propEntry.getKey();
@@ -521,7 +570,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
                 }
                 objectProp = (ObjectProperty) prop;
                 lines.add("Bundle " + propName + " = new Bundle();");
-                writeSampleResponse(objectProp, propName, lines, false);
+                writeExampleMessage(objectProp, propName, lines);
                 lines.add(rootName  + ".putBundle(\"" + propName + "\", " + propName + ");");
             } else {
                 String setterName = getSetterName(type, format);
