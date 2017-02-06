@@ -3,8 +3,9 @@
     "info": {
         "title": "Proximity Profile",
         "version": "2.0.0",
-        "description": ""
+        "description": "スマートデバイスの近接センサーの物/人の検知を通知するAPI。"
     },
+    "basePath": "/gotapi/proximity",
     "consumes": [
         "application/x-www-form-urlencoded",
         "multipart/form-data"
@@ -25,7 +26,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceProximityResponse"
+                        }
                     }
                 }
             },
@@ -50,7 +54,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/DeviceProximityEvent"
                     }
                 }
             },
@@ -68,7 +80,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/DeviceProximityEvent"
                     }
                 }
             }
@@ -88,7 +108,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/UserProximityResponse"
+                        }
                     }
                 }
             },
@@ -113,7 +136,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/UserProximityEvent"
                     }
                 }
             },
@@ -131,8 +162,194 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        }
                     }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/UserProximityEvent"
+                    }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "DeviceProximityEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "$ref": "#/definitions/DeviceProximityInfo"
+                }
+            ]
+        },
+        "DeviceProximityResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "$ref": "#/definitions/DeviceProximityInfo"
+                }
+            ]
+        },
+        "DeviceProximityInfo": {
+            "type": "object",
+            "required": [
+                "proximity"
+            ],
+            "properties": {
+                "proximity": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "integer",
+                            "title": "近接距離",
+                            "description": "cm単位の距離。"
+                        },
+                        "min": {
+                            "type": "integer",
+                            "title": "近接距離最小値",
+                            "description": "cm単位の距離。"
+                        },
+                        "max": {
+                            "type": "integer",
+                            "title": "近接距離最大値",
+                            "description": "cm単位の距離。"
+                        },
+                        "threshold": {
+                            "type": "integer",
+                            "title": "閾値",
+                            "description": "cm単位の距離の閾値。"
+                        },
+                        "range": {
+                            "type": "string",
+                            "title": "距離識別子",
+                            "description": "距離を示す文字列。",
+                            "enum": ["IMMEDIATE", "NEAR", "FAR", "UNKNOWN"]
+                        }
+                    }
+                }
+            }
+        },
+        "UserProximityEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "$ref": "#/definitions/UserProximityInfo"
+                }
+            ]
+        },
+        "UserProximityResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "$ref": "#/definitions/UserProximityInfo"
+                }
+            ]
+        },
+        "UserProximityInfo": {
+            "type": "object",
+            "required": [
+                "proximity"
+            ],
+            "properties": {
+                "proximity": {
+                    "type": "object",
+                    "required": [
+                        "near"
+                    ],
+                    "properties": {
+                        "near": {
+                            "type": "boolean",
+                            "title": "近接の有無",
+                            "description": "ユーザがデバイスに近接しているかどうか。<br>true: 近接している<br>false: 近接していない"
+                        }
+                    }
+                }
+            }
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムの名前",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムのバージョン名",
+                    "description": ""
+                },
+                "errorCode": {
+                    "type": "string",
+                    "title": "エラーコード",
+                    "description": ""
+                },
+                "errorMessage": {
+                    "type": "string",
+                    "title": "エラーメッセージ",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "レスポンスに対する署名",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        },
+        "CommonEvent": {
+            "type": "object",
+            "required": [
+                "serviceId",
+                "profile",
+                "interface",
+                "attribute"
+            ],
+            "properties": {
+                "serviceId": {
+                    "type": "string",
+                    "title": "サービスID",
+                    "description": ""
+                },
+                "profile": {
+                    "type": "string",
+                    "title": "プロファイル名",
+                    "description": ""
+                },
+                "interface": {
+                    "type": "string",
+                    "title": "インターフェース名",
+                    "description": ""
+                },
+                "attribute": {
+                    "type": "string",
+                    "title": "アトリビュート名",
+                    "description": ""
                 }
             }
         }

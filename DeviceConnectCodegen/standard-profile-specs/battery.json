@@ -3,7 +3,7 @@
     "info": {
         "title": "Battery Profile",
         "version": "2.0.0",
-        "description": ""
+        "description": "スマートデバイスのバッテリー情報を提供するAPI。"
     },
     "consumes": [],
     "paths": {
@@ -137,7 +137,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/OnBatteryChangeResponse"
+                        }
                     }
                 }
             },
@@ -167,6 +170,11 @@
                             "$ref": "#/definitions/CommonResponse"
                         }
                     }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/OnBatteryChangeEvent"
+                    }
                 }
             },
             "delete": {
@@ -188,11 +196,6 @@
                             "$ref": "#/definitions/CommonResponse"
                         }
                     }
-                },
-                "x-event": {
-                    "schema": {
-                        "$ref": "#/definitions/OnBatteryChangeEvent"
-                    }
                 }
             }
         },
@@ -211,7 +214,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/OnChargingChangeResponse"
+                        }
                     }
                 }
             },
@@ -416,11 +422,77 @@
                 }
             ]
         },
+        "OnChargingChangeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "required": [
+                                "charging"
+                            ],
+                            "properties": {
+                                "charging": {
+                                    "type": "boolean",
+                                    "description": "充電状態フラグ<br>充電中:true<br>非充電中:false"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
         "OnBatteryChangeEvent": {
             "type": "object",
             "allOf": [
                 {
                     "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "required": [
+                                "chargingTime",
+                                "dischargingTime",
+                                "level"
+                            ],
+                            "properties": {
+                                "chargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "完全充電までの時間(秒)。<br>満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "dischargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "完全放電までの時間(秒)。<br>充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "level": {
+                                    "type": "number",
+                                    "description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OnBatteryChangeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
                 },
                 {
                     "required": [
@@ -469,23 +541,23 @@
                 },
                 "product": {
                     "type": "string",
-                    "description": ""
+                    "description": "DeviceConnectシステムの名前。"
                 },
                 "version": {
                     "type": "string",
-                    "description": ""
+                    "description": "DeviceConnectシステムのバージョン名。"
                 },
                 "errorCode": {
                     "type": "string",
-                    "description": ""
+                    "description": "エラーコード。"
                 },
                 "errorMessage": {
                     "type": "string",
-                    "description": ""
+                    "description": "エラーメッセージ。"
                 },
                 "hmac": {
                     "type": "string",
-                    "description": ""
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
                 }
             }
         },
@@ -504,15 +576,15 @@
                 },
                 "profile": {
                     "type": "string",
-                    "description": ""
+                    "description": "プロファイル名。"
                 },
                 "interface": {
                     "type": "string",
-                    "description": ""
+                    "description": "インターフェース名。"
                 },
                 "attribute": {
                     "type": "string",
-                    "description": ""
+                    "description": "アトリビュート名。"
                 }
             }
         }
