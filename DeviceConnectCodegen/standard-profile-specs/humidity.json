@@ -3,7 +3,7 @@
     "info": {
         "title": "Humidity Profile",
         "version": "2.0.0",
-        "description": ""
+        "description": "スマートデバイスが計測した湿度を取得する機能を提供するAPI。"
     },
     "consumes": [
         "application/x-www-form-urlencoded",
@@ -25,8 +25,63 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/HumidityResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+         "HumidityResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "humidity"
+                    ],
+                    "properties": {
+                        "humidity": {
+                            "type": "number",
+                            "title": "湿度",
+                            "description": "湿度センサーが検知した湿度を通知する。<br>範囲: 0.0 ~ 1.0",
+                            "minimum": 0.0,
+                            "maximum": 1.0
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "description": "DeviceConnectシステムの名前。"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "DeviceConnectシステムのバージョン名。"
+                },
+                "hmac": {
+                    "type": "string",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
                 }
             }
         }

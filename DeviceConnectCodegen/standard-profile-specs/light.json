@@ -3,7 +3,7 @@
     "info": {
         "title": "Light Profile",
         "version": "2.0.0",
-        "description": ""
+        "description": "スマートデバイスのライト機能を提供するAPI。"
     },
     "consumes": [
         "application/x-www-form-urlencoded",
@@ -25,7 +25,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LightStatusResponse"
+                        }
                     }
                 }
             },
@@ -76,7 +79,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LightControlResponse"
+                        }
                     }
                 }
             },
@@ -100,7 +106,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LightControlResponse"
+                        }
                     }
                 }
             },
@@ -157,8 +166,100 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LightControlResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "LightStatusResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "lights"
+                    ],
+                    "properties": {
+                        "lights": {
+                            "type": "array",
+                            "title": "ライト一覧",
+                            "description": "ライト一覧を格納する配列。",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "lightId",
+                                    "name",
+                                    "on",
+                                    "config"
+                                ],
+                                "properties": {
+                                    "lightId": {
+                                        "type": "string",
+                                        "title": "ライトID",
+                                        "description": "ライトを識別するID。"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "title": "ライト名",
+                                        "description": "ライト名。"
+                                    },
+                                    "on": {
+                                        "type": "boolean",
+                                        "title": "ライトの点灯状態",
+                                        "description": "ライトの点灯状態を示す。<br>true: 点灯<br>false: 消灯"
+                                    },
+                                    "config": {
+                                        "type": "string",
+                                        "title": "コンフィグ",
+                                        "description": "ライトに設定がある場合には、ここに文字列としてデータが格納されている。"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "LightControlResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "description": "DeviceConnectシステムの名前。"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "DeviceConnectシステムのバージョン名。"
+                },
+                "hmac": {
+                    "type": "string",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
                 }
             }
         }

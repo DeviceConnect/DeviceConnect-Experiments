@@ -167,7 +167,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventRegistrationResponse"
                         }
                     }
                 },
@@ -193,7 +193,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventUnregistrationResponse"
                         }
                     }
                 }
@@ -244,7 +244,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventRegistrationResponse"
                         }
                     }
                 },
@@ -270,7 +270,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventUnregistrationResponse"
                         }
                     }
                 }
@@ -527,6 +527,22 @@
                 }
             ]
         },
+        "EventRegistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventUnregistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
         "CommonResponse": {
             "type": "object",
             "required": [
@@ -546,14 +562,6 @@
                 "version": {
                     "type": "string",
                     "description": "DeviceConnectシステムのバージョン名。"
-                },
-                "errorCode": {
-                    "type": "string",
-                    "description": "エラーコード。"
-                },
-                "errorMessage": {
-                    "type": "string",
-                    "description": "エラーメッセージ。"
                 },
                 "hmac": {
                     "type": "string",

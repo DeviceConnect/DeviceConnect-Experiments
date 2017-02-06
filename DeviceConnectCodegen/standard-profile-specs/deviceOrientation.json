@@ -55,7 +55,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventRegistrationResponse"
                         }
                     }
                 },
@@ -81,7 +81,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/EventUnregistrationResponse"
                         }
                     }
                 }
@@ -235,19 +235,27 @@
                     "type": "string",
                     "description": "DeviceConnectシステムのバージョン名。"
                 },
-                "errorCode": {
-                    "type": "string",
-                    "description": "エラーコード。"
-                },
-                "errorMessage": {
-                    "type": "string",
-                    "description": "エラーメッセージ。"
-                },
                 "hmac": {
                     "type": "string",
                     "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
                 }
             }
+        },
+        "EventRegistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventUnregistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
         },
         "CommonEvent": {
             "type": "object",

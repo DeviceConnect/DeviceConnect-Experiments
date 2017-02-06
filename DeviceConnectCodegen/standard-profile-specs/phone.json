@@ -31,7 +31,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PhoneControlResponse"
+                        }
                     }
                 }
             }
@@ -58,7 +61,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PhoneControlResponse"
+                        }
                     }
                 }
             }
@@ -78,7 +84,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/PhoneStatusResponse"
+                        }
                     }
                 }
             },
@@ -96,7 +105,15 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventRegistrationResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/PhoneStatusEvent"
                     }
                 }
             },
@@ -114,8 +131,151 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventUnregistrationResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "PhoneStatusResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "$ref": "#/definitions/PhoneStatusInfo"
+                }
+            ]
+        },
+        "PhoneStatusEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "$ref": "#/definitions/PhoneStatusInfo"
+                }
+            ]
+        },
+        "PhoneStatusInfo": {
+            "type": "object",
+            "required": [
+                "phoneStatus"
+            ],
+            "properties": {
+                "phoneStatus": {
+                    "type": "object",
+                    "title": "電話機能の状態",
+                    "description": "電話機能の状態を保持するオブジェクト。特定の相手先との通話状態の変化を通知する。",
+                    "required": [
+                        "phoneNumber",
+                        "state"
+                    ],
+                    "properties": {
+                        "phoneNumber": {
+                            "type": "string",
+                            "title": "電話番号",
+                            "description": "相手先の電話番号を示す文字列。文字には数字の0〜9のみを使用可能。長さは11桁または13桁のいずれかとする。11桁は国内電話、13桁は国際電話として扱う。"
+                        },
+                        "state": {
+                            "type": "number",
+                            "title": "通話状態",
+                            "description": "通話状態を示す定数。<br>0: 通話開始<br>1: 通話失敗<br>2: 通話終了",
+                            "enum": [0, 1, 2]
+                        }
+                    }
+                }
+            }
+        },
+        "PhoneControlResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventRegistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventUnregistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0: 正常応答<br>0以外: 異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムの名前",
+                    "description": ""
+                },
+                "version": {
+                    "type": "string",
+                    "title": "DeviceConnectシステムのバージョン名",
+                    "description": ""
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "レスポンスに対する署名",
+                    "description": "アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        },
+        "CommonEvent": {
+            "type": "object",
+            "required": [
+                "serviceId",
+                "profile",
+                "interface",
+                "attribute"
+            ],
+            "properties": {
+                "serviceId": {
+                    "type": "string",
+                    "title": "サービスID",
+                    "description": ""
+                },
+                "profile": {
+                    "type": "string",
+                    "title": "プロファイル名",
+                    "description": ""
+                },
+                "interface": {
+                    "type": "string",
+                    "title": "インターフェース名",
+                    "description": ""
+                },
+                "attribute": {
+                    "type": "string",
+                    "title": "アトリビュート名",
+                    "description": ""
                 }
             }
         }
