@@ -86,6 +86,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                 api.put("attribute", attributeName);
                 api.put("apiPath", apiPath);
                 api.put("apiId", apiId);
+
                 switch (method) {
                     case GET:
                         api.put("getApi", true);
@@ -104,6 +105,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
                         profile.put("hasDeleteApi", true);
                         break;
                 }
+
                 switch (operation.getType()) {
                     case ONE_SHOT:
                         api.put("isOneShotApi", true);

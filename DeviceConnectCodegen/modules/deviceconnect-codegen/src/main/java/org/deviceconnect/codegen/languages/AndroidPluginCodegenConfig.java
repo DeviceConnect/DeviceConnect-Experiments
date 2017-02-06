@@ -47,8 +47,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         final String profileClassName;
         final boolean isStandardProfile = baseClassNamePrefix != null;
         if (isStandardProfile) {
-            baseClassName = baseClassNamePrefix + "Profile";
-            profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
+        baseClassName = baseClassNamePrefix + "Profile";
+        profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
         } else {
             baseClassName = "DConnectProfile";
             profileClassName = toUpperCapital(profileName) + "Profile";
@@ -558,11 +558,23 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
                 }
                 arrayProp = (ArrayProperty) prop;
                 Property itemsProp = arrayProp.getItems();
-                String setterName = getSetterName(itemsProp.getType(), itemsProp.getFormat());
-                if (setterName == null) {
+                String className = getClassName(itemsProp);
+                if (className == null) {
                     continue;
                 }
-                lines.add(rootName + "." + setterName +  "Array(\"" + propName + "\", );"); // TODO パラメータ値の設定
+                lines.add(className + "[] " + propName + " = new " + className + "[1];");
+                if ("object".equals(itemsProp.getType())) {
+                    lines.add(propName + "[0] = new Bundle()");
+                    writeExampleMessage((ObjectProperty) itemsProp, propName + "[0]", lines);
+                    lines.add(rootName + ".putParcelableArray(\"" + propName + "\", " + propName + ");");
+                } else {
+                    lines.add(propName + "[0] = " + getExampleValue(itemsProp));
+                    String setterName = getSetterName(itemsProp.getType(), itemsProp.getFormat());
+                    if (setterName == null) {
+                        continue;
+                    }
+                    lines.add(rootName + "." + setterName +  "Array(\"" + propName + "\", " + propName + ");");
+                }
             } else if ("object".equals(type)) {
                 ObjectProperty objectProp;
                 if (!(prop instanceof ObjectProperty)) {
@@ -577,7 +589,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
                 if (setterName == null) {
                     continue;
                 }
-                lines.add(rootName + "." + setterName +  "(\""+ propName + "\", " + getExampleValue(type, format) + ");");
+                lines.add(rootName + "." + setterName +  "(\""+ propName + "\", " + getExampleValue(prop) + ");");
             }
         }
     }
@@ -606,11 +618,47 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
     }
 
-    private String getExampleValue(final String type, final String format) {
+    private String getClassName(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
+        if ("object".equals(type)) {
+            return "Bundle";
+        } else if ("boolean".equals(type)) {
+            return "Boolean";
+        } else if ("string".equals(type)) {
+            return "String";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "Long";
+            } else {
+                return "Integer";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "Double";
+            } else {
+                return "Float";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
+    private String getExampleValue(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
         if ("boolean".equals(type)) {
             return "false";
         } else if ("string".equals(type)) {
-            return "null";
+            StringProperty strProp = (StringProperty) prop;
+            List<String> enumList = strProp.getEnum();
+            if (enumList != null && enumList.size() > 0) {
+                return enumList.get(0);
+            } else {
+                return "\"test\"";
+            }
         } else if ("integer".equals(type)) {
             if ("int64".equals(format)) {
                 return "0L";
