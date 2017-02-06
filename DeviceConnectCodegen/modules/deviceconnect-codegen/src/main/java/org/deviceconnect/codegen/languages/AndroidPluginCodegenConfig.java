@@ -47,11 +47,11 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         final String profileClassName;
         final boolean isStandardProfile = baseClassNamePrefix != null;
         if (isStandardProfile) {
-        baseClassName = baseClassNamePrefix + "Profile";
-        profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
+            baseClassName = baseClassNamePrefix + "Profile";
+            profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
         } else {
             baseClassName = "DConnectProfile";
-            profileClassName = toUpperCapital(profileName) + "Profile";
+            profileClassName = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         }
         properties.put("baseProfileClass", baseClassName);
         properties.put("profileClass", profileClassName);
@@ -558,17 +558,17 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
                 }
                 arrayProp = (ArrayProperty) prop;
                 Property itemsProp = arrayProp.getItems();
-                String className = getClassName(itemsProp);
-                if (className == null) {
+                String arrayClassName = getArrayClassName(itemsProp);
+                if (arrayClassName == null) {
                     continue;
                 }
-                lines.add(className + "[] " + propName + " = new " + className + "[1];");
+                lines.add(arrayClassName + "[] " + propName + " = new " + arrayClassName + "[1];");
                 if ("object".equals(itemsProp.getType())) {
-                    lines.add(propName + "[0] = new Bundle()");
+                    lines.add(propName + "[0] = new Bundle();");
                     writeExampleMessage((ObjectProperty) itemsProp, propName + "[0]", lines);
                     lines.add(rootName + ".putParcelableArray(\"" + propName + "\", " + propName + ");");
                 } else {
-                    lines.add(propName + "[0] = " + getExampleValue(itemsProp));
+                    lines.add(propName + "[0] = " + getExampleValue(itemsProp) + ";");
                     String setterName = getSetterName(itemsProp.getType(), itemsProp.getFormat());
                     if (setterName == null) {
                         continue;
@@ -646,6 +646,34 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
     }
 
+    private String getArrayClassName(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
+        if ("object".equals(type)) {
+            return "Bundle";
+        } else if ("boolean".equals(type)) {
+            return "boolean";
+        } else if ("string".equals(type)) {
+            return "String";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "long";
+            } else {
+                return "int";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "double";
+            } else {
+                return "float";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
     private String getExampleValue(final Property prop) {
         final String type = prop.getType();
         final String format = prop.getFormat();
@@ -655,7 +683,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             StringProperty strProp = (StringProperty) prop;
             List<String> enumList = strProp.getEnum();
             if (enumList != null && enumList.size() > 0) {
-                return enumList.get(0);
+                return "\"" + enumList.get(0) + "\"";
             } else {
                 return "\"test\"";
             }
