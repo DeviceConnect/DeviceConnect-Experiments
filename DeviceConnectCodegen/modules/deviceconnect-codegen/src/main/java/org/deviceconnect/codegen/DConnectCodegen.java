@@ -19,6 +19,20 @@ import java.util.*;
 public class DConnectCodegen {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Codegen.class);
+    private static final String[] PROHIBITED_PROFILES = {
+            "availability",
+            "authorization",
+            "serviceDiscovery",
+            "serviceInformation",
+            "system"
+    };
+    private static final String[] RESERVED_NAMES = {
+            "files",
+            "get",
+            "put",
+            "post",
+            "delete"
+    };
 
     static Map<String, DConnectCodegenConfig> configs = new HashMap<String, DConnectCodegenConfig>();
     static String configString;
@@ -94,6 +108,16 @@ public class DConnectCodegen {
                     Map<String, Swagger> swaggerMap = new HashMap<>();
                     for (File file : specFiles) {
                         String profileName = parseProfileNameFromFileName(file.getName());
+
+                        // プロファイル名が予約語の場合は異常終了
+                        if (isReservedName(profileName)) {
+                            exitOnError("次の名前は予約語のためプロファイル名として使用できません: " + concat(RESERVED_NAMES));
+                        }
+                        // プロファイル名が基本プロファイル名の場合は異常終了
+                        if (isProhibitedProfile(profileName)) {
+                            exitOnError("次のプロファイルは基本プロファイルのため入力できません: " + concat(PROHIBITED_PROFILES));
+                        }
+
                         swaggerMap.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
                     }
                     clientOptInput.swagger(mergeSwaggers(swaggerMap));
@@ -147,7 +171,41 @@ public class DConnectCodegen {
         }
     }
 
-    private static String parseProfileNameFromFileName(String fileName) {
+    private static void exitOnError(final String message) {
+        System.err.println(message);
+        System.exit(1);
+    }
+
+    private static String concat(final String[] array) {
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < array.length; i++) {
+            if (i > 0) {
+                result.append(", ");
+            }
+            result.append(array[i]);
+        }
+        return result.toString();
+    }
+
+    private static boolean isProhibitedProfile(final String profileName) {
+        for (String prohibited : PROHIBITED_PROFILES) {
+            if (profileName.equalsIgnoreCase(prohibited)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isReservedName(final String name) {
+        for (String reserved : RESERVED_NAMES) {
+            if (name.equalsIgnoreCase(reserved)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String parseProfileNameFromFileName(final String fileName) {
         if (!fileName.endsWith(".json")) {
             throw new IllegalArgumentException("JSON file is required.");
         }
