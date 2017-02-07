@@ -8,6 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
+        <!-- Device Connect API リクエストのレシーバー -->
         <receiver
             android:name=".{{messageServiceProviderClass}}"
             android:enabled="true"
@@ -23,10 +24,20 @@
             </intent-filter>
         </receiver>
 
+        <!-- プラグイン本体サービス -->
         <service
             android:name=".{{messageServiceClass}}"
             android:exported="false">
         </service>
+
+        <!-- プラグイン設定画面 -->
+        <activity android:name=".{{classPrefix}}SettingActivity">
+            <!-- TODO ランチャー画面に表示させたくない場合は、下記のインテントフィルタを削除。 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

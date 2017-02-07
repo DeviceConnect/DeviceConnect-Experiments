@@ -1,7 +1,6 @@
 package org.deviceconnect.codegen.languages;
 
 
-import com.sun.javafx.sg.prism.NGShape;
 import io.swagger.codegen.*;
 import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
@@ -196,10 +195,12 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", resFolder + "/drawable-xhdpi/", "ic_launcher.png"));
         supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", resFolder + "/drawable-xxhdpi/", "ic_launcher.png"));
 
-        // 実装ファイル
+        // 実装ファイル (全プラグイン共通)
         final String packageFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
         supportingFiles.add(new SupportingFile("MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
         supportingFiles.add(new SupportingFile("MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
+        supportingFiles.add(new SupportingFile("SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
+        supportingFiles.add(new SupportingFile("SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
     }
 
     @Override
