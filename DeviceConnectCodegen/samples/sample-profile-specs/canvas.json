@@ -58,7 +58,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/CanvasControlResponse"
                         }
                     }
                 }
@@ -79,7 +79,7 @@
                     "200": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/CommonResponse"
+                            "$ref": "#/definitions/CanvasControlResponse"
                         }
                     }
                 }
@@ -88,6 +88,14 @@
     },
 
     "definitions": {
+        "CanvasControlResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
         "CommonResponse": {
             "type": "object",
             "required": [
@@ -111,33 +119,6 @@
                 "hmac": {
                     "type": "string",
                     "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
-                }
-            }
-        },
-        "CommonEvent": {
-            "type": "object",
-            "required": [
-                "serviceId",
-                "profile",
-                "interface",
-                "attribute"
-            ],
-            "properties": {
-                "serviceId": {
-                    "type": "string",
-                    "description": "0:正常応答<br>0以外:異常応答"
-                },
-                "profile": {
-                    "type": "string",
-                    "description": "プロファイル名。"
-                },
-                "interface": {
-                    "type": "string",
-                    "description": "インターフェース名。"
-                },
-                "attribute": {
-                    "type": "string",
-                    "description": "アトリビュート名。"
                 }
             }
         }

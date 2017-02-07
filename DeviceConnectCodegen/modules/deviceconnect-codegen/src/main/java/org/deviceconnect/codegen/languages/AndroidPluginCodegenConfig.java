@@ -439,7 +439,10 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             return lines;
         }
 
-        writeExampleResponse(root, "root", lines);
+        Map<String, Property> props = root.getProperties();
+        if (props != null && props.size() > 0) {
+            writeExampleResponse(root, "root", lines);
+        }
         return lines;
     }
 
@@ -477,7 +480,10 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             return lines;
         }
 
-        writeExampleEvent(root, "root", lines);
+        Map<String, Property> props = root.getProperties();
+        if (props != null && props.size() > 0) {
+            writeExampleEvent(root, "root", lines);
+        }
         return lines;
     }
 
