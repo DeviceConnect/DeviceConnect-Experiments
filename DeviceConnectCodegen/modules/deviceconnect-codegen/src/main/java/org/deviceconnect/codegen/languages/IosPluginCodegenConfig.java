@@ -26,7 +26,6 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
         String classPrefix = getClassPrefix();
-        additionalProperties.put("serviceName", classPrefix + " Service");
         additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
         String pluginClass = classPrefix + "Plugin";
         additionalProperties.put("pluginClass", pluginClass);

@@ -67,6 +67,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
             Map<String, Object> profile = profiles.get(profileName);
             if (profile == null) {
                 profile = new HashMap<>();
+                profile.putAll(additionalProperties);
                 profile.put("apiList", new ArrayList<Map<String, Object>>());
                 profiles.put(profileName, profile);
             }

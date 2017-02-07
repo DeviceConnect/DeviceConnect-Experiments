@@ -174,7 +174,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         final String messageServiceClass = classPrefix + "MessageService";
         final String messageServiceProviderClass = classPrefix + "MessageServiceProvider";
         additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
-        additionalProperties.put("serviceName", classPrefix + " Service");
         additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
         additionalProperties.put("messageServiceClass", messageServiceClass);
         additionalProperties.put("messageServiceProviderClass", messageServiceProviderClass);

@@ -17,7 +17,7 @@ public class {{messageServiceClass}} extends DConnectMessageService {
 
         // TODO 以降の処理では常駐型のサービスを生成しています. 要件に適さない場合は修正してください.
         DConnectService service = new DConnectService("{{serviceId}}");
-        service.setName("{{serviceName}}");
+        service.setName("{{displayName}}'s Service");
         service.setOnline(true);
         {{#supportedProfileClasses}}
         service.addProfile(new {{name}}());
