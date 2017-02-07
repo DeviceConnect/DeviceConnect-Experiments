@@ -36,4 +36,28 @@ public class {{messageServiceClass}} extends DConnectMessageService {
     protected SystemProfile getSystemProfile() {
         return new {{classPrefix}}SystemProfile();
     }
+
+    @Override
+    protected void onManagerUninstalled() {
+        super.onManagerUninstalled();
+        // TODO Device Connect Managerアンインストール時に実行したい処理. 実装は任意.
+    }
+
+    @Override
+    protected void onManagerTerminated() {
+        super.onManagerTerminated();
+        // TODO Device Connect Manager停止時に実行したい処理. 実装は任意.
+    }
+
+    @Override
+    protected void onManagerEventTransmitDisconnected(final String origin) {
+        super.onManagerEventTransmitDisconnected(origin);
+        // TODO アプリとのWebSocket接続が切断された時に実行したい処理. 実装は任意.
+    }
+
+    @Override
+    protected void onDevicePluginReset() {
+        super.onDevicePluginReset();
+        // TODO Device Connect Managerの設定画面上で「プラグイン再起動」を要求された場合の処理. 実装は任意.
+    }
 }
