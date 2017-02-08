@@ -1,19 +1,19 @@
-:: ã‚¹ã‚±ãƒ«ãƒˆãƒ³ã‚³ãƒ¼ãƒ‰ç¨®åˆ¥: Androidãƒ—ãƒ©ã‚°ã‚¤ãƒ³
+:: ƒXƒPƒ‹ƒgƒ“ƒR[ƒhí•Ê: Androidƒvƒ‰ƒOƒCƒ“
 set LANG=deviceConnectAndroidPlugin
 
-:: ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«å®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+:: ƒvƒƒtƒ@ƒCƒ‹’è‹`ƒtƒ@ƒCƒ‹‚ÌƒfƒBƒŒƒNƒgƒŠ
 set SPEC_DIR=.\sample-profile-specs
 
-:: ã‚¹ã‚±ãƒ«ãƒˆãƒ³ã‚³ãƒ¼ãƒ‰å‡ºåŠ›å…ˆ
+:: ƒXƒPƒ‹ƒgƒ“ƒR[ƒho—Íæ
 set OUTPUT_DIR=.\output\Android\MyPlugin
 
-:: Androidãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸å
+:: Androidƒvƒ‰ƒOƒCƒ“‚ÌƒpƒbƒP[ƒW–¼
 set PACKAGE_NAME=com.mydomain.myplugin
 
-:: Androidãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¡¨ç¤ºå
+:: Androidƒvƒ‰ƒOƒCƒ“‚Ì•\¦–¼
 set DISPLAY_NAME=MyPlugin
 
-:: ã‚¹ã‚±ãƒ«ãƒˆãƒ³ã‚³ãƒ¼ãƒ‰ç”Ÿæˆãƒ„ãƒ¼ãƒ«ã®ãƒã‚¤ãƒŠãƒª
+:: ƒXƒPƒ‹ƒgƒ“ƒR[ƒh¶¬ƒc[ƒ‹‚ÌƒoƒCƒiƒŠ
 set JAR_FILE=..\bin\deviceconnect-codegen.jar
 
 java -Dfile.encoding=UTF-8 -jar %JAR_FILE% --input-spec-dir %SPEC_DIR%  --lang %LANG% --package-name %PACKAGE_NAME%  --display-name %DISPLAY_NAME%  --output %OUTPUT_DIR%
