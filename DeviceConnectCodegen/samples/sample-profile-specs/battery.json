@@ -25,6 +25,17 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/AllResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "charging": true,
+                                "chargingTime": 10,
+                                "dischargingTime": 0,
+                                "level": 0.8
+                            }
                         }
                     }
                 }
@@ -48,6 +59,14 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ChargingResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "charging": true
+                            }
                         }
                     }
                 }
@@ -71,6 +90,14 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/ChargingTimeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "chargingTime": 10
+                            }
                         }
                     }
                 }
@@ -94,6 +121,14 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/DischargingTimeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "dischargingTime": 0
+                            }
                         }
                     }
                 }
@@ -117,6 +152,14 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/LevelResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "level": 0.8
+                            }
                         }
                     }
                 }
@@ -140,6 +183,18 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/OnBatteryChangeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "battery": {
+                                    "chargingTime": 10,
+                                    "dischargingTime": 0,
+                                    "level": 0.8
+                                }
+                            }
                         }
                     }
                 }
@@ -168,12 +223,31 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/EventRegistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
                         }
                     }
                 },
                 "x-event": {
                     "schema": {
                         "$ref": "#/definitions/OnBatteryChangeEvent"
+                    },
+                    "examples": {
+                        "application/json": {
+                            "serviceId": "example-service-id",
+                            "profile": "battery",
+                            "attribute": "onBatteryChange",
+                            "battery": {
+                                "chargingTime": 10,
+                                "dischargingTime": 0,
+                                "level": 0.8
+                            }
+                        }
                     }
                 }
             },
@@ -194,6 +268,13 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/EventUnregistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
                         }
                     }
                 }
@@ -217,6 +298,16 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/OnChargingChangeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "battery": {
+                                    "charging": true
+                                }
+                            }
                         }
                     }
                 }
@@ -245,12 +336,29 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/EventRegistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
                         }
                     }
                 },
                 "x-event": {
                     "schema": {
                         "$ref": "#/definitions/OnChargingChangeEvent"
+                    },
+                    "examples": {
+                        "application/json": {
+                            "serviceId": "example-service-id",
+                            "profile": "battery",
+                            "attribute": "onChargingChange",
+                            "battery": {
+                                "charging": true
+                            }
+                        }
                     }
                 }
             },
@@ -271,6 +379,13 @@
                         "description": "",
                         "schema": {
                             "$ref": "#/definitions/EventUnregistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
                         }
                     }
                 }

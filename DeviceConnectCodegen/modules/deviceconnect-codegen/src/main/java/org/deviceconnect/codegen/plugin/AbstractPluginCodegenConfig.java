@@ -1,20 +1,24 @@
-package org.deviceconnect.codegen.languages;
+package org.deviceconnect.codegen.plugin;
 
 
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.CodegenConfig;
+import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
+import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.models.DConnectOperation;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen {
+public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
 
     private final String[] standardProfileClassNames;
+
+    private File[] inputSpecFiles;
 
     protected AbstractPluginCodegenConfig() {
         standardProfileClassNames = loadStandardProfileNames();
@@ -54,6 +58,16 @@ public abstract class AbstractPluginCodegenConfig extends DefaultDConnectCodegen
 
     protected String getClassPrefix() {
         return (String) additionalProperties.get("classPrefix");
+    }
+
+    @Override
+    public File[] getInputSpecFiles() {
+        return inputSpecFiles;
+    }
+
+    @Override
+    public void setInputSpecFiles(final File[] specs) {
+        this.inputSpecFiles = specs;
     }
 
     @Override

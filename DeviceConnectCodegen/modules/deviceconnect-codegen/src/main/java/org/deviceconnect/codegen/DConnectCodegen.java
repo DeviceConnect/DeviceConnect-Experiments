@@ -4,6 +4,7 @@ package org.deviceconnect.codegen;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
+import io.swagger.models.Info;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
@@ -214,6 +215,12 @@ public class DConnectCodegen {
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
         Swagger merged = new Swagger();
+
+        // info
+        Info info = new Info();
+        info.setTitle("Device Connect");
+        info.setVersion("1.0.0");
+        merged.setInfo(info);
 
         // paths
         Map<String, Path> paths = new HashMap<>();

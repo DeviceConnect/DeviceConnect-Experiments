@@ -1,9 +1,8 @@
-package org.deviceconnect.codegen.languages;
+package org.deviceconnect.codegen.plugin;
 
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
-import io.swagger.models.Model;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.FormParameter;

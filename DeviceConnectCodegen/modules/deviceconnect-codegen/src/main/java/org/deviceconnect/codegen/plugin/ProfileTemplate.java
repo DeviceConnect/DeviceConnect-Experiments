@@ -1,4 +1,4 @@
-package org.deviceconnect.codegen.languages;
+package org.deviceconnect.codegen.plugin;
 
 
 class ProfileTemplate {
