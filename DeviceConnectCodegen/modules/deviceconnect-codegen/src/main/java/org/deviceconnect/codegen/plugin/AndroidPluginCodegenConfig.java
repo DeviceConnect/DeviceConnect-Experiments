@@ -58,7 +58,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         properties.put("profilePackage", getProfilePackage());
         properties.put("isStandardProfile", isStandardProfile);
 
-        ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName;});
 
         ProfileTemplate template = new ProfileTemplate();

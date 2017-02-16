@@ -50,7 +50,7 @@ public class DConnectCodegen {
         options.addOption("h", "help", false, "shows this message");
         options.addOption("l", "lang", true, "client language to generate.\nAvailable languages include:\n\t[" + configString + "]");
         options.addOption("o", "output", true, "where to write the generated files");
-        //options.addOption("i", "input-spec", true, "location of the swagger spec, as URL or file");
+        options.addOption("i", "input-spec", true, "location of the swagger spec, as URL or file");
         options.addOption("s", "input-spec-dir", true, "directory of the swagger specs");
         options.addOption("t", "template-dir", true, "folder containing the template files");
         options.addOption("d", "debug-info", false, "prints additional info for debugging");
@@ -95,18 +95,59 @@ public class DConnectCodegen {
             if (cmd.hasOption("o")) {
                 config.setOutputDir(cmd.getOptionValue("o"));
             }
-            if (cmd.hasOption("s")) {
+            if (cmd.hasOption("i")) {
+                String location = cmd.getOptionValue("i");
+                Swagger swagger = new SwaggerParser().read(location, clientOptInput.getAuthorizationValues(), true);
+                clientOptInput.swagger(swagger);
+
+                String basePath = swagger.getBasePath();
+                if (basePath == null || basePath.equals("")) {
+                    basePath = "/";
+                    swagger.setBasePath(basePath);
+                }
+                Map<String, Swagger> profiles = new HashMap<>();
+                Map<String, Path> paths = swagger.getPaths();
+                for (Map.Entry<String, Path> entry : paths.entrySet()) {
+                    Path path = entry.getValue();
+                    String pathName = entry.getKey();
+                    String fullPathName = basePath.equals("/") ? pathName : basePath + pathName;
+                    String[] parts = fullPathName.split("/");
+                    if (parts.length < 3) {
+                        continue;
+                    }
+                    String apiPart = parts[1];
+                    String profilePart = parts[2];
+                    String subPath = "/";
+                    for (int i = 3; i < parts.length; i++) {
+                        subPath += parts[i];
+                        if (i < parts.length - 1) {
+                            subPath += "/";
+                        }
+                    }
+
+                    Swagger profile = profiles.get(profilePart);
+                    if (profile == null) {
+                        profile = createProfileSpec(swagger);
+                        profile.setBasePath("/" + apiPart + "/" + profilePart);
+                        profiles.put(profilePart, profile);
+                    }
+                    Map<String, Path> subPaths = profile.getPaths();
+                    subPaths.put(subPath, path);
+                    profile.setPaths(subPaths);
+                }
+
+                config.setProfileSpecs(profiles);
+            } else if (cmd.hasOption("s")) {
                 File dir = new File(cmd.getOptionValue("s"));
                 if (dir.isDirectory()) {
                     specFiles = dir.listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(final File dir, final String name) {
-                            return name.endsWith(".json");
+                            return name.endsWith(".json") || name.endsWith(".yaml");
                         }
                     });
-                    config.setInputSpecFiles(specFiles);
 
-                    Map<String, Swagger> swaggerMap = new HashMap<>();
+                    Map<String, Swagger> profileSpecs = new HashMap<>();
                     for (File file : specFiles) {
                         String profileName = parseProfileNameFromFileName(file.getName());
 
@@ -119,9 +160,10 @@ public class DConnectCodegen {
                             exitOnError("次のプロファイルは基本プロファイルのため入力できません: " + concat(PROHIBITED_PROFILES));
                         }
 
-                        swaggerMap.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
+                        profileSpecs.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
                     }
-                    clientOptInput.swagger(mergeSwaggers(swaggerMap));
+                    config.setProfileSpecs(profileSpecs);
+                    clientOptInput.swagger(mergeSwaggers(profileSpecs));
                 } else {
                     usage(options);
                     return;
@@ -170,6 +212,34 @@ public class DConnectCodegen {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static Swagger createProfileSpec(final Swagger swagger) {
+        Swagger profile = new Swagger();
+        profile.setSwagger(swagger.getSwagger());
+        Info info = new Info();
+        info.setTitle(swagger.getInfo().getTitle());
+        info.setVersion(swagger.getInfo().getVersion());
+        profile.setInfo(info);
+        profile.setConsumes(swagger.getConsumes());
+        profile.setExternalDocs(swagger.getExternalDocs());
+        profile.setHost(swagger.getHost());
+        profile.setParameters(swagger.getParameters());
+        profile.setResponses(swagger.getResponses());
+        profile.setProduces(swagger.getProduces());
+        profile.setSecurity(swagger.getSecurity());
+        profile.setSecurityDefinitions(swagger.getSecurityDefinitions());
+        profile.setSchemes(swagger.getSchemes());
+        profile.setTags(swagger.getTags());
+        Map<String, Object> extensions = swagger.getVendorExtensions();
+        if (extensions != null) {
+            for (Map.Entry<String, Object> entry : extensions.entrySet()) {
+                profile.setVendorExtension(entry.getKey(), entry.getValue());
+            }
+        }
+        profile.setDefinitions(swagger.getDefinitions());
+        profile.setPaths(new HashMap<String, Path>());
+        return profile;
     }
 
     private static void exitOnError(final String message) {

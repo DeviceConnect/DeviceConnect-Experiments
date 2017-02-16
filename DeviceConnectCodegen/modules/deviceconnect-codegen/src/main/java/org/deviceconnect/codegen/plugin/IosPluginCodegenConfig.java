@@ -137,7 +137,6 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         impl.outputFile = profileClassName + ".m";
         profileTemplates.add(impl);
 
-        ((List<Object>) additionalProperties.get("supportedProfileNames")).add(new Object() { String name = profileName; });
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName; });
 
         return profileTemplates;

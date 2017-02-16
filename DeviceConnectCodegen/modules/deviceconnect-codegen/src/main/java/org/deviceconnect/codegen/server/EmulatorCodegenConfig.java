@@ -3,13 +3,15 @@ package org.deviceconnect.codegen.server;
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.languages.NodeJSServerCodegen;
+import io.swagger.models.Swagger;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 
 import java.io.File;
+import java.util.Map;
 
 public class EmulatorCodegenConfig extends NodeJSServerCodegen implements DConnectCodegenConfig {
 
-    private File[] inputSpecFiles;
+    private Map<String, Swagger> profileSpecs;
 
     @Override
     public CodegenType getTag() {
@@ -27,12 +29,12 @@ public class EmulatorCodegenConfig extends NodeJSServerCodegen implements DConne
     }
 
     @Override
-    public File[] getInputSpecFiles() {
-        return inputSpecFiles;
+    public Map<String, Swagger> getProfileSpecs() {
+        return this.profileSpecs;
     }
 
     @Override
-    public void setInputSpecFiles(final File[] specs) {
-        this.inputSpecFiles = specs;
+    public void setProfileSpecs(final Map<String, Swagger> profileSpecs) {
+        this.profileSpecs = profileSpecs;
     }
 }

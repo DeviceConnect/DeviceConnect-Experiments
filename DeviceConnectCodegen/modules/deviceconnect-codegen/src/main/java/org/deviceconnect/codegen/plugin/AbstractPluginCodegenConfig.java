@@ -1,12 +1,14 @@
 package org.deviceconnect.codegen.plugin;
 
 
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.CodegenConfig;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.util.Json;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.models.DConnectOperation;
 
@@ -18,11 +20,10 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
     private final String[] standardProfileClassNames;
 
-    private File[] inputSpecFiles;
+    private Map<String, Swagger> profileSpecs;
 
     protected AbstractPluginCodegenConfig() {
         standardProfileClassNames = loadStandardProfileNames();
-        additionalProperties.put("supportedProfileNames", new ArrayList<>());
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
 
@@ -61,13 +62,13 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
     }
 
     @Override
-    public File[] getInputSpecFiles() {
-        return inputSpecFiles;
+    public Map<String, Swagger> getProfileSpecs() {
+        return this.profileSpecs;
     }
 
     @Override
-    public void setInputSpecFiles(final File[] specs) {
-        this.inputSpecFiles = specs;
+    public void setProfileSpecs(final Map<String, Swagger> profileSpecs) {
+        this.profileSpecs = profileSpecs;
     }
 
     @Override
@@ -167,18 +168,29 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         }
 
         // 各プロファイルのスケルトンコード生成
-        for (Map.Entry<String, Map<String, Object>> entry : profiles.entrySet()) {
-            String profileName = entry.getKey();
-            Map<String, Object> profile = entry.getValue();
+        List<Object> supportedProfileNames = new ArrayList<>();
+        for (final Iterator<Map.Entry<String, Map<String, Object>>> it = profiles.entrySet().iterator(); it.hasNext(); ) {
+            final Map.Entry<String, Map<String, Object>> entry = it.next();
+            final String profileName = entry.getKey();
+            final Map<String, Object> profile = entry.getValue();
             try {
                 List<ProfileTemplate> profileTemplates = prepareProfileTemplates(profileName, profile);
-                for (ProfileTemplate template : profileTemplates) {
-                    generateProfile(template, profile);
+                if (profileTemplates != null) {
+                    for (ProfileTemplate template : profileTemplates) {
+                        generateProfile(template, profile);
+                    }
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to generate profile source code: profile = " + profileName, e);
             }
+
+            supportedProfileNames.add(new Object() {
+                String name = profileName;
+                String id = profileName.toLowerCase();
+                boolean hasNext = it.hasNext();
+            });
         }
+        additionalProperties.put("supportedProfileNames", supportedProfileNames);
 
         // プロファイル定義ファイルのコピー
         try {
@@ -268,43 +280,30 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         if (!dir.mkdirs()) {
             throw new IOException("Failed to copy profile spec directory: " + dirPath);
         }
-        for (File specFile : getInputSpecFiles()) {
-            File copy = new File(dirPath, specFile.getName());
-            LOGGER.info("writing file " + copy.getAbsolutePath());
-            copyFile(specFile, copy);
+        if (profileSpecs != null) {
+            for (Map.Entry<String, Swagger> spec : profileSpecs.entrySet()) {
+                String fileName = spec.getKey() + ".json";
+                String content = Json.mapper().writeValueAsString(spec.getValue());
+                writeFile(content, new File(getProfileSpecFolder(), fileName));
+            }
         }
     }
 
-    private void copyFile(final File source, final File destination) throws IOException {
-        if (!source.exists()) {
-            throw new IOException("Profile Spec File is not found: " + source.getAbsolutePath());
-        }
+    private void writeFile(final String source, final File destination) throws IOException {
         if (destination.exists()) {
             throw new IOException("Profile Spec File is already created: " + destination.getAbsolutePath());
         }
         if (!destination.createNewFile()) {
             throw new IOException("Failed to create Profile Spec File: " + destination.getAbsolutePath());
         }
-        FileInputStream in = null;
         FileOutputStream out = null;
-        int len;
-        byte[] buf = new byte[1024];
         try {
-            in = new FileInputStream(source);
             out = new FileOutputStream(destination);
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
+            out.write(source.getBytes());
             out.flush();
         } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } finally {
-                if (out != null) {
-                    out.close();
-                }
+            if (out != null) {
+                out.close();
             }
         }
     }
