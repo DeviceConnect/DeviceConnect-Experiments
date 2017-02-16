@@ -1,0 +1,48 @@
+'use strict';
+
+// Constructor
+let GotapiPlugin = function(util) {
+  this.util = util;
+
+  this.info = {
+    name: '{{displayName}}',
+    services: [
+      {
+        serviceId: "{{serviceId}}",
+        id: "{{serviceId}}",
+        name: "{{displayName}} Service",
+        online: true,
+        scopes: [
+            {{#supportedProfileNames}}
+            "{{name}}"{{#hasNext}},{{/hasNext}}
+            {{/supportedProfileNames}}
+        ]
+      }
+    ]
+  };
+
+  this.profiles = {
+    {{#supportedProfileNames}}
+    {{id}}: require('./profiles/{{name}}.js'){{#hasNext}},{{/hasNext}}
+    {{/supportedProfileNames}}
+  };
+};
+
+GotapiPlugin.prototype.init = function(callback) {
+  this.util.init(this.info);
+  this.util.onmessage = this.receiveMessage.bind(this);
+  callback(this.info);
+};
+
+GotapiPlugin.prototype.receiveMessage = function(message) {
+  var profile = this.profiles[message.profile.toLowerCase()];
+  if (profile !== undefined) {
+    profile.receiveMessage(message);
+  } else {
+    message.result = 404;
+  }
+
+  this.util.returnMessage(message);
+};
+
+module.exports = GotapiPlugin;

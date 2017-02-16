@@ -1,0 +1,12 @@
+'use strict';
+
+let operations = {
+    {{#paths}}
+
+    {{/paths}}
+};
+
+let Profile = require('../profile.js');
+module.exports = new Profile({
+    operations: operations
+});
