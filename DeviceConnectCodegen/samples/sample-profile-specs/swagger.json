@@ -1,13 +1,166 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Battery Profile",
+        "title": "Device Connect API",
         "version": "2.0.0",
         "description": "スマートデバイスのバッテリー情報を提供するAPI。"
     },
     "consumes": [],
+    "basePath": "/gotapi",
     "paths": {
-        "/": {
+        "/deviceOrientation/onDeviceOrientation": {
+            "get": {
+                "x-type": "one-shot",
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceOrientationResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "x-type": "event",
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "interval",
+                        "in": "formData",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventRegistrationResponse"
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/DeviceOrientationEvent"
+                    }
+                }
+            },
+            "delete": {
+                "x-type": "event",
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventUnregistrationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/canvas/drawImage": {
+            "post" : {
+                "x-type": "one-shot",
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "mimeType",
+                        "in": "formData",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "data",
+                        "in": "formData",
+                        "type": "file",
+                        "required": false
+                    },
+                    {
+                        "name": "x",
+                        "in": "formData",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "y",
+                        "in": "formData",
+                        "type": "integer",
+                        "required": false
+                    },
+                    {
+                        "name": "mode",
+                        "in": "formData",
+                        "type": "string",
+                        "required": false,
+                        "enum": ["scales", "fills"]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CanvasControlResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "x-type": "one-shot",
+                "summary": "",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CanvasControlResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/battery": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "スマートデバイスのバッテリー情報を取得する。",
@@ -41,7 +194,7 @@
                 }
             }
         },
-        "/charging": {
+        "/battery/charging": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "スマートデバイスの充電状態フラグを取得する。",
@@ -72,7 +225,7 @@
                 }
             }
         },
-        "/chargingTime": {
+        "/battery/chargingTime": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "スマートデバイスの充電完了時間を取得する。",
@@ -103,7 +256,7 @@
                 }
             }
         },
-        "/dischargingTime": {
+        "/battery/dischargingTime": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "スマートデバイスの放電完了時間を取得する。",
@@ -134,7 +287,7 @@
                 }
             }
         },
-        "/level": {
+        "/battery/level": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "スマートデバイスのバッテリー残量を取得する。",
@@ -165,7 +318,7 @@
                 }
             }
         },
-        "/onBatteryChange": {
+        "/battery/onBatteryChange": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "",
@@ -280,7 +433,7 @@
                 }
             }
         },
-        "/onChargingChange": {
+        "/battery/onChargingChange": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "",
@@ -642,22 +795,6 @@
                 }
             ]
         },
-        "EventRegistrationResponse": {
-            "type": "object",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/CommonResponse"
-                }
-            ]
-        },
-        "EventUnregistrationResponse": {
-            "type": "object",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/CommonResponse"
-                }
-            ]
-        },
         "CommonResponse": {
             "type": "object",
             "required": [
@@ -708,6 +845,155 @@
                 "attribute": {
                     "type": "string",
                     "description": "アトリビュート名。"
+                }
+            }
+        },
+        "CanvasControlResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventRegistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventUnregistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "DeviceOrientationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "$ref": "#/definitions/DeviceOrientationInfo"
+                }
+            ]
+        },
+        "DeviceOrientationEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "$ref": "#/definitions/DeviceOrientationInfo"
+                }
+            ]
+        },
+        "DeviceOrientationInfo": {
+            "type": "object",
+            "required": [
+                "orientation"
+            ],
+            "properties": {
+                "orientation": {
+                    "type": "object",
+                    "required": [
+                        "interval"
+                    ],
+                    "properties": {
+                        "interval": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "インターバル",
+                            "description": "インターバル (単位: ミリ秒)"
+                        },
+                        "acceleration": {
+                            "type": "object",
+                            "title": "加速度",
+                            "description": "加速度のオブジェクト。",
+                            "required": [
+                                "x",
+                                "y",
+                                "z"
+                            ],
+                            "properties": {
+                                "x": {
+                                    "type": "number",
+                                    "title": "x軸成分",
+                                    "description": "x軸方向への加速度（m/s2）。"
+                                },
+                                "y": {
+                                    "type": "number",
+                                    "title": "y軸成分",
+                                    "description": "y軸方向への加速度（m/s2）。"
+                                },
+                                "z": {
+                                    "type": "number",
+                                    "title": "z軸成分",
+                                    "description": "z軸方向への加速度（m/s2）。"
+                                }
+                            }
+                        },
+                        "accelerationIncludingGravity": {
+                            "type": "object",
+                            "title": "重力込みの加速度",
+                            "description": "重力込みの加速度のオブジェクト。",
+                            "required": [
+                                "x",
+                                "y",
+                                "z"
+                            ],
+                            "properties": {
+                                "x": {
+                                    "type": "number",
+                                    "title": "x軸成分",
+                                    "description": "x軸方向への重力込みの加速度（m/s2）。"
+                                },
+                                "y": {
+                                    "type": "number",
+                                    "title": "y軸成分",
+                                    "description": "y軸方向への重力込みの加速度（m/s2）。"
+                                },
+                                "z": {
+                                    "type": "number",
+                                    "title": "z軸成分",
+                                    "description": "z軸方向への重力込みの加速度（m/s2）。"
+                                }
+                            }
+                        },
+                        "rotationRate": {
+                            "type": "object",
+                            "title": "角速度",
+                            "description": "角速度のオブジェクト。",
+                            "required": [
+                                "alpha",
+                                "beta",
+                                "gamma"
+                            ],
+                            "properties": {
+                                "alpha": {
+                                    "type": "number",
+                                    "title": "z軸回り成分",
+                                    "description": "z軸回りの角速度(degree/s)。"
+                                },
+                                "beta": {
+                                    "type": "number",
+                                    "title": "x軸回り成分",
+                                    "description": "x軸回りの角速度(degree/s)。"
+                                },
+                                "gamma": {
+                                    "type": "number",
+                                    "title": "y軸回り成分",
+                                    "description": "y軸回りの角速度(degree/s)。"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
