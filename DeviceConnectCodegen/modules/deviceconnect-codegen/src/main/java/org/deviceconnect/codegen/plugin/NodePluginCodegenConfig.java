@@ -1,12 +1,11 @@
 package org.deviceconnect.codegen.plugin;
 
 
-import io.swagger.codegen.CodegenConstants;
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,17 +16,128 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected String getDeclaration(final Parameter p) {
-        return null;
+        return "let " + p.getName() + " = message.params." + p.getName() + ";";
     }
 
     @Override
     protected List<String> getResponseCreation(final Swagger swagger, final Response response) {
-        return null;
+        List<String> lines = new ArrayList<>();
+        Property schema = response.getSchema();
+
+        ObjectProperty root;
+        if (schema instanceof ObjectProperty) {
+            root = (ObjectProperty) schema;
+        } else if (schema instanceof RefProperty) {
+            RefProperty ref = (RefProperty) schema;
+            if (isIgnoredDefinition(ref.getName())) {
+                return lines;
+            }
+            Model model = findDefinition(swagger, ref.getSimpleRef());
+            Map<String, Property> properties;
+            if (model instanceof ComposedModel) {
+                properties = getProperties(swagger, (ComposedModel) model);
+            } else if (model instanceof ModelImpl) {
+                properties = model.getProperties();
+            } else {
+                lines.add("// WARNING: メッセージの定義が不正です.");
+                return lines;
+            }
+            if (properties == null) {
+                lines.add("// WARNING: メッセージの定義が見つかりませんでした.");
+                return lines;
+            }
+            root =  new ObjectProperty();
+            root.setProperties(properties);
+        } else {
+            lines.add("// WARNING: メッセージの定義が不正です.");
+            return lines;
+        }
+
+        Map<String, Property> props = root.getProperties();
+        if (props != null && props.size() > 0) {
+            writeExampleMessage(root, "message", lines);
+        }
+        return lines;
     }
 
     @Override
     protected List<String> getEventCreation(final Swagger swagger, final Response event) {
-        return null;
+        return getResponseCreation(swagger, event);
+    }
+
+    private void writeExampleMessage(final ObjectProperty root, final String rootName,
+                                     final List<String> lines) {
+        Map<String, Property> props = root.getProperties();
+        if (props == null) {
+            return;
+        }
+        for (Map.Entry<String, Property> propEntry : props.entrySet()) {
+            String propName = propEntry.getKey();
+            Property prop = propEntry.getValue();
+
+            String type = prop.getType();
+            if ("array".equals(type)) {
+                ArrayProperty arrayProp;
+                if (!(prop instanceof  ArrayProperty)) {
+                    continue;
+                }
+                arrayProp = (ArrayProperty) prop;
+                Property itemsProp = arrayProp.getItems();
+
+                lines.add("let " + propName + " = [];");
+                if ("object".equals(itemsProp.getType())) {
+                    lines.add(propName + "[0] = {};");
+                    writeExampleMessage((ObjectProperty) itemsProp, propName + "[0]", lines);
+                    lines.add(rootName + "." + propName + " = " + propName + ";");
+                } else {
+                    lines.add(propName + "[0] = " + getExampleValue(itemsProp) + ";");
+                    lines.add(rootName + "." + propName + " = " + propName + ";");
+                }
+            } else if ("object".equals(type)) {
+                ObjectProperty objectProp;
+                if (!(prop instanceof ObjectProperty)) {
+                    continue;
+                }
+                objectProp = (ObjectProperty) prop;
+                lines.add("let " + propName + " = {};");
+                writeExampleMessage(objectProp, propName, lines);
+                lines.add(rootName  + "." + propName + " = " + propName + ";");
+            } else {
+                lines.add(rootName + "." + propName + " = " + getExampleValue(prop) + ";");
+            }
+        }
+    }
+
+    private String getExampleValue(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
+        if ("boolean".equals(type)) {
+            return "false";
+        } else if ("string".equals(type)) {
+            StringProperty strProp = (StringProperty) prop;
+            List<String> enumList = strProp.getEnum();
+            if (enumList != null && enumList.size() > 0) {
+                return "\"" + enumList.get(0) + "\"";
+            } else {
+                return "\"test\"";
+            }
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "0";
+            } else {
+                return "0";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "0.0";
+            } else {
+                return "0.0";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
     }
 
     @Override
@@ -37,15 +147,13 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
-//        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-//
-//        ProfileTemplate template = new ProfileTemplate();
-//        template.templateFile = "profile.mustache";
-//        template.outputFile = profileClassName + ".java";
-//        profileTemplates.add(template);
-//        return profileTemplates;
+        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
 
-        return null;
+        ProfileTemplate template = new ProfileTemplate();
+        template.templateFile = "profile.js.mustache";
+        template.outputFile = profileName + ".js";
+        profileTemplates.add(template);
+        return profileTemplates;
     }
 
     @Override
@@ -61,6 +169,10 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         // index.js (= プラグイン本体の実装ファイル)
         supportingFiles.add(new SupportingFile("index.js.mustache", "", "index.js"));
+
+        // 共通ロジック
+        supportingFiles.add(new SupportingFile("profile.js", "", "profile.js"));
+        supportingFiles.add(new SupportingFile("serviceinformation.js.mustache", "", "profiles/serviceinformation.js"));
     }
 
     @Override

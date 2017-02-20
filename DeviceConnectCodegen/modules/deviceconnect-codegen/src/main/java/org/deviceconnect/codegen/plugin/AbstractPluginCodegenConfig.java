@@ -8,6 +8,7 @@ import io.swagger.codegen.CodegenConfig;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.models.DConnectOperation;
@@ -96,11 +97,14 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                 String interfaceName = getInterfaceNameFromPath(pathName);
                 String attributeName = getAttributeNameFromPath(pathName);
                 String apiPath = createApiPath(interfaceName, attributeName);
-                String apiId = createApiIdentifier(method, profileName, interfaceName, attributeName);
+                String apiFullPath = createApiFullPath(swagger, profileName, interfaceName, attributeName);
+                String apiId = createApiIdentifier(swagger, method, profileName, interfaceName, attributeName);
 
+                api.put("method", method.name().toLowerCase());
                 api.put("interface", interfaceName);
                 api.put("attribute", attributeName);
-                api.put("apiPath", apiPath);
+                api.put("apiPath", apiPath); // プロファイル名以下のパス
+                api.put("apiFullPath", apiFullPath); // フルパス
                 api.put("apiId", apiId);
 
                 switch (method) {
@@ -165,7 +169,11 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
                 LOGGER.info("Parsed path: profile = " + profileName + ", interface = " + interfaceName + ", attribute = " + attributeName);
             }
+            for (Iterator<Map<String, Object>> it = apiList.iterator(); it.hasNext(); ) {
+                it.next().put("hasNext", it.hasNext());
+            }
         }
+
 
         // 各プロファイルのスケルトンコード生成
         List<Object> supportedProfileNames = new ArrayList<>();
@@ -264,9 +272,23 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         return path;
     }
 
-    private static String createApiIdentifier(HttpMethod method, String profileName,
+    private static String createApiFullPath(Swagger swagger, String profileName,
+                                            String interfaceName, String attributeName) {
+        String basePath = swagger.getBasePath();
+        String path = (basePath == null) ? "" : basePath;
+        path += "/" + profileName;
+        if (interfaceName != null) {
+            path += "/" + interfaceName;
+        }
+        if (attributeName != null) {
+            path += "/" + attributeName;
+        }
+        return path;
+    }
+
+    private static String createApiIdentifier(Swagger swagger, HttpMethod method, String profileName,
                                               String interfaceName, String attributeName) {
-        return method.name() + " /gotapi/" + profileName + createApiPath(interfaceName, attributeName);
+        return method.name() + " " + createApiFullPath(swagger, profileName, interfaceName, attributeName);
     }
 
     protected abstract String getProfileSpecFolder();
@@ -407,5 +429,49 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         buf.append(str.substring(0, 1).toUpperCase());
         buf.append(str.substring(1).toLowerCase());
         return buf.toString();
+    }
+
+    protected Model findDefinition(final Swagger swagger, final String simpleRef) {
+        Map<String, Model> definitions = swagger.getDefinitions();
+        if (definitions == null) {
+            return null;
+        }
+        return definitions.get(simpleRef);
+    }
+
+    protected boolean isIgnoredDefinition(final String refName) {
+        return "CommonResponse".equals(refName) || "CommonEvent".equals(refName);
+    }
+
+    protected Map<String, Property> getProperties(final Swagger swagger, final ComposedModel parent) {
+        Map<String, Property> result = new HashMap<>();
+        Stack<ComposedModel> stack = new Stack<>();
+        stack.push(parent);
+        do {
+            ComposedModel model = stack.pop();
+            List<Model> children = model.getAllOf();
+            for (Model child : children) {
+                if (child instanceof ModelImpl) {
+                    if (child.getProperties() != null) {
+                        result.putAll(child.getProperties());
+                    }
+                } else if (child instanceof ComposedModel) {
+                    stack.push((ComposedModel) child);
+                } else if (child instanceof RefModel) {
+                    String refName = ((RefModel) child).getSimpleRef();
+                    if (isIgnoredDefinition(refName)) {
+                        continue;
+                    }
+                    Model m = findDefinition(swagger, refName);
+                    if (m == null) {
+                        continue;
+                    }
+                    if (m.getProperties() != null) {
+                        result.putAll(m.getProperties());
+                    }
+                }
+            }
+        } while (!stack.empty());
+        return result;
     }
 }

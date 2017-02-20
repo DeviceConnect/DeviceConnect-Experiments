@@ -13,8 +13,9 @@ let GotapiPlugin = function(util) {
         name: "{{displayName}} Service",
         online: true,
         scopes: [
+            "serviceinformation",
             {{#supportedProfileNames}}
-            "{{name}}"{{#hasNext}},{{/hasNext}}
+            "{{id}}"{{#hasNext}},{{/hasNext}}
             {{/supportedProfileNames}}
         ]
       }
@@ -22,6 +23,7 @@ let GotapiPlugin = function(util) {
   };
 
   this.profiles = {
+    serviceinformation: require('./profiles/serviceinformation.js'),
     {{#supportedProfileNames}}
     {{id}}: require('./profiles/{{name}}.js'){{#hasNext}},{{/hasNext}}
     {{/supportedProfileNames}}
@@ -35,9 +37,15 @@ GotapiPlugin.prototype.init = function(callback) {
 };
 
 GotapiPlugin.prototype.receiveMessage = function(message) {
-  var profile = this.profiles[message.profile.toLowerCase()];
-  if (profile !== undefined) {
-    profile.receiveMessage(message);
+  var profile = null;
+  for (let name in this.profiles) {
+    if (name.toLowerCase() === message.profile.toLowerCase()) {
+        profile = this.profiles[name];
+        break;
+    }
+  }
+  if (profile !== null) {
+    profile.receiveMessage(this.util, message);
   } else {
     message.result = 404;
   }

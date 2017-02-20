@@ -487,50 +487,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         return lines;
     }
 
-    private boolean isIgnoredDefinition(final String refName) {
-        return "CommonResponse".equals(refName) || "CommonEvent".equals(refName);
-    }
-
-    private Map<String, Property> getProperties(final Swagger swagger, final ComposedModel parent) {
-        Map<String, Property> result = new HashMap<>();
-        Stack<ComposedModel> stack = new Stack<>();
-        stack.push(parent);
-        do {
-            ComposedModel model = stack.pop();
-            List<Model> children = model.getAllOf();
-            for (Model child : children) {
-                if (child instanceof ModelImpl) {
-                    if (child.getProperties() != null) {
-                        result.putAll(child.getProperties());
-                    }
-                } else if (child instanceof ComposedModel) {
-                    stack.push((ComposedModel) child);
-                } else if (child instanceof RefModel) {
-                    String refName = ((RefModel) child).getSimpleRef();
-                    if (isIgnoredDefinition(refName)) {
-                        continue;
-                    }
-                    Model m = findDefinition(swagger, refName);
-                    if (m == null) {
-                        continue;
-                    }
-                    if (m.getProperties() != null) {
-                        result.putAll(m.getProperties());
-                    }
-                }
-            }
-        } while (!stack.empty());
-        return result;
-    }
-
-    private Model findDefinition(final Swagger swagger, final String simpleRef) {
-        Map<String, Model> definitions = swagger.getDefinitions();
-        if (definitions == null) {
-            return null;
-        }
-        return definitions.get(simpleRef);
-    }
-
     private void writeExampleResponse(final ObjectProperty root, final String rootName,
                                       final List<String> lines) {
         lines.add("Bundle " + rootName + " = response.getExtras();");
