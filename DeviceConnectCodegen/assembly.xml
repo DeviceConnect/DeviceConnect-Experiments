@@ -18,8 +18,9 @@
             <directory>samples</directory>
             <outputDirectory>samples</outputDirectory>
     		<includes>
-    			<include>*.sh</include>
-                <include>*.bat</include>
+    			<include>android-plugin.sh</include>
+                <include>android-plugin.bat</include>
+                <include>ios-plugin.sh</include>
     		</includes>
             <fileMode>0744</fileMode>
     	</fileSet>
@@ -28,6 +29,7 @@
             <outputDirectory>samples/sample-profile-specs</outputDirectory>
             <includes>
                 <include>*.json</include>
+                <include>*.yaml</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -35,6 +37,7 @@
             <outputDirectory>standard-profile-specs</outputDirectory>
             <includes>
                 <include>*.json</include>
+                <include>*.yaml</include>
             </includes>
         </fileSet>
         <fileSet>
