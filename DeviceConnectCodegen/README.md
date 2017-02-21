@@ -32,7 +32,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-0.4.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.4.0) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-0.5.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.5.0) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
@@ -79,13 +79,13 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <tbody>
 
 <tr>
-<td valign="top">--lang</td>
+<td valign="top"><pre>--lang</pre></td>
 <td valign="top">
 スケルトン生成対象の指定。下記のいずれかの値を引数とする。
 <ul>
 <li>Androidプラグイン: deviceConnectAndroidPlugin</li>
 <li>iOSプラグイン: deviceConnectIosPlugin</li>
-<li>[未対応] NodeJSプラグイン: deviceConnectNodePlugin</li>
+<li>[未対応] NodeJSプラグイン: gotapiNodePlugin</li>
 <li>[未対応] HTMLアプリケーション: deviceConnectHtmlApp</li>
 <li>[未対応] DeviceConnectエミュレータ: deviceConnectEmulator</li>
 </ul>
@@ -94,15 +94,23 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top">--input-spec-dir</td>
+<td valign="top"><pre>--input-spec</pre></td>
 <td valign="top">
-スケルトンコードでサポートするプロファイル仕様の指定。プロファイル仕様定義ファイルを格納したディレクトリへの絶対パスまたは相対パスを引数とする。
+スケルトンコードでサポートするプロファイル仕様の指定。プロファイル仕様定義ファイルへの絶対パスまたは相対パスを引数とする。ファイルの形式はJSON・YAMLのいずれかとする。指定したファイル内にサポートするすべてのAPIを定義すること。
 </td>
-<td valign="top">-</td>
+<td valign="top">*1</td>
 </tr>
 
 <tr>
-<td valign="top">--output</td>
+<td valign="top"><pre>--input-spec-dir</pre></td>
+<td valign="top">
+スケルトンコードでサポートするプロファイル仕様の指定。プロファイル仕様定義ファイルを格納したディレクトリへの絶対パスまたは相対パスを引数とする。各ファイルの形式はそれぞれJSON・YAMLのいずれかとする。ファイル名は <プロファイル名>.<拡張子>であること。
+</td>
+<td valign="top">*1</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--output</pre></td>
 <td valign="top">
 スケルトンコードの出力先の指定。PC上の任意のディレクトリへの絶対パスまたは相対パスを引数とする。<br>
 <br>
@@ -112,7 +120,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top">--display-name</td>
+<td valign="top"><pre>--display-name</pre></td>
 <td valign="top">
 スケルトンコードの名前の指定。<br>
 <br>
@@ -124,7 +132,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top">--package-name</td>
+<td valign="top"><pre>--package-name</pre></td>
 <td valign="top">
 <b>[Androidプラグインのみ有効]</b><br>
 スケルトンコードのパッケージ名の指定。デフォルト値は、"com.mydomain.myplugin"。
@@ -133,7 +141,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top">--class-name-prefix</td>
+<td valign="top"><pre>--class-name-prefix</pre></td>
 <td valign="top">
 <b>[Androidプラグイン・iOSプラグインの場合のみ有効]</b><br>
 出力されるクラス名のプレフィクスの指定。<br>
@@ -147,6 +155,8 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 
 </tbody>
 </table>
+
+*1: `--input-spec` または `--input-spec-dir` のいずれかを必ず指定すること。両方指定された場合は `--input-spec` が優先される。
 
 ## 開発環境
 ### ビルドツール

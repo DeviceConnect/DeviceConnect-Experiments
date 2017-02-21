@@ -3,7 +3,7 @@
     "info": {
         "title": "Device Connect API",
         "version": "2.0.0",
-        "description": "スマートデバイスのバッテリー情報を提供するAPI。"
+        "description": ""
     },
     "consumes": [],
     "basePath": "/gotapi",
