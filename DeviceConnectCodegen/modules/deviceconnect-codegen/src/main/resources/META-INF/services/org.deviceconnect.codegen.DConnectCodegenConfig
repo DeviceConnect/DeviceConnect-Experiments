@@ -1,4 +1,3 @@
 org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig
 org.deviceconnect.codegen.plugin.IosPluginCodegenConfig
-org.deviceconnect.codegen.plugin.NodePluginCodegenConfig
 org.deviceconnect.codegen.server.EmulatorCodegenConfig
