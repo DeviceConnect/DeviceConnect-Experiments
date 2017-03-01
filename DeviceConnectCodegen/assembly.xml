@@ -33,14 +33,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>standard-profile-specs</directory>
-            <outputDirectory>standard-profile-specs</outputDirectory>
-            <includes>
-                <include>*.json</include>
-                <include>*.yaml</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>modules/deviceconnect-codegen/target</directory>
             <outputDirectory>bin</outputDirectory>
             <includes>
