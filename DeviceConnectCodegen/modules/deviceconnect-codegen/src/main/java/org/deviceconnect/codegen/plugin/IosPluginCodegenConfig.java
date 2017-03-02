@@ -3,11 +3,11 @@ package org.deviceconnect.codegen.plugin;
 
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.properties.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -101,12 +101,242 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected List<String> getResponseCreation(final Swagger swagger, final Response response) {
-        return null;
+        List<String> lines = new ArrayList<>();
+        Property schema = response.getSchema();
+
+        ObjectProperty root;
+        if (schema instanceof ObjectProperty) {
+            root = (ObjectProperty) schema;
+        } else if (schema instanceof RefProperty) {
+            RefProperty ref = (RefProperty) schema;
+            if (isIgnoredDefinition(ref.getName())) {
+                return lines;
+            }
+            Model model = findDefinition(swagger, ref.getSimpleRef());
+            Map<String, Property> properties;
+            if (model instanceof ComposedModel) {
+                properties = getProperties(swagger, (ComposedModel) model);
+            } else if (model instanceof ModelImpl) {
+                properties = model.getProperties();
+            } else {
+                lines.add("// WARNING: レスポンスの定義が不正です.");
+                return lines;
+            }
+            if (properties == null) {
+                lines.add("// WARNING: レスポンスの定義が見つかりませんでした.");
+                return lines;
+            }
+            root =  new ObjectProperty();
+            root.setProperties(properties);
+        } else {
+            lines.add("// WARNING: レスポンスの定義が不正です.");
+            return lines;
+        }
+
+        Map<String, Property> props = root.getProperties();
+        if (props != null && props.size() > 0) {
+            writeExampleMessage(root, "response", lines);
+        }
+        return lines;
     }
 
     @Override
     protected List<String> getEventCreation(final Swagger swagger, final Response event) {
-        return null;
+        List<String> lines = new ArrayList<>();
+        Property schema = event.getSchema();
+
+        ObjectProperty root;
+        if (schema instanceof ObjectProperty) {
+            root = (ObjectProperty) schema;
+        } else if (schema instanceof RefProperty) {
+            RefProperty ref = (RefProperty) schema;
+            if (isIgnoredDefinition(ref.getName())) {
+                return lines;
+            }
+            Model model = findDefinition(swagger, ref.getSimpleRef());
+            Map<String, Property> properties;
+            if (model instanceof ComposedModel) {
+                properties = getProperties(swagger, (ComposedModel) model);
+            } else if (model instanceof ModelImpl) {
+                properties = model.getProperties();
+            } else {
+                lines.add("// WARNING: イベントの定義が不正です.");
+                return lines;
+            }
+            if (properties == null) {
+                lines.add("// WARNING: イベントの定義が見つかりませんでした.");
+                return lines;
+            }
+            root = new ObjectProperty();
+            root.setProperties(properties);
+        } else {
+            lines.add("// WARNING: イベントの定義が不正です.");
+            return lines;
+        }
+
+        Map<String, Property> props = root.getProperties();
+        if (props != null && props.size() > 0) {
+            writeExampleMessage(root, "root", lines);
+        }
+        return lines;
+    }
+
+    private void writeExampleMessage(final ObjectProperty root, final String rootName,
+                                     final List<String> lines) {
+        Map<String, Property> props = root.getProperties();
+        if (props == null) {
+            return;
+        }
+        for (Map.Entry<String, Property> propEntry : props.entrySet()) {
+            String propName = propEntry.getKey();
+            Property prop = propEntry.getValue();
+
+            String type = prop.getType();
+            String format = prop.getFormat();
+            if ("array".equals(type)) {
+                ArrayProperty arrayProp;
+                if (!(prop instanceof  ArrayProperty)) {
+                    continue;
+                }
+                arrayProp = (ArrayProperty) prop;
+                Property itemsProp = arrayProp.getItems();
+                lines.add("DConnectArray *" + propName + " = [DConnectArray array];");
+                String objPropName = propName + "0";
+                if ("object".equals(itemsProp.getType())) {
+                    lines.add("DConnectMessage *" + objPropName + " = [DConnectMessage message];");
+                    writeExampleMessage((ObjectProperty) itemsProp, objPropName, lines);
+                    lines.add("[" + propName + " addMessage:" + objPropName + "];");
+                } else {
+                    String exampleValue = getExampleValue(itemsProp);
+                    String setterName = getSetterNameForArray(itemsProp.getType(), itemsProp.getFormat());
+                    lines.add("[" + propName + " " + setterName + ":" + exampleValue + "];");
+                }
+                lines.add("[" + rootName + " setArray:" + propName + " forKey:@\"" + propName + "\"];");
+            } else if ("object".equals(type)) {
+                ObjectProperty objectProp;
+                if (!(prop instanceof ObjectProperty)) {
+                    continue;
+                }
+                objectProp = (ObjectProperty) prop;
+                lines.add("DConnectMessage *" + propName + " = [DConnectMessage message];");
+                writeExampleMessage(objectProp, propName, lines);
+                lines.add("[" + rootName  + " setMessage:" + propName + " forKey:@\"" + propName +  "\"];");
+            } else {
+                String setterName = getSetterNameForMessage(type, format);
+                if (setterName == null) {
+                    continue;
+                }
+                lines.add("[" + rootName + " " + setterName +  ":"+ getExampleValue(prop) + " forKey:@\"" + propName + "\"];");
+            }
+        }
+    }
+
+    private String getSetterNameForMessage(final String type, final String format) {
+        if ("boolean".equals(type)) {
+            return "setBool";
+        } else if ("string".equals(type)) {
+            return "setString";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "setLongLong";
+            } else {
+                return "setInt";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "setDouble";
+            } else {
+                return "setFloat";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
+    private String getSetterNameForArray(final String type, final String format) {
+        if ("boolean".equals(type)) {
+            return "addBool";
+        } else if ("string".equals(type)) {
+            return "addString";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "addLongLong";
+            } else {
+                return "addInt";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "addDouble";
+            } else {
+                return "addFloat";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
+    private String getClassName(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
+        if ("object".equals(type)) {
+            return "Bundle";
+        } else if ("boolean".equals(type)) {
+            return "BOOL";
+        } else if ("string".equals(type)) {
+            return "String";
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "Long";
+            } else {
+                return "Integer";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "Double";
+            } else {
+                return "Float";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
+    }
+
+    private String getExampleValue(final Property prop) {
+        final String type = prop.getType();
+        final String format = prop.getFormat();
+        if ("boolean".equals(type)) {
+            return "false";
+        } else if ("string".equals(type)) {
+            StringProperty strProp = (StringProperty) prop;
+            List<String> enumList = strProp.getEnum();
+            if (enumList != null && enumList.size() > 0) {
+                return "@\"" + enumList.get(0) + "\"";
+            } else {
+                return "@\"test\"";
+            }
+        } else if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "0";
+            } else {
+                return "0";
+            }
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return "0.0d";
+            } else {
+                return "0.0f";
+            }
+        } else {
+            // 現状のプラグインでは下記のタイプは非対応.
+            //  - file
+            return null;
+        }
     }
 
     @Override
