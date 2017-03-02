@@ -14,7 +14,15 @@
         {{/paramList}}
 
         // TODO ここでAPIを実装してください.
-        [response setErrorToUnknownWithMessage:@"Not implemented yet."];
+        {{#isOneShotApi}}
+        [response setResult:DConnectMessageResultTypeOk];
+        {{#responses}}
+        {{{.}}}
+        {{/responses}}
+        {{/isOneShotApi}}
+        {{#isEventApi}}
+        [response setResult:DConnectMessageResultTypeOk];
+        {{/isEventApi}}
         return YES;
     }];
     {{/apiList}}
