@@ -30,14 +30,19 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         additionalProperties.put("pluginClass", pluginClass);
         additionalProperties.put("basePluginClass", "DConnectDevicePlugin");
 
-        String classesDir = "Classes";
+        String classesDir = getClassesDirName();
         supportingFiles.add(new SupportingFile("plugin.h.mustache", classesDir, pluginClass + ".h"));
         supportingFiles.add(new SupportingFile("plugin.m.mustache", classesDir, pluginClass + ".m"));
     }
 
+    private String getClassesDirName() {
+        String[] dirs = outputFolder.split("/");
+        return dirs[dirs.length - 1];
+    }
+
     @Override
     protected String profileFileFolder() {
-        return outputFolder + File.separator + "Classes" + File.separator + "Profiles";
+        return outputFolder + File.separator + getClassesDirName() + File.separator + "Profiles";
     }
 
     @Override
@@ -176,7 +181,7 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         Map<String, Property> props = root.getProperties();
         if (props != null && props.size() > 0) {
-            writeExampleMessage(root, "root", lines);
+            writeExampleMessage(root, "message", lines);
         }
         return lines;
     }
@@ -279,34 +284,6 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
     }
 
-    private String getClassName(final Property prop) {
-        final String type = prop.getType();
-        final String format = prop.getFormat();
-        if ("object".equals(type)) {
-            return "Bundle";
-        } else if ("boolean".equals(type)) {
-            return "BOOL";
-        } else if ("string".equals(type)) {
-            return "String";
-        } else if ("integer".equals(type)) {
-            if ("int64".equals(format)) {
-                return "Long";
-            } else {
-                return "Integer";
-            }
-        } else if ("number".equals(type)) {
-            if ("double".equals(format)) {
-                return "Double";
-            } else {
-                return "Float";
-            }
-        } else {
-            // 現状のプラグインでは下記のタイプは非対応.
-            //  - file
-            return null;
-        }
-    }
-
     private String getExampleValue(final Property prop) {
         final String type = prop.getType();
         final String format = prop.getFormat();
@@ -351,7 +328,7 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
             profileClassName = getClassPrefix() + baseClassNamePrefix + "Profile";
         } else {
             baseClassName = "DConnectProfile";
-            profileClassName = toUpperCapital(profileName) + "Profile";
+            profileClassName = getClassPrefix() + toUpperCapital(profileName) + "Profile";
         }
         properties.put("baseProfileClass", baseClassName);
         properties.put("profileClass", profileClassName);
