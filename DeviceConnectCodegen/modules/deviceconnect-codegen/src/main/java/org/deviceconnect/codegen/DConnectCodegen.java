@@ -124,6 +124,7 @@ public class DConnectCodegen {
                             subPath += "/";
                         }
                     }
+                    checkProfileName(profilePart);
 
                     Swagger profile = profiles.get(profilePart);
                     if (profile == null) {
@@ -150,16 +151,7 @@ public class DConnectCodegen {
                     Map<String, Swagger> profileSpecs = new HashMap<>();
                     for (File file : specFiles) {
                         String profileName = parseProfileNameFromFileName(file.getName());
-
-                        // プロファイル名が予約語の場合は異常終了
-                        if (isReservedName(profileName)) {
-                            exitOnError("次の名前は予約語のためプロファイル名として使用できません: " + concat(RESERVED_NAMES));
-                        }
-                        // プロファイル名が基本プロファイル名の場合は異常終了
-                        if (isProhibitedProfile(profileName)) {
-                            exitOnError("次のプロファイルは基本プロファイルのため入力できません: " + concat(PROHIBITED_PROFILES));
-                        }
-
+                        checkProfileName(profileName);
                         profileSpecs.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
                     }
                     config.setProfileSpecs(profileSpecs);
@@ -240,6 +232,17 @@ public class DConnectCodegen {
         profile.setDefinitions(swagger.getDefinitions());
         profile.setPaths(new HashMap<String, Path>());
         return profile;
+    }
+
+    private static void checkProfileName(final String profileName) {
+        // プロファイル名が予約語の場合は異常終了
+        if (isReservedName(profileName)) {
+            exitOnError("次の名前は予約語のためプロファイル名として使用できません: " + concat(RESERVED_NAMES));
+        }
+        // プロファイル名が基本プロファイル名の場合は異常終了
+        if (isProhibitedProfile(profileName)) {
+            exitOnError("次のプロファイルは基本プロファイルのため入力できません: " + concat(PROHIBITED_PROFILES));
+        }
     }
 
     private static void exitOnError(final String message) {
