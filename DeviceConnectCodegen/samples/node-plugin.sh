@@ -10,15 +10,12 @@ SPEC="./sample-profile-specs/swagger.json"
 # NOTE: フォルダ名の先頭に node-gotapi-plugin- を付けること.
 OUTPUT_DIR="./output/NodeJS/node-gotapi-plugin-sample"
 
-# Androidプラグインのパッケージ名
-PACKAGE_NAME="node-gotapi-plugin-sample"
-
-# Androidプラグインの表示名
+# node-gotapiプラグインの表示名
 DISPLAY_NAME="MyPlugin"
 
 # スケルトンコード生成ツールのバイナリ
 JAR_FILE="../bin/deviceconnect-codegen.jar"
 
-ARGS="--input-spec $SPEC  --lang $LANG --package-name  $PACKAGE_NAME --display-name $DISPLAY_NAME  --output $OUTPUT_DIR"
+ARGS="--input-spec $SPEC  --lang $LANG --display-name $DISPLAY_NAME  --output $OUTPUT_DIR"
 
 java -Dfile.encoding=UTF-8 -jar $JAR_FILE $ARGS

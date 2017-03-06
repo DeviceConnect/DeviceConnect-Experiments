@@ -164,6 +164,9 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
         final String classPrefix = getClassPrefix();
         additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
 
+        // README
+        supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
+
         // package.json
         supportingFiles.add(new SupportingFile("package.json.mustache", "", "package.json"));
 

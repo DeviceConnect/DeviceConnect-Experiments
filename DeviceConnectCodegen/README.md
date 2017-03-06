@@ -8,15 +8,12 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 ### 前提知識
 - OpenAPI Specification 2.0
 
-### 特記事項
-- DeviceConnectではプロファイルごとにAPIセットを定義します。よって、1つまたは複数のJSONファイルを含んだディレクトリを入力とします。ただ1つのJSONを入力とする Swagger Codegen とは異なりますので、ご注意ください。
-
 ### サポート範囲
 本ツールで生成可能なスケルトンコードのタイプは下記のとおりです。
 
 - Androidプラグイン
 - iOSプラグイン
-- [未対応] Nodeプラグイン
+- [node-gotapi](https://github.com/futomi/node-gotapi)プラグイン
 - [未対応] HTMLアプリケーション
 - [未対応] DeviceConnectエミュレータ
 
@@ -26,13 +23,12 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |ファイル名|説明|
 |:--|:--|
 |bin/deviceconnect-codegen.jar|本ツールのバイナリ。|
-|standard-profile-specs/|DeviceConnect標準プロファイルの定義ファイル群。|
 |samples/android-plugin.sh|Androidプラグインのスケルトンコードを生成するシェルスクリプトのサンプル。|
 |samples/ios-plugin.sh|iOSプラグインのスケルトンコードを生成するシェルスクリプトのサンプル。|
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-0.5.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.5.0) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-0.6.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.6.0) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
@@ -54,8 +50,13 @@ $ ./ios-plugin.sh
 
 出力先: samples/output/iOS/MyPlugin
 
-### Nodeプラグインの場合
-T.B.D.
+### node-gotapiプラグインの場合
+```
+$ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
+$ ./node-plugin.sh
+```
+
+出力先: samples/output/NodeJS/node-gotapi-plugin-sample
 
 ### HTMLアプリケーションの場合
 T.B.D.
@@ -85,7 +86,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <ul>
 <li>Androidプラグイン: deviceConnectAndroidPlugin</li>
 <li>iOSプラグイン: deviceConnectIosPlugin</li>
-<li>[未対応] NodeJSプラグイン: gotapiNodePlugin</li>
+<li>node-gotapiプラグイン: gotapiNodePlugin</li>
 <li>[未対応] HTMLアプリケーション: deviceConnectHtmlApp</li>
 <li>[未対応] DeviceConnectエミュレータ: deviceConnectEmulator</li>
 </ul>
