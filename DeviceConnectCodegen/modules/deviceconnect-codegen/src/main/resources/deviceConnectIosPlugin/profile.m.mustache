@@ -11,7 +11,9 @@
 - (instancetype) init
 {
     self = [super init];
+    {{#hasEventApi}}
     _timers = [NSMutableDictionary dictionary];
+    {{/hasEventApi}}
 
     __weak {{profileClass}} *weakSelf = self;
     {{#apiList}}
@@ -79,6 +81,11 @@
     {{/apiList}}
     return self;
 }
+
+- (NSString *) profileName {
+    return @"{{profileNameDefinition}}";
+}
+
 {{#hasEventApi}}
 
 - (void) startEventTimer:(DConnectRequestMessage*)request
