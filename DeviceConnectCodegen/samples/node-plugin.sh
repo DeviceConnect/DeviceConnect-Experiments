@@ -3,7 +3,7 @@
 # スケルトンコード種別: node-gotapiプラグイン
 LANG="gotapiNodePlugin"
 
-# プロファイル定義ファイルのディレクトリ
+# プロファイル定義ファイル
 SPEC="./sample-profile-specs/swagger.json"
 
 # スケルトンコード出力先

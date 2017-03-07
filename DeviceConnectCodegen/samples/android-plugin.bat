@@ -1,7 +1,7 @@
 :: スケルトンコード種別: Androidプラグイン
 set LANG=deviceConnectAndroidPlugin
 
-:: プロファイル定義ファイルのディレクトリ
+:: プロファイル定義ファイル
 set SPEC=.\sample-profile-specs\swagger.json
 
 :: スケルトンコード出力先
