@@ -22,6 +22,7 @@
                 <include>android-plugin.bat</include>
                 <include>ios-plugin.sh</include>
                 <include>node-plugin.sh</include>
+                <include>node-plugin.bat</include>
     		</includes>
             <fileMode>0744</fileMode>
     	</fileSet>
@@ -31,6 +32,13 @@
             <includes>
                 <include>*.json</include>
                 <include>*.yaml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>standard-profile-specs</directory>
+            <outputDirectory>standard-profile-specs</outputDirectory>
+            <includes>
+                <include>*.json</include>
             </includes>
         </fileSet>
         <fileSet>
