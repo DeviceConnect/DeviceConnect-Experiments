@@ -166,7 +166,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         invokerPackage = (String) additionalProperties.get("packageName");
         embeddedTemplateDir = templateDir = getName();
         additionalProperties.put("profilePackage", getProfilePackage());
-        additionalProperties.put("pluginSdkVersion", "1.1.0");
 
         final String classPrefix = getClassPrefix();
         final String messageServiceClass = classPrefix + "MessageService";
