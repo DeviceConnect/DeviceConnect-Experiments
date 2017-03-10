@@ -1,7 +1,6 @@
 package org.deviceconnect.codegen.plugin;
 
 
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 import io.swagger.codegen.CodegenConfig;

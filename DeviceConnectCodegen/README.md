@@ -14,7 +14,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 - Androidプラグイン
 - iOSプラグイン
 - [node-gotapi](https://github.com/futomi/node-gotapi)プラグイン
-- [未対応] HTMLアプリケーション
+- HTMLアプリケーション
 - [未対応] DeviceConnectエミュレータ
 
 ## ファイル構成
@@ -28,7 +28,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-0.6.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.6.0) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-0.7.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v0.7.0) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
@@ -59,7 +59,12 @@ $ ./node-plugin.sh
 出力先: samples/output/NodeJS/node-gotapi-plugin-sample
 
 ### HTMLアプリケーションの場合
-T.B.D.
+```
+$ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
+$ ./html-app.sh
+```
+
+出力先: samples/output/html/MyApp
 
 ### DeviceConnectエミュレータの場合
 T.B.D.
@@ -87,7 +92,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <li>Androidプラグイン: deviceConnectAndroidPlugin</li>
 <li>iOSプラグイン: deviceConnectIosPlugin</li>
 <li>node-gotapiプラグイン: gotapiNodePlugin</li>
-<li>[未対応] HTMLアプリケーション: deviceConnectHtmlApp</li>
+<li>HTMLアプリケーション: deviceConnectHtmlApp</li>
 <li>[未対応] DeviceConnectエミュレータ: deviceConnectEmulator</li>
 </ul>
 </td>

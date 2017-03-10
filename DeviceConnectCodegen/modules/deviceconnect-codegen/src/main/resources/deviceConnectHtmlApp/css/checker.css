@@ -1,0 +1,216 @@
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+div.request_param {
+    padding: 12px 8px 8px 8px;
+}
+
+div.request_param span {
+    font-size: small;
+}
+
+table.request {
+    margin: 8px 0px 8px 0px;
+    padding: 0px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-radius: 6px;
+    width: 100%;
+}
+
+table.request tr {
+    margin: 0px;
+    padding: 0px;
+}
+
+table.request tr td {
+    margin: 0px;
+    padding: 0px;
+}
+
+table.request tr td.left {
+    border-radius: 0.5em 0 0 0.5em;
+    font-size: xx-small;
+    color: #FFF;
+    font-weight: bold;
+}
+
+table.included tr td {
+    background-color: #5B9CFC;
+}
+
+table.excluded tr td {
+    background-color: #CCCCCC;
+}
+
+table.request tr td span {
+    margin: 8px;
+    padding: 0px;
+    font-size: xx-small;
+    color: #FFF;
+}
+
+table.request tr td div {
+    position: relative;
+    background-color: #FFF;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+}
+
+table.included tr td div {
+    border: solid 2px #5B9CFC;
+}
+
+table.excluded tr td div {
+    border: solid 2px #CCCCCC;
+}
+
+table.request tr td div input.text {
+    width: 100%;
+    margin 0px;
+    padding: 10px 0px;
+    border: none;
+}
+
+table.request tr td div select {
+    width: 100%;
+    margin 0px;
+    padding: 10px 0px;
+    border: none;
+}
+
+table.request tr td div input.slider {
+    width: 95%;
+    margin 0px;
+    padding: 5px 0px;
+    border: none;
+}
+
+table.request tr td div span.min {
+    position: absolute;
+    top: 20px;
+    left: 4px;
+    margin: 0px;
+    padding: 0px;
+    font-size: xx-small;
+}
+
+table.request tr td div span.max {
+    position: absolute;
+    top: 20px;
+    right: 4px;
+    margin: 0px;
+    padding: 0px;
+    font-size: xx-small;
+}
+
+div.send_request {
+    text-align: right;
+    font-size: small;
+}
+
+div.send_request button {
+    background-color: #5B9CFC;
+    margin: 8px;
+    padding: 10px 20px;
+    color: #fff;
+    border-style: none;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    -ms-border-radius: 0.5em;
+}
+
+div.send_request button:active {
+    background-color: #CCC;
+}
+
+div.request {
+    margin: 8px;
+}
+
+div.request span {
+    font-size: small;
+}
+
+div.request div {
+    background-color: #FFF;
+    margin: 4px 0px 0px 0px;
+    padding: 8px;
+    border: solid 2px #5B9CFC;
+    font-size: xx-small;
+    word-break: break-all;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    -ms-border-radius: 0.5em;
+}
+
+div.response {
+    margin: 8px;
+}
+
+div.response span {
+    font-size: small;
+}
+
+div.response div {
+    background-color: #FFF;
+    margin: 4px 0px 0px 0px;
+    padding: 8px;
+    border: solid 2px #5B9CFC;
+    font-size: xx-small;
+    word-break: break-all;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    -ms-border-radius: 0.5em;
+}
+
+div.event {
+    margin: 8px;
+}
+
+div.event span {
+    font-size: small;
+}
+
+div.event div {
+    background-color: #FFF;
+    margin: 4px 0px 0px 0px;
+    padding: 8px;
+    border: solid 2px #5B9CFC;
+    font-size: xx-small;
+    word-break: break-all;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    -ms-border-radius: 0.5em;
+}
+
+div.test {
+    padding: 4px;
+}
+
+input, select {
+    vertical-align: middle;
+}
+
+#host {
+    padding: 12px;
+}
+
+#host input[type=text] {
+    width: 240px;
+    padding: 6px 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

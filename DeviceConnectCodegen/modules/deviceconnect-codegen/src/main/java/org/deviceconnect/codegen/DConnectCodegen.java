@@ -1,15 +1,19 @@
 package org.deviceconnect.codegen;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
+import io.swagger.converter.ModelConverter;
 import io.swagger.models.Info;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.*;
+import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +128,7 @@ public class DConnectCodegen {
                             subPath += "/";
                         }
                     }
-                    checkProfileName(profilePart);
+                    checkProfileName(config, profilePart);
 
                     Swagger profile = profiles.get(profilePart);
                     if (profile == null) {
@@ -136,7 +140,6 @@ public class DConnectCodegen {
                     subPaths.put(subPath, path);
                     profile.setPaths(subPaths);
                 }
-
                 config.setProfileSpecs(profiles);
             } else if (cmd.hasOption("s")) {
                 File dir = new File(cmd.getOptionValue("s"));
@@ -151,7 +154,7 @@ public class DConnectCodegen {
                     Map<String, Swagger> profileSpecs = new HashMap<>();
                     for (File file : specFiles) {
                         String profileName = parseProfileNameFromFileName(file.getName());
-                        checkProfileName(profileName);
+                        checkProfileName(config, profileName);
                         profileSpecs.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
                     }
                     config.setProfileSpecs(profileSpecs);
@@ -234,7 +237,11 @@ public class DConnectCodegen {
         return profile;
     }
 
-    private static void checkProfileName(final String profileName) {
+    private static void checkProfileName(final DConnectCodegenConfig config, final String profileName) {
+        if (config instanceof HtmlAppCodegenConfig) {
+            return;
+        }
+
         // プロファイル名が予約語の場合は異常終了
         if (isReservedName(profileName)) {
             exitOnError("次の名前は予約語のためプロファイル名として使用できません: " + concat(RESERVED_NAMES));
