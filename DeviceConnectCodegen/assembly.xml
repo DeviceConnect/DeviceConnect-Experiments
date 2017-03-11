@@ -48,5 +48,13 @@
                 <include>deviceconnect-codegen.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>modules/deviceconnect-codegen</directory>
+            <outputDirectory>src/deviceconnect-codegen</outputDirectory>
+            <includes>
+                <include>**/src/main/**</include>
+                <include>pom.xml</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
