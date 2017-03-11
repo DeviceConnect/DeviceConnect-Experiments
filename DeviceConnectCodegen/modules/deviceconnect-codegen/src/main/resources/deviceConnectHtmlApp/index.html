@@ -38,6 +38,21 @@
         </div>
     </script>
 
+    <script id="param_service_id" type="text/x-template">
+        <table name="table-{#name}" class="request {#included}">
+            <tr>
+                <td width="30%" class="left include">
+                    <input type="checkbox" name="include-{#name}" onchange="main.switchParam(this,'{#name}')" {#checkbox}>{#name}
+                </td>
+                <td width="70%">
+                    <div>
+                        <input class="text" type="text" name="{#name}" value="{#value}" autocomplete="on" list="cached_services" {#inputable}>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </script>
+
     <script id="param_file" type="text/x-template">
         <table name="table-{#name}" class="request {#included}">
             <tr>
@@ -170,8 +185,12 @@
 
 <div id="host">
 Host: <input type="text" id="host_address" />
+<button id="service_discovery" onclick="main.findServices()">Find services</button>
 </div>
 <div id="main" class="ac_menu"></div>
+
+<datalist id="cached_services">
+</datalist>
 
 </body>
 </html>

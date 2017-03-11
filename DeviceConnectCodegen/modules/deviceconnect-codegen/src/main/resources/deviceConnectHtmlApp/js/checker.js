@@ -19,6 +19,38 @@ var main = (function(parent, global) {
     }
     parent.init = init;
 
+    function findServices() {
+        console.log('Start to find services.');
+        var defaultName = dom('service_discovery').textContent;
+        dom('service_discovery').disabled = true;
+        dom('service_discovery').textContent = 'Finding...';
+        util.serviceDiscovery(function(newServices) {
+            var datalist = dom('cached_services');
+            var service;
+            var opt;
+            // 古いサービス一覧を削除
+            while (datalist.hasChildNodes()) {
+                datalist.removeChild(datalist.lastChild);
+            }
+            // 新しいサービス一覧を作成
+            for (var k in newServices) {
+                service = newServices[k];
+                opt = document.createElement('option');
+                opt.label = service.name;
+                opt.value = service.id;
+                datalist.appendChild(opt);
+            }
+
+            dom('service_discovery').disabled = false;
+            dom('service_discovery').textContent = defaultName;
+            alert(newServices.length + '個のサービスが見つかりました。serviceIdの入力候補にて選択可能です。');
+        }, function() {
+            dom('service_discovery').disabled = false;
+            showAlert("サービスの情報取得に失敗しました。", errorCode, errorMessage);
+        });
+    }
+    parent.findServices = findServices;
+
     function parseJSON(json) {
         dom('main').innerHTML = createSupportPath(json.basePath, json.paths);
     }
@@ -275,6 +307,17 @@ var main = (function(parent, global) {
         return util.createTemplate('param_number', data);
     }
 
+    function createTextServiceIdParam(name, value, on) {
+        var data = {
+            'name' : name,
+            'value' : value,
+            'included' : (on ? 'included' : 'excluded'),
+            'checkbox' : (on ? 'checked disabled' : ''),
+            'inputable' : (on ? '' : 'disabled')
+        };
+        return util.createTemplate('param_service_id', data);
+    }
+
     function createSelectParam(name, list, on) {
         var text = "";
         for (var i = 0; i < list.length; i++) {
@@ -347,7 +390,7 @@ var main = (function(parent, global) {
                     contentHtml += createSelectParam(param.name, param.enum, on);
                 } else {
                     if (param.name == 'serviceId') {
-                        contentHtml += createTextParam(param.name, util.getServiceId(), on);
+                        contentHtml += createTextServiceIdParam(param.name, [], on);
                     } else {
                         contentHtml += createTextParam(param.name, '', on);
                     }

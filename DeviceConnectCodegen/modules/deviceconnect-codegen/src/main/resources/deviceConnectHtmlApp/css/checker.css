@@ -214,3 +214,19 @@ input, select {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
+button#service_discovery {
+    background-color: #5B9CFC;
+    margin: 0px;
+    padding: 8px 20px;
+    color: #fff;
+    border-style: none;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    -ms-border-radius: 0.5em;
+}
+
+button#service_discovery:disabled {
+    background-color: #ccc;
+}

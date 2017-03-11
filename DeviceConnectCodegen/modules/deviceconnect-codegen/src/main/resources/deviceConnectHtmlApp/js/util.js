@@ -115,19 +115,24 @@ var util = (function(parent, global) {
             });
     }
 
-    function serviceDiscovery(callback) {
+    function serviceDiscovery(onsuccess, onerror) {
         dConnect.discoverDevices(mAccessToken, function(json) {
-            callback(json.services);
+            onsuccess(json.services);
         }, function(errorCode, errorMessage) {
             if (errorCode == 11 || errorCode == 12 || errorCode == 13 || errorCode == 15) {
                 authorization(function() {
-                    serviceDiscovery(callback);
+                    serviceDiscovery(onsuccess);
                 });
             } else {
-                showAlert("デバイスの情報取得に失敗しました。", errorCode, errorMessage)
+                if (onerror) {
+                    onerror(errorCode, errorMessage);
+                } else {
+                    showAlert("サービスの情報取得に失敗しました。", errorCode, errorMessage);
+                }
             }
         });
     }
+    parent.serviceDiscovery = serviceDiscovery;
 
     function serviceInformation(callback) {
         dConnect.getSystemDeviceInfo(getServiceId(), getAccessToken(), function(json) {
