@@ -63,7 +63,7 @@ public class HtmlAppCodegenConfig extends DefaultCodegen implements DConnectCode
     public void processOpts() {
         super.processOpts();
         embeddedTemplateDir = templateDir = getName();
-        supportingFiles.add(new SupportingFile("index.html", "", "index.html"));
+        supportingFiles.add(new SupportingFile("index.html.mustache", "", "index.html"));
         supportingFiles.add(new SupportingFile("resource.html", "", "resource.html"));
         supportingFiles.add(new SupportingFile("css/accordion.css", "css", "accordion.css"));
         supportingFiles.add(new SupportingFile("css/checker.css", "css", "checker.css"));
