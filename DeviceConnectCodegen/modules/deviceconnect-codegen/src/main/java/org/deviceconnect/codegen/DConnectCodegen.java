@@ -14,6 +14,7 @@ import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
+import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,7 +250,7 @@ public class DConnectCodegen {
     }
 
     private static void checkProfileName(final DConnectCodegenConfig config, final String profileName) {
-        if (config instanceof HtmlAppCodegenConfig) {
+        if (config instanceof HtmlAppCodegenConfig || config instanceof HtmlDocsCodegenConfig) {
             return;
         }
 
