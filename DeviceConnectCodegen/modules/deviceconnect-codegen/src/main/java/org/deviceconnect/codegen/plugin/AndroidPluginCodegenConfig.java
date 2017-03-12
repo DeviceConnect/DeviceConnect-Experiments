@@ -27,6 +27,11 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     //----- AbstractPluginCodegenConfig ----//
 
     @Override
+    public String getDefaultPackageName() {
+        return "com.mydomain.myplugin";
+    }
+
+    @Override
     protected String profileFileFolder() {
         String separator = File.separator;
         return outputFolder + separator + sourceFolder + separator + getProfilePackage().replace('.', File.separatorChar);

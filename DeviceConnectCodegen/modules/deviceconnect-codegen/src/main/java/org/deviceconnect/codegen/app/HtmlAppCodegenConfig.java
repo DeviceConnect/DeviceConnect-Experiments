@@ -18,6 +18,11 @@ public class HtmlAppCodegenConfig extends DefaultCodegen implements DConnectCode
     private Map<String, Swagger> profileSpecs;
 
     @Override
+    public String getDefaultDisplayName() {
+        return "MyApp";
+    }
+
+    @Override
     public CodegenType getTag() {
         return CodegenType.CLIENT;
     }

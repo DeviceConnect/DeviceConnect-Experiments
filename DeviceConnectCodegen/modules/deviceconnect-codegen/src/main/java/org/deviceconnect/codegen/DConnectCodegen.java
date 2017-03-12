@@ -14,6 +14,7 @@ import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
+import org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,12 +182,15 @@ public class DConnectCodegen {
             if (cmd.hasOption("t")) {
                 clientOpts.getProperties().put(CodegenConstants.TEMPLATE_DIR, String.valueOf(cmd.getOptionValue("t")));
             }
+
+            String displayName;
             if (cmd.hasOption("n")) {
-                clientOpts.getProperties().put("displayName", cmd.getOptionValue("n"));
+                displayName = cmd.getOptionValue("n");
             } else {
-                usage(options);
-                return;
+                displayName = config.getDefaultDisplayName();
             }
+            clientOpts.getProperties().put("displayName", displayName);
+
             String classPrefix;
             if (cmd.hasOption("x")) {
                 classPrefix = cmd.getOptionValue("x");
@@ -194,8 +198,15 @@ public class DConnectCodegen {
                 classPrefix = "My";
             }
             clientOpts.getProperties().put("classPrefix", classPrefix);
-            if (cmd.hasOption("p")) {
-                clientOpts.getProperties().put("packageName", cmd.getOptionValue("p"));
+
+            if (config instanceof AndroidPluginCodegenConfig) {
+                String packageName;
+                if (cmd.hasOption("p")) {
+                    packageName = cmd.getOptionValue("p");
+                } else {
+                    packageName = ((AndroidPluginCodegenConfig) config).getDefaultPackageName();
+                }
+                clientOpts.getProperties().put("packageName", packageName);
             }
         } catch (Exception e) {
             e.printStackTrace();

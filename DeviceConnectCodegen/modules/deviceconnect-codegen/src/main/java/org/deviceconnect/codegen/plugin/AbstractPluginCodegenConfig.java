@@ -27,6 +27,15 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
         additionalProperties.put("supportedProfileClasses", new ArrayList<>());
     }
 
+    public String getDefaultPackageName() {
+        return null;
+    }
+
+    @Override
+    public String getDefaultDisplayName() {
+        return "MyPlugin";
+    }
+
     protected String loadResourceFile(final String fileName) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream in = classLoader.getResourceAsStream(fileName);
@@ -73,7 +82,7 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
     @Override
     public void preprocessSwagger(final Swagger swagger) {
-        Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
+       Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
         for (Map.Entry<String, Path> pathEntry : swagger.getPaths().entrySet()) {
             String pathName = pathEntry.getKey();
             Path path = pathEntry.getValue();

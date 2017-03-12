@@ -14,6 +14,11 @@ public class EmulatorCodegenConfig extends NodeJSServerCodegen implements DConne
     private Map<String, Swagger> profileSpecs;
 
     @Override
+    public String getDefaultDisplayName() {
+        return "MyEmulator";
+    }
+
+    @Override
     public CodegenType getTag() {
         return CodegenType.SERVER;
     }

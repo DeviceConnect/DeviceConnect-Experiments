@@ -13,4 +13,6 @@ public interface DConnectCodegenConfig extends CodegenConfig {
 
     void setProfileSpecs(Map<String, Swagger> profileSpecs);
 
+    String getDefaultDisplayName();
+
 }
