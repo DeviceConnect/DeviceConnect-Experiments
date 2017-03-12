@@ -24,6 +24,10 @@ var main = (function(parent, global) {
         var defaultName = dom('service_discovery').textContent;
         dom('service_discovery').disabled = true;
         dom('service_discovery').textContent = 'Finding...';
+        var onFinished = function() {
+           dom('service_discovery').disabled = false;
+           dom('service_discovery').textContent = defaultName;
+        };
         util.serviceDiscovery(function(newServices) {
             var datalist = dom('cached_services');
             var service;
@@ -41,12 +45,11 @@ var main = (function(parent, global) {
                 datalist.appendChild(opt);
             }
 
-            dom('service_discovery').disabled = false;
-            dom('service_discovery').textContent = defaultName;
+            onFinished();
             alert(newServices.length + '個のサービスが見つかりました。serviceIdの入力候補にて選択可能です。');
-        }, function() {
-            dom('service_discovery').disabled = false;
-            showAlert("サービスの情報取得に失敗しました。", errorCode, errorMessage);
+        }, function(errorCode, errorMessage) {
+            onFinished();
+            util.showAlert("サービスの情報取得に失敗しました。", errorCode, errorMessage);
         });
     }
     parent.findServices = findServices;
