@@ -33,7 +33,7 @@
         {{/isOneShotApi}}
         {{#isEventApi}}
         {{#putApi}}
-        DConnectEventManager *mgr = [DConnectEventManager sharedManagerForClass:[MyPlugin class]];
+        DConnectEventManager *mgr = [DConnectEventManager sharedManagerForClass:[{{{pluginClass}}} class]];
         DConnectEventError error = [mgr addEventForRequest:request];
         if (error == DConnectEventErrorNone) {
             [response setResult:DConnectMessageResultTypeOk];
@@ -64,7 +64,7 @@
         }
         {{/putApi}}
         {{#deleteApi}}
-        DConnectEventManager *mgr = [DConnectEventManager sharedManagerForClass:[MyPlugin class]];
+        DConnectEventManager *mgr = [DConnectEventManager sharedManagerForClass:[{{{pluginClass}}} class]];
         DConnectEventError error = [mgr removeEventForRequest:request];
         if (error == DConnectEventErrorNone) {
             [response setResult:DConnectMessageResultTypeOk];
