@@ -2,6 +2,10 @@ body {
     font-size: 10pt;
 }
 
+h1.title {
+    color: #5B9CFC;
+}
+
 h2.profile-title {
     color: #999;
 }
