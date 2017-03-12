@@ -21,8 +21,11 @@
     			<include>android-plugin.sh</include>
                 <include>android-plugin.bat</include>
                 <include>ios-plugin.sh</include>
+                <include>ios-plugin.bat</include>
                 <include>node-plugin.sh</include>
                 <include>node-plugin.bat</include>
+                <include>html-app.sh</include>
+                <include>html-app.bat</include>
     		</includes>
             <fileMode>0744</fileMode>
     	</fileSet>
