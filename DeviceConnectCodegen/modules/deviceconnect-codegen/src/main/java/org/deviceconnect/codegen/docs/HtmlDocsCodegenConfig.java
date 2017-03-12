@@ -13,9 +13,7 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
 
@@ -55,16 +53,22 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
     public void processOpts() {
         super.processOpts();
 
-        List<Object> profileHtmlList = new ArrayList<>();
+        List<ProfileDocs> profileHtmlList = new ArrayList<>();
         for (Map.Entry<String, Swagger> specEntry : profileSpecs.entrySet()) {
             final String profileName = specEntry.getKey();
-            profileHtmlList.add(new Object() {
-                String profile = profileName;
+            profileHtmlList.add(new ProfileDocs() {
+                public String profileName() { return profileName; }
             });
         }
+        Collections.sort(profileHtmlList, new Comparator<ProfileDocs>() {
+            @Override
+            public int compare(ProfileDocs o1, ProfileDocs o2) {
+                return o1.profileName().compareTo(o2.profileName());
+            }
+        });
         additionalProperties.put("profileHtmlList", profileHtmlList);
 
-        List<Object> swaggerList = new ArrayList<>();
+        ArrayList<ProfileDocs> swaggerList = new ArrayList<>();
         for (Map.Entry<String, Swagger> specEntry : profileSpecs.entrySet()) {
             final String profileName = specEntry.getKey();
             final Swagger profileSpec = specEntry.getValue();
@@ -75,8 +79,11 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
 
             final List<Object> operationList = new ArrayList<>();
             for (Map.Entry<String, Path> pathEntry : profileSpec.getPaths().entrySet()) {
-                final String pathName = pathEntry.getKey();
-                final Path path = pathEntry.getValue();
+                String pathName = pathEntry.getKey();
+                Path path = pathEntry.getValue();
+                if ("/".equals(pathName)) {
+                    pathName = "";
+                }
                 final String fullPathName = basePath + pathName;
 
                 for (Map.Entry<HttpMethod, Operation> opEntry : path.getOperationMap().entrySet()) {
@@ -126,8 +133,8 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
                 }
             }
 
-            Object swaggerObj = new Object() {
-                String profileName() { return profileName; }
+            ProfileDocs swaggerObj = new ProfileDocs() {
+                public String profileName() { return profileName; }
                 String version = profileSpec.getInfo().getVersion();
                 String title = profileSpec.getInfo().getTitle();
                 String description = profileSpec.getInfo().getDescription();
@@ -135,6 +142,12 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
             };
             swaggerList.add(swaggerObj);
         }
+        Collections.sort(swaggerList, new Comparator<ProfileDocs>() {
+            @Override
+            public int compare(ProfileDocs o1, ProfileDocs o2) {
+                return o1.profileName().compareTo(o2.profileName());
+            }
+        });
         additionalProperties.put("swaggerList", swaggerList);
 
         embeddedTemplateDir = templateDir = getName();
@@ -144,5 +157,9 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
         supportingFiles.add(new SupportingFile("html/profile-list.html.mustache", "html", "profile-list.html"));
         supportingFiles.add(new SupportingFile("html/operation-list.html.mustache", "html", "operation-list.html"));
         supportingFiles.add(new SupportingFile("html/all-operations.html.mustache", "html", "all-operations.html"));
+    }
+
+    private interface ProfileDocs {
+        String profileName();
     }
 }

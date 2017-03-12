@@ -1,4 +1,7 @@
 # 変更履歴
+2017/03/13: v1.0.0 [iOS] iOSプラグインのスケルトン生成機能を追加
+                   [HTML] HTMLアプリのスケルトン生成機能を追加
+
 2017/03/09: v0.6.0 [Android] Device Connect SDK v2.0.0 を使用するように変更
                    [NodeJS] node-gotapiプラグインのスケルトン生成機能を追加
 
