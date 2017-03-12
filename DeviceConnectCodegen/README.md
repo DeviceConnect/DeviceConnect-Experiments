@@ -149,7 +149,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 </tr>
 
 <tr>
-<td valign="top"><pre>--class-name-prefix</pre></td>
+<td valign="top"><pre>--class-prefix</pre></td>
 <td valign="top">
 <b>[Androidプラグイン・iOSプラグインの場合のみ有効]</b><br>
 出力されるクラス名のプレフィクスの指定。<br>
