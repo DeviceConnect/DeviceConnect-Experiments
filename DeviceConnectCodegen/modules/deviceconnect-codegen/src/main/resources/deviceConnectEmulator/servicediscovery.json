@@ -1,0 +1,43 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "ServiceDiscovery Profile",
+        "version": "2.0.0",
+        "description": ""
+    },
+    "consumes": [],
+    "basePath": "/gotapi/serviceDiscovery",
+    "paths": {
+        "/": {
+            "get": {
+                "x-type": "one-shot",
+                "summary": "",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/CommonResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "services": [
+                                    {
+                                        "id": "dummy.deviceconnect.org",
+                                        "name": "Dummy Service",
+                                        "online": true,
+                                        "scopes": []
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
