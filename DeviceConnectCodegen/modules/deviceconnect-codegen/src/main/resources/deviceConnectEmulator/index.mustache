@@ -49,6 +49,13 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
     next();
   });
 
+  // CORS
+  app.use(function(req, res, next) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
   // Route validated requests to appropriate controller
   app.use(middleware.swaggerRouter(options));
 
