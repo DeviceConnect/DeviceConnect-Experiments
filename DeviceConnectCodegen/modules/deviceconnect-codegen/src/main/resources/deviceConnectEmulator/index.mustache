@@ -139,12 +139,11 @@ function startEvent(req, message) {
   }
   var origin = parseOrigin(req);
   _eventTimers[id] = setInterval(function() {
-    console.log('++++++++++ Event');
     var ws = websockets[origin];
     if (ws) {
       ws.sendUTF(JSON.stringify(message));
     } else {
-      console.warn('websockets[\'' + origin + '\'] is not found.');
+      console.warn('websockets[\'' + origin + '\'] is not established.');
     }
   }, interval);
 }
@@ -196,3 +195,6 @@ ConnectionWrapper.prototype.sendUTF = function(data) {
 
 var _eventTimers = {};
 var _eventMessages = {};
+{{#eventList}}
+_eventMessages['{{{key}}}'] = JSON.parse('{{{json}}}');
+{{/eventList}}

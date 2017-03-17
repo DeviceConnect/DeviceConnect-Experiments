@@ -9,9 +9,11 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.sun.org.apache.xml.internal.utils.Hashtree2Node;
 import io.swagger.codegen.*;
 import io.swagger.models.*;
 import io.swagger.parser.SwaggerParser;
@@ -194,6 +196,7 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
 
         appendServiceDiscovery(swagger);
         appendServiceInformation(swagger);
+        checkEvents(swagger);
 
         // need vendor extensions for x-swagger-router-controller
         Map<String, Path> paths = swagger.getPaths();
@@ -218,6 +221,49 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
                 }
             }
         }
+    }
+
+    private void checkEvents(final Swagger swagger) {
+        List<Object> eventList = new ArrayList<>();
+
+        // Collect event examples from swagger.json
+        final String basePath = swagger.getBasePath();
+        Map<String, Path> paths = swagger.getPaths();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        if(paths != null) {
+            for(final String pathname : paths.keySet()) {
+                Path path = paths.get(pathname);
+                Map<HttpMethod, Operation> operationMap = path.getOperationMap();
+                if(operationMap != null) {
+                    for(HttpMethod method : operationMap.keySet()) {
+                        if (method == HttpMethod.PUT) {
+                            try {
+                                Operation operation = operationMap.get(method);
+                                JsonNode event = (JsonNode) operation.getVendorExtensions().get("x-event");
+                                if (event != null) {
+                                    JsonNode examples = event.get("examples");
+                                    if (examples != null) {
+                                        JsonNode json = examples.get("application/json");
+                                        if (json != null) {
+                                            final String eventJson = mapper.writeValueAsString(json);
+                                            eventList.add(new Object() {
+                                                String key = (basePath + pathname).toLowerCase();
+                                                String json = eventJson;
+                                            });
+                                        }
+                                    }
+                                }
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        additionalProperties.put("eventList", eventList);
     }
 
     private void appendServiceDiscovery(final Swagger allSpecs) {
