@@ -2,10 +2,15 @@
 
 var app = require('connect')();
 var http = require('http');
+var websocket = require('websocket').server;
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var fs = require('fs');
 var serverPort = {{serverPort}};
+
+var websocketServer;
+var websockets = {};
+var httpServer;
 
 // swaggerRouter configuration
 var options = {
@@ -26,15 +31,168 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Validate Swagger requests
   app.use(middleware.swaggerValidator());
 
+  // Start events if requested.
+  app.use(function(req, res, next) {
+    var url = req.url.split("?")[0];
+    var method = req.method.toLowerCase();
+    console.log('Requested from [' + req.headers.origin + ']:' + method + ' ' + url);
+
+    if ('put' === method) {
+      var eventMessage = findEventMessage(req);
+      console.log('Event message: ' + eventMessage);
+      if (eventMessage) {
+        startEvent(req, eventMessage);
+      }
+    } else if ('delete' === method) {
+      stopEvent(req);
+    }
+    next();
+  });
+
   // Route validated requests to appropriate controller
   app.use(middleware.swaggerRouter(options));
 
   // Serve the Swagger documents and Swagger UI
   app.use(middleware.swaggerUi());
 
-  // Start the server
-  http.createServer(app).listen(serverPort, function () {
+  // Start the HTTP server
+  httpServer = http.createServer(app);
+  httpServer.listen(serverPort, function () {
     console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
     console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
   });
+
+  // Start the WebSocket server
+  websocketServer = new websocket({
+    httpServer: httpServer,
+    autoAcceptConnections: false
+  });
+  websocketServer.on('request', function(request) {
+    var connection = request.accept(null, request.origin);
+    connection.on('message', function(message) {
+      var data = message.utf8Data;
+      console.log('websocket: type=' + message.type + ', data=' + data);
+      if (message.type !== 'utf8') {
+        return;
+      }
+      if (!data || data === '') {
+        return;
+      }
+      try {
+        var json = JSON.parse(data);
+
+        // Check an accessToken from an app.
+        var accessToken = json.accessToken;
+        if (!accessToken) {
+          var error = {
+            result: 1,
+            errorCode: 1,
+            errorMessage: "accessToken is not specified."
+          };
+          sendJSON(connection, error);
+          return;
+        }
+
+        // Check whether already connected with same origin.
+        var origin = request.origin || 'dummy';
+        if (websockets[origin] && !websockets[origin].isSame(connection)) {
+          console.log('Already connected: origin = ' + origin);
+          var error = {
+            result: 1,
+            errorCode: 4,
+            errorMessage: "already established."
+          };
+          sendJSON(connection, error);
+          connection.close();
+          return;
+        }
+
+        establish(origin, connection);
+        console.log('Established websocket: origin = ' + origin);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  });
 });
+
+function sendJSON(connection, json) {
+  connection.sendUTF(JSON.stringify(json));
+}
+
+function establish(origin, connection) {
+  websockets[origin] = new ConnectionWrapper(origin, connection);
+}
+
+function findEventMessage(req) {
+  var path = parsePath(req).toLowerCase();
+  return _eventMessages[path];
+}
+
+function startEvent(req, message) {
+  stopEvent(req);
+
+  var id = createEventId(req);
+  var interval = req.body.interval;
+  if (!interval) {
+    interval = 1000;
+  }
+  var origin = parseOrigin(req);
+  _eventTimers[id] = setInterval(function() {
+    console.log('++++++++++ Event');
+    var ws = websockets[origin];
+    if (ws) {
+      ws.sendUTF(JSON.stringify(message));
+    } else {
+      console.warn('websockets[\'' + origin + '\'] is not found.');
+    }
+  }, interval);
+}
+
+function stopEvent(req) {
+  var id = createEventId(req);
+  var timer = _eventTimers[id];
+  if (timer) {
+    clearInterval(timer);
+  }
+}
+
+function parseOrigin(req) {
+  var origin = req.headers.origin;
+  if (!origin) {
+    origin = 'dummy';
+  }
+  return origin;
+}
+
+function parsePath(req) {
+  return req.url.split('?')[0];
+}
+
+function createEventId(req) {
+  var origin = parseOrigin(req);
+  var path = parsePath(req);
+  return origin + '@' + path;
+}
+
+var ConnectionWrapper = function(origin, connection) {
+  this.origin = origin;
+  this.connection = connection;
+  var self = this;
+  connection.on('close', function(reasonCode, description) {
+    console.log('Closed websocket: origin = ' + self.getOrigin());
+    websockets[self.getOrigin()] = undefined;
+  });
+}
+ConnectionWrapper.prototype.getOrigin = function() {
+  return this.origin;
+}
+ConnectionWrapper.prototype.isSame = function(connection) {
+  return this.connection === connection;
+}
+ConnectionWrapper.prototype.sendUTF = function(data) {
+  this.connection.sendUTF(data);
+}
+
+var _eventTimers = {};
+var _eventMessages = {};
