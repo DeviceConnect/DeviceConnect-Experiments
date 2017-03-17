@@ -194,6 +194,8 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
             }
         }
 
+        appendAvailability(swagger);
+        appendAuthorization(swagger);
         appendServiceDiscovery(swagger);
         appendServiceInformation(swagger);
         checkEvents(swagger);
@@ -264,6 +266,36 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
         }
 
         additionalProperties.put("eventList", eventList);
+    }
+
+    private void appendAvailability(final Swagger allSpecs) {
+        try {
+            String resPath = getResoucePath("availability.json");
+            Swagger authorizationSpec = getProfileSpec(resPath);
+            Path path = authorizationSpec.getPath("/");
+
+            Map<String, Path> paths = allSpecs.getPaths();
+            paths.put("/availability", path);
+            allSpecs.setPaths(paths);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void appendAuthorization(final Swagger allSpecs) {
+        try {
+            String resPath = getResoucePath("authorization.json");
+            Swagger authorizationSpec = getProfileSpec(resPath);
+            Path grantPath = authorizationSpec.getPath("/grant");
+            Path accessTokenPath = authorizationSpec.getPath("/accessToken");
+
+            Map<String, Path> paths = allSpecs.getPaths();
+            paths.put("/authorization/grant", grantPath);
+            paths.put("/authorization/accessToken", accessTokenPath);
+            allSpecs.setPaths(paths);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void appendServiceDiscovery(final Swagger allSpecs) {
