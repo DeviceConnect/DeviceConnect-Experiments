@@ -4,6 +4,8 @@ package org.deviceconnect.codegen.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
 
 import java.io.*;
@@ -81,7 +83,7 @@ public final class JsonChecker {
         print("計: " + total + "分 = " + (total / 60) + "時間 = " + (total / 60 / 8) + "人日");
     }
 
-    public void checkExamples(final File dir) throws IOException {
+    void checkExamples(final File dir) throws IOException {
         if (!dir.exists()) {
             throw new IOException("dir is not found: " + dir.getAbsolutePath());
         }
@@ -95,6 +97,7 @@ public final class JsonChecker {
             }
         });
         for (final File file : files) {
+            print("File: " + file.getName());
             checkFile(file);
         }
     }
@@ -104,12 +107,9 @@ public final class JsonChecker {
         check(file, new CheckListener() {
             @Override
             public void missing(final String jsonReference) {
-                if (jsonReference.contains("responses") || jsonReference.contains("x-event")) {
-                    count.up();
-                }
+                print("miss: " + jsonReference);
             }
         });
-        print(file.getName() + ": " + count.value());
     }
 
     private class Counter {
@@ -160,9 +160,7 @@ public final class JsonChecker {
                             l.missing(pathToOp + "/summary");
                         }
                         String description = op.getDescription();
-                        if (description == null || description.equals("")) {
-                            l.missing(pathToOp + "/description");
-                        }
+
 
                         List<Parameter> parameters = op.getParameters();
                         if (parameters != null) {
@@ -181,6 +179,11 @@ public final class JsonChecker {
                         if (responses != null) {
                             Response response200 = responses.get("200");
                             if (response200 != null) {
+                                Property schema = response200.getSchema();
+                                if (schema == null || !(schema instanceof RefProperty)) {
+                                    l.missing(pathToOp + "/responses/200/schema");
+                                }
+
                                 Map<String, Object> examples = response200.getExamples();
                                 if (examples != null) {
                                     Object example = examples.get("application/json");
@@ -197,7 +200,7 @@ public final class JsonChecker {
 
                         String type = (String) op.getVendorExtensions().get("x-type");
                         if (type != null) {
-                            if (type.equals("event")) {
+                            if (type.equals("event") && "put".equalsIgnoreCase(method)) {
                                 JsonNode event = (JsonNode) op.getVendorExtensions().get("x-event");
                                 if (event != null) {
                                     JsonNode schema = event.get("schema");
@@ -210,6 +213,10 @@ public final class JsonChecker {
                                     }
                                 } else {
                                     l.missing(pathToOp + "/x-event");
+                                }
+                            } else if (type.equals("event") && "get".equalsIgnoreCase(method)) {
+                                if (description == null || description.equals("")) {
+                                    l.missing(pathToOp + "/description");
                                 }
                             }
                         } else {
