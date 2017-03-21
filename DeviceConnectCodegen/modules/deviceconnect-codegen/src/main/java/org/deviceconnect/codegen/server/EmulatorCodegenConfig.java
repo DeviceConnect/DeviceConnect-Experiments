@@ -198,6 +198,7 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
         appendAuthorization(swagger);
         appendServiceDiscovery(swagger);
         appendServiceInformation(swagger);
+        checkPaths(swagger);
         checkEvents(swagger);
 
         // need vendor extensions for x-swagger-router-controller
@@ -223,6 +224,23 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
                 }
             }
         }
+    }
+
+    private void checkPaths(final Swagger swagger) {
+        List<Object> pathList = new ArrayList<>();
+        final String basePath = swagger.getBasePath();
+        Map<String, Path> paths = swagger.getPaths();
+        if (paths != null) {
+            for (final Iterator<String> it = paths.keySet().iterator(); it.hasNext(); ) {
+                final String path = it.next();
+                final boolean hasNext = it.hasNext();
+                pathList.add(new Object() {
+                    String path() { return basePath + path; }
+                    boolean hasNext() { return hasNext; }
+                });
+            }
+        }
+        additionalProperties.put("pathList", pathList);
     }
 
     private void checkEvents(final Swagger swagger) {

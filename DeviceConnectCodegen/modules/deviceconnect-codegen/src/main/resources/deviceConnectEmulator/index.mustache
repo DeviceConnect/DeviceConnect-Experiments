@@ -25,11 +25,38 @@ var swaggerDoc = jsyaml.safeLoad(spec);
 
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
+  // CORS
+  app.use(function(req, res, next) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Max-Age', '86400');
+    next();
+  });
+
   // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
   app.use(middleware.swaggerMetadata());
 
   // Validate Swagger requests
   app.use(middleware.swaggerValidator());
+
+  // OPTIONS Method
+  app.use(function(req, res, next) {
+    var method = req.method.toLowerCase();
+    if (method === 'options') {
+      res.writeHead(200);
+      res.end();
+    } else {
+      next();
+    }
+  });
+
+  // Ignore cases in path.
+  app.use(function(req, res, next) {
+    ignoreCase(req);
+    next();
+  });
 
   // Start events if requested.
   app.use(function(req, res, next) {
@@ -46,13 +73,6 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
     } else if ('delete' === method) {
       stopEvent(req);
     }
-    next();
-  });
-
-  // CORS
-  app.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
 
@@ -123,11 +143,26 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
   });
 });
 
+function ignoreCase(req) {
+  var parts = req.url.split("?");
+  var requested = parts[0];
+  var query = (parts.length === 2) ? parts[1] : '';
+  var defined;
+  for (var k in _paths) {
+    defined = _paths[k];
+    if (requested.toLowerCase() === defined.toLowerCase()) {
+      req.url = defined + "?" + query;
+      break;
+    }
+  }
+}
+
 function sendJSON(connection, json) {
   connection.sendUTF(JSON.stringify(json));
 }
 
 function establish(origin, connection) {
+  sendJSON(connection, {result:0});
   websockets[origin] = new ConnectionWrapper(origin, connection);
 }
 
@@ -199,6 +234,12 @@ ConnectionWrapper.prototype.isSame = function(connection) {
 ConnectionWrapper.prototype.sendUTF = function(data) {
   this.connection.sendUTF(data);
 }
+
+var _paths = [
+  {{#pathList}}
+  '{{{path}}}'{{#hasNext}},{{/hasNext}}
+  {{/pathList}}
+];
 
 var _eventTimers = {};
 var _eventMessages = {};
