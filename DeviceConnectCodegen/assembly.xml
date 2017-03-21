@@ -26,6 +26,8 @@
                 <include>node-plugin.bat</include>
                 <include>html-app.sh</include>
                 <include>html-app.bat</include>
+                <include>emulator.sh</include>
+                <include>emulator.bat</include>
     		</includes>
             <fileMode>0744</fileMode>
     	</fileSet>
