@@ -1,0 +1,65 @@
+body {
+    font-size: 10pt;
+}
+
+h1.title {
+    color: #5B9CFC;
+}
+
+h2.profile-title {
+    color: #999;
+}
+div.profile-summary-content {
+    padding-left: 10pt;
+}
+div.profile-description-content {
+    padding-left: 10pt;
+}
+div.profile-operations-content {
+}
+
+div.operation-docs-block {
+    border: 1px solid #000;
+    margin-left: 12pt;
+    margin-right: 12pt;
+    margin-top: 30pt;
+    margin-bottom: 30pt;
+}
+div.operation-docs-header {
+    font-weight: normal;
+    font-size: 14pt;
+    padding: 6pt;
+    background: #eee;
+}
+div.operation-docs-body {
+    padding: 10pt;
+}
+
+div.operation-title {
+    font-weight: bold;
+    color: #999;
+}
+div.operation-content {
+    margin-left: 10pt;
+    margin-bottom: 10pt;
+}
+div.operation-content table {
+    border: 1px solid #000;
+    width: 100%;
+}
+div.operation-content table th {
+    font-size: 8pt;
+    background-color: #eee;
+}
+div.operation-content table td {
+    font-size: 10pt;
+}
+
+div.model-title {
+    font-weight: bold;
+    color: #999;
+}
+div.model-content {
+    margin-left: 10pt;
+    margin-bottom: 10pt;
+}

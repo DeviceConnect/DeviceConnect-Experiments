@@ -1,0 +1,218 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "2.0.0",
+		"title": "Device Connect API"
+	},
+	"basePath": "/gotapi/deviceOrientation",
+	"paths": {
+		"/onDeviceOrientation": {
+			"put": {
+				"summary": "",
+				"description": "",
+				"parameters": [{
+					"name": "serviceId",
+					"in": "formData",
+					"required": true,
+					"type": "string"
+				}, {
+					"name": "interval",
+					"in": "formData",
+					"required": false,
+					"type": "integer",
+					"format": "int64"
+				}],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/EventRegistrationResponse"
+						}
+					}
+				},
+				"x-type": "event",
+				"x-event": {
+					"schema": {
+						"$ref": "#/definitions/DeviceOrientationEvent"
+					}
+				}
+			},
+			"delete": {
+				"summary": "",
+				"description": "",
+				"parameters": [{
+					"name": "serviceId",
+					"in": "query",
+					"required": true,
+					"type": "string"
+				}],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/EventUnregistrationResponse"
+						}
+					}
+				},
+				"x-type": "event"
+			}
+		}
+	},
+	"definitions": {
+		"CommonResponse": {
+			"type": "object",
+			"required": ["product", "result", "version"],
+			"properties": {
+				"result": {
+					"type": "integer",
+					"description": "0:正常応答<br>0以外:異常応答"
+				},
+				"product": {
+					"type": "string",
+					"description": "DeviceConnectシステムの名前。"
+				},
+				"version": {
+					"type": "string",
+					"description": "DeviceConnectシステムのバージョン名。"
+				},
+				"hmac": {
+					"type": "string",
+					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+				}
+			}
+		},
+		"CommonEvent": {
+			"type": "object",
+			"required": ["attribute", "interface", "profile", "serviceId"],
+			"properties": {
+				"serviceId": {
+					"type": "string",
+					"description": "0:正常応答<br>0以外:異常応答"
+				},
+				"profile": {
+					"type": "string",
+					"description": "プロファイル名。"
+				},
+				"interface": {
+					"type": "string",
+					"description": "インターフェース名。"
+				},
+				"attribute": {
+					"type": "string",
+					"description": "アトリビュート名。"
+				}
+			}
+		},
+		"EventRegistrationResponse": {
+			"allOf": [{
+				"$ref": "#/definitions/CommonResponse"
+			}]
+		},
+		"EventUnregistrationResponse": {
+			"allOf": [{
+				"$ref": "#/definitions/CommonResponse"
+			}]
+		},
+		"DeviceOrientationResponse": {
+			"allOf": [{
+				"$ref": "#/definitions/CommonResponse"
+			}, {
+				"$ref": "#/definitions/DeviceOrientationInfo"
+			}]
+		},
+		"DeviceOrientationEvent": {
+			"allOf": [{
+				"$ref": "#/definitions/CommonEvent"
+			}, {
+				"$ref": "#/definitions/DeviceOrientationInfo"
+			}]
+		},
+		"DeviceOrientationInfo": {
+			"type": "object",
+			"required": ["orientation"],
+			"properties": {
+				"orientation": {
+					"type": "object",
+					"properties": {
+						"interval": {
+							"type": "integer",
+							"format": "int64",
+							"description": "インターバル (単位: ミリ秒)",
+							"title": "インターバル"
+						},
+						"acceleration": {
+							"type": "object",
+							"description": "加速度のオブジェクト。",
+							"title": "加速度",
+							"properties": {
+								"x": {
+									"type": "number",
+									"description": "x軸方向への加速度（m/s2）。",
+									"title": "x軸成分"
+								},
+								"y": {
+									"type": "number",
+									"description": "y軸方向への加速度（m/s2）。",
+									"title": "y軸成分"
+								},
+								"z": {
+									"type": "number",
+									"description": "z軸方向への加速度（m/s2）。",
+									"title": "z軸成分"
+								}
+							},
+							"required": ["x", "y", "z"]
+						},
+						"accelerationIncludingGravity": {
+							"type": "object",
+							"description": "重力込みの加速度のオブジェクト。",
+							"title": "重力込みの加速度",
+							"properties": {
+								"x": {
+									"type": "number",
+									"description": "x軸方向への重力込みの加速度（m/s2）。",
+									"title": "x軸成分"
+								},
+								"y": {
+									"type": "number",
+									"description": "y軸方向への重力込みの加速度（m/s2）。",
+									"title": "y軸成分"
+								},
+								"z": {
+									"type": "number",
+									"description": "z軸方向への重力込みの加速度（m/s2）。",
+									"title": "z軸成分"
+								}
+							},
+							"required": ["x", "y", "z"]
+						},
+						"rotationRate": {
+							"type": "object",
+							"description": "角速度のオブジェクト。",
+							"title": "角速度",
+							"properties": {
+								"alpha": {
+									"type": "number",
+									"description": "z軸回りの角速度(degree/s)。",
+									"title": "z軸回り成分"
+								},
+								"beta": {
+									"type": "number",
+									"description": "x軸回りの角速度(degree/s)。",
+									"title": "x軸回り成分"
+								},
+								"gamma": {
+									"type": "number",
+									"description": "y軸回りの角速度(degree/s)。",
+									"title": "y軸回り成分"
+								}
+							},
+							"required": ["alpha", "beta", "gamma"]
+						}
+					},
+					"required": ["interval"]
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,21 @@
+# {{displayName}}
+
+## 留意事項
+・iOS版プラグインのスケルトンコードはロジック部分の実装ファイルのみが出力されます。Xcodeプロジェクトとしては出力されません。
+
+## サポートするプロファイル
+{{#supportedProfileNames}}
+- {{name}}
+{{/supportedProfileNames}}
+
+## 要実装箇所
+下記の .m ファイルにTODOを記載しています。プラグインの要件に合わせて実装してください。
+
+- {{pluginClass}}.m
+{{#supportedProfileClasses}}
+- {{name}}.m
+{{/supportedProfileClasses}}
+
+
+## 関連ページ
+- [Device Connect プラグイン開発マニュアル](https://github.com/DeviceConnect/DeviceConnect-Android/wiki/DevicePlugin-Manual-for-Android-Studio-110)

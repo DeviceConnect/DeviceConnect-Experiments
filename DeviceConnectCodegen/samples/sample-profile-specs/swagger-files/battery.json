@@ -1,0 +1,94 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "2.0.0",
+		"title": "Device Connect API"
+	},
+	"basePath": "/gotapi/battery",
+	"paths": {
+		"/": {
+			"get": {
+				"summary": "スマートデバイスのバッテリー情報を取得する。",
+				"description": "",
+				"parameters": [{
+					"name": "serviceId",
+					"in": "query",
+					"required": true,
+					"type": "string"
+				}],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/AllResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0",
+								"charging": true,
+								"chargingTime": 10,
+								"dischargingTime": 0,
+								"level": 0.8
+							}
+						}
+					}
+				},
+				"x-type": "one-shot"
+			}
+		}
+	},
+	"definitions": {
+		"AllResponse": {
+			"allOf": [{
+				"$ref": "#/definitions/CommonResponse"
+			}, {
+				"type": "object",
+				"required": ["charging"],
+				"properties": {
+					"charging": {
+						"type": "boolean",
+						"description": "充電状態フラグ。<br>充電中:true<br>非充電中:false"
+					},
+					"chargingTime": {
+						"type": "integer",
+						"format": "int64",
+						"description": "完全充電までの時間(秒)。<br>満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+					},
+					"dischargingTime": {
+						"type": "integer",
+						"format": "int64",
+						"description": "完全放電までの時間(秒)。<br>充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE"
+					},
+					"level": {
+						"type": "number",
+						"description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
+					}
+				}
+			}]
+		},
+		"CommonResponse": {
+			"type": "object",
+			"required": ["product", "result", "version"],
+			"properties": {
+				"result": {
+					"type": "integer",
+					"description": "0:正常応答<br>0以外:異常応答"
+				},
+				"product": {
+					"type": "string",
+					"description": "DeviceConnectシステムの名前。"
+				},
+				"version": {
+					"type": "string",
+					"description": "DeviceConnectシステムのバージョン名。"
+				},
+				"hmac": {
+					"type": "string",
+					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+				}
+			}
+		}
+	}
+}
