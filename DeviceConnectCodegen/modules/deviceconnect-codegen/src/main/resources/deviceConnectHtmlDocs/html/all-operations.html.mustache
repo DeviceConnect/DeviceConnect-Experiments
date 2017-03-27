@@ -1,0 +1,72 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<link href="../css/profile.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+{{#swaggerList}}
+<h1 class="title">{{title}}</h1>
+<div>Ver. {{version}}</div>
+
+<h2 class="profile-title">Description</h2>
+<div class="profile-description-content">
+{{{description}}}
+</div>
+
+<h2 class="profile-title">Operations</h2>
+<div class="profile-operations-content">
+<ul>
+    {{#operationList}}
+    <li><a href="#{{id}}">{{name}}</a></li>
+    {{/operationList}}
+</ul>
+</div>
+
+{{#operationList}}
+<a name="{{id}}" />
+<div class="operation-docs-block">
+    <div class="operation-docs-header">{{name}}</div>
+    <div class="operation-docs-body">
+        <div class="operation-title">Type</div>
+        <div class="operation-content">{{type}}</div>
+        <div class="operation-title">Summary</div>
+        <div class="operation-content">{{{summary}}}</div>
+        <div class="operation-title">Descriotion</div>
+        <div class="operation-content">{{{description}}}</div>
+        <div class="operation-title">Parameters</div>
+        <div class="operation-content">
+        <table>
+            <tbody>
+                <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                {{#paramList}}
+                <tr><td>{{name}}</td><td>{{type}}</td><td>{{required}}</td><td>{{{description}}}</td></tr>
+                {{/paramList}}
+            </tbody>
+        </table>
+        </div>
+        <div class="operation-title">Response</div>
+        <div class="operation-content">
+            {{#response}}
+            <a href="#Models-{{modelId}}">{{modelName}}</a>
+            {{/response}}
+        </div>
+    </div>
+</div>
+{{/operationList}}
+
+
+<h2 class="profile-title">Models</h2>
+{{#modelList}}
+<a name="Models-{{id}}" />
+<div class="model-title">{{name}}</div>
+<div class="model-content">
+</div>
+{{/modelList}}
+{{^modelList}}No Model.{{/modelList}}
+
+<hr />
+{{/swaggerList}}
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<link href="../css/operation-list.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+{{#swaggerList}}
+<a name="{{profileName}}" />
+<h3 style="color: #5B9CFC">{{title}}</h3>
+<ul>
+    {{#operationList}}
+    <li><a href="all-operations.html#{{id}}" target="content_frame">{{name}}</a></li>
+    {{/operationList}}
+</ul>
+{{/swaggerList}}
+</body>
+</html>

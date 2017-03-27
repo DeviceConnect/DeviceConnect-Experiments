@@ -1,0 +1,26 @@
+#import "{{pluginClass}}.h"
+{{#supportedProfileClasses}}
+#import "{{name}}.h"
+{{/supportedProfileClasses}}
+
+@implementation {{pluginClass}}
+
+- (instancetype) init {
+    self = [super initWithObject: self];
+    if (self) {
+        DConnectMemoryCacheController *ctl = [[DConnectMemoryCacheController alloc] init];
+        [[DConnectEventManager sharedManagerForClass:[self class]] setController:ctl];
+
+        // TODO 以降の処理では常駐型のサービスを生成しています. 要件に適さない場合は修正してください.
+        DConnectService *service = [[DConnectService alloc] initWithServiceId:@"{{serviceId}}" plugin:self];
+        [service setName:@"{{displayName}} Service"];
+        [service setOnline:YES];
+        {{#supportedProfileClasses}}
+        [service addProfile:[{{name}} new]];
+        {{/supportedProfileClasses}}
+        [self.serviceProvider addService:service];
+    }
+    return self;
+}
+
+@end
