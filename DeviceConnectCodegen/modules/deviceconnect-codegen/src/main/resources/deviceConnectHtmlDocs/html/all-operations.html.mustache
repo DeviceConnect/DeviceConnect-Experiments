@@ -45,27 +45,21 @@
             </tbody>
         </table>
         </div>
+        {{#response}}
         <div class="operation-title">Response</div>
         <div class="operation-content">
-            {{#response}}
-            <a href="#Models-{{modelId}}">{{modelName}}</a>
-            {{/response}}
+        {{> dconnect-message}}
         </div>
+        {{/response}}
+        {{#event}}
+        <div class="operation-title">Event</div>
+        <div class="operation-content">
+        {{> dconnect-message}}
+        </div>
+        {{/event}}
     </div>
 </div>
 {{/operationList}}
-
-
-<h2 class="profile-title">Models</h2>
-{{#modelList}}
-<a name="Models-{{id}}" />
-<div class="model-title">{{name}}</div>
-<div class="model-content">
-</div>
-{{/modelList}}
-{{^modelList}}No Model.{{/modelList}}
-
-<hr />
 {{/swaggerList}}
 
 </body>
