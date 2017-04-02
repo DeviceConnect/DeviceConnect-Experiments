@@ -28,19 +28,21 @@
 <div class="operation-docs-block">
     <div class="operation-docs-header">{{name}}</div>
     <div class="operation-docs-body">
-        <div class="operation-title">Type</div>
+        <div class="operation-title">API Pattern</div>
         <div class="operation-content">{{type}}</div>
         <div class="operation-title">Summary</div>
         <div class="operation-content">{{{summary}}}</div>
-        <div class="operation-title">Descriotion</div>
-        <div class="operation-content">{{{description}}}</div>
+        {{#description}}
+        <div class="operation-title">Description</div>
+        <div class="operation-content">{{{.}}}</div>
+        {{/description}}
         <div class="operation-title">Parameters</div>
         <div class="operation-content">
         <table>
             <tbody>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 {{#paramList}}
-                <tr><td>{{name}}</td><td>{{type}}</td><td>{{required}}</td><td>{{{description}}}</td></tr>
+                <tr><td class="mono">{{name}}</td><td>{{type}}</td><td>{{required}}</td><td>{{{description}}}</td></tr>
                 {{/paramList}}
             </tbody>
         </table>
@@ -50,12 +52,20 @@
         <div class="operation-content">
         {{> dconnect-message}}
         </div>
+        {{#example}}
+        <div class="operation-title">Example Response</div>
+        <div class="operation-content"><pre class="mono">{{{.}}}</pre></div>
+        {{/example}}
         {{/response}}
         {{#event}}
         <div class="operation-title">Event</div>
         <div class="operation-content">
         {{> dconnect-message}}
         </div>
+        {{#example}}
+        <div class="operation-title">Example Event</div>
+        <div class="operation-content"><pre class="mono">{{{.}}}</pre></div>
+        {{/example}}
         {{/event}}
     </div>
 </div>

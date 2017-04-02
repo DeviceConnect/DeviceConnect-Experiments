@@ -2,8 +2,10 @@ package org.deviceconnect.codegen.docs;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.codegen.SupportingFile;
@@ -101,19 +103,30 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
                             String type() {
                                 String type;
                                 String format;
+                                Property items;
                                 if (param instanceof QueryParameter) {
                                     type = ((QueryParameter) param).getType();
                                     format = ((QueryParameter) param).getFormat();
+                                    items = ((QueryParameter) param).getItems();
                                 } else if (param instanceof FormParameter) {
                                     type = ((FormParameter) param).getType();
                                     format = ((FormParameter) param).getFormat();
+                                    items = ((FormParameter) param).getItems();
                                 } else {
                                     return null;
                                 }
-                                if (format == null) {
+
+                                if ("array".equals(type)) {
+                                    if (items != null) {
+                                        return type + "(" + convertPropertyToCommonName(items) + ")";
+                                    } else {
+                                        return type;
+                                    }
+                                } else if ("object".equals(type)) {
                                     return type;
+                                } else {
+                                    return convertPrimitiveProperty(type, format);
                                 }
-                                return type + " (" + format + ")";
                             }
                             String required = param.getRequired() ? "Yes" : "No";
                             String description = param.getDescription();
@@ -128,7 +141,13 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
                         String name = method + " " + fullPathName;
                         String type = (String) op.getVendorExtensions().get("x-type");
                         String summary = op.getSummary();
-                        String description = op.getDescription();
+                        String description() {
+                            String description = op.getDescription();
+                            if ("".equals(description)) {
+                                return null;
+                            }
+                            return description;
+                        }
                         List<Object> paramList() {
                             return paramList;
                         }
@@ -164,13 +183,49 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
         supportingFiles.add(new SupportingFile("html/all-operations.html.mustache", "html", "all-operations.html"));
     }
 
+    private String convertPropertyToCommonName(final Property prop) {
+        String type = prop.getType();
+        String format = prop.getFormat();
+        if ("array".equals(type)) {
+            ArrayProperty arrayProp = (ArrayProperty) prop;
+            return type + "(" + convertPropertyToCommonName(arrayProp.getItems()) + ")";
+        } else if ("array".equals(type)) {
+            return type;
+        } else  {
+            return convertPrimitiveProperty(type, format);
+        }
+    }
+
+    private String convertPrimitiveProperty(final String type, final String format) {
+        if ("integer".equals(type)) {
+            if ("int64".equals(format)) {
+                return "long";
+            }
+            return "integer";
+        } else if ("number".equals(type)) {
+            if ("double".equals(format)) {
+                return format;
+            }
+            return "float";
+        } else if ("string".equals(type)) {
+           if ("byte".equals(format) || "binary".equals(format) || "date".equals(format) || "password".equals(format)) {
+               return format;
+           } else if ("date-time".equals(format)) {
+               return "dateTime";
+           } else {
+               return type; // string
+           }
+        } else {
+            return type;
+        }
+    }
+
     private Object createResponseDocument(final Swagger swagger, final Operation operation) {
         final Map<String, Response> responses = operation.getResponses();
         if (responses != null) {
             Response response = responses.get("200");
             if (response != null) {
-                Property schema = response.getSchema();
-                return createMessageDocument(swagger, schema);
+                return createMessageDocument(swagger, response);
             }
         }
         return null;
@@ -185,14 +240,14 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
         if (eventModel == null) {
             return null;
         }
-        Property schema = eventModel.getSchema();
+        return createMessageDocument(swagger, eventModel);
+    }
+
+    private Object createMessageDocument(final Swagger swagger, final Response message) {
+        Property schema = message.getSchema();
         if (schema == null) {
             return null;
         }
-        return createMessageDocument(swagger, schema);
-    }
-
-    private Object createMessageDocument(final Swagger swagger, final Property schema) {
         ObjectProperty root;
         if (schema instanceof ObjectProperty) {
             root = (ObjectProperty) schema;
@@ -231,6 +286,25 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
             List<ResponseParamDoc> paramList() { return paramDocList; }
 
             int maxNestLevel() { return maxNestLevel; }
+
+            String example() {
+                String exampleJson = null;
+                Map<String, Object> examples = message.getExamples();
+                if (examples != null) {
+                    Map<String, Object> example = (Map<String, Object>) examples.get("application/json");
+                    if (example != null) {
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                        try {
+                            ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+                            exampleJson = writer.writeValueAsString(example);
+                        } catch (JsonProcessingException e) {
+                            // NOP.
+                        }
+                    }
+                }
+                return exampleJson;
+            }
         };
     }
 
@@ -256,11 +330,7 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
             Property prop = propEntry.getValue();
 
             String type = prop.getType();
-            String format = prop.getFormat();
-            String title = prop.getTitle();
-            String description = prop.getDescription();
-            boolean isRequired = prop.getRequired();
-            ResponseParamDoc paramDoc = new ResponseParamDoc(propName, type, format, title, description, isRequired, nestLevel);
+            ResponseParamDoc paramDoc = new ResponseParamDoc(propName, prop, nestLevel);
             paramDocList.add(paramDoc);
 
             if ("array".equals(type)) {
@@ -326,6 +396,7 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
         final String name;
         final String type;
         final String format;
+        final String dataType;
         final String title;
         final String description;
         final boolean isRequired;
@@ -333,18 +404,15 @@ public class HtmlDocsCodegenConfig extends DefaultCodegen implements DConnectCod
         int maxNestLevel;
 
         ResponseParamDoc(final String name,
-                         final String type,
-                         final String format,
-                         final String title,
-                         final String description,
-                         final boolean isRequired,
+                         final Property prop,
                          final int nestLevel) {
             this.name = name;
-            this.type = type;
-            this.format = format;
-            this.title = title;
-            this.description = description;
-            this.isRequired = isRequired;
+            this.type = prop.getType();
+            this.format = prop.getFormat();
+            this.dataType = convertPropertyToCommonName(prop);
+            this.title = prop.getTitle();
+            this.description = prop.getDescription();
+            this.isRequired = prop.getRequired();
             this.nestLevel = nestLevel;
         }
 

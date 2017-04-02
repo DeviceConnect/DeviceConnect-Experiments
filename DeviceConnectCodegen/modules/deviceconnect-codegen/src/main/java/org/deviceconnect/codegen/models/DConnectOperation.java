@@ -2,6 +2,7 @@ package org.deviceconnect.codegen.models;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
@@ -90,10 +91,18 @@ public class DConnectOperation {
                 return null;
             }
 
+            Map<String, Object> examples = null;
+            JsonNode examplesNode = rootNode.get("examples");
+            if (examplesNode != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                examples = mapper.convertValue(examplesNode, Map.class);
+            }
+
             Response eventModel = new Response();
             RefProperty refSchema = new RefProperty();
             refSchema.set$ref(text);
             eventModel.setSchema(refSchema);
+            eventModel.setExamples(examples);
             return eventModel;
         } else {
             return null; // TODO
