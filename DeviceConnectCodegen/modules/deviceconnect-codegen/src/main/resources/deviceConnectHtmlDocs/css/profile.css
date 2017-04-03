@@ -3,17 +3,19 @@ body {
 }
 
 h1.title {
-    color: #5B9CFC;
+    background-color: #5B9CFC;
+    color: #fff;
+    padding: 4pt;
 }
 
 h2.profile-title {
     color: #999;
 }
 div.profile-summary-content {
-    padding-left: 10pt;
+    padding-left: 0pt;
 }
 div.profile-description-content {
-    padding-left: 10pt;
+    padding-left: 0pt;
 }
 div.profile-operations-content {
 }
@@ -40,19 +42,43 @@ div.operation-title {
     color: #999;
 }
 div.operation-content {
-    margin-left: 10pt;
-    margin-bottom: 10pt;
+    margin-left: 0pt;
+    margin-bottom: 20pt;
 }
 div.operation-content table {
-    border: 1px solid #000;
     width: 100%;
 }
 div.operation-content table th {
     font-size: 8pt;
-    background-color: #eee;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6pt;
+    padding-top: 6pt;
+    padding-left: 3pt;
+    padding-right: 3pt;
 }
 div.operation-content table td {
-    font-size: 10pt;
+    font-size: 8pt;
+    vertical-align: top;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6pt;
+    padding-top: 6pt;
+    padding-left: 3pt;
+    padding-right: 3pt;
+}
+div.operation-content pre {
+    font-size: 8pt;
+    padding: 8pt;
+    background-color: #eee;
+
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.mono {
+    font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
 }
 
 div.model-title {

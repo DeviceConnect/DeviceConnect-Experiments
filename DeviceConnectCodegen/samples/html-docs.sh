@@ -1,6 +1,6 @@
 #!/bin/sh -x
 
-# スケルトンコード種別: API仕様書
+# スケルトンコード種別: APIリファレンス
 LANG="deviceConnectHtmlDocs"
 
 # プロファイル定義ファイル
