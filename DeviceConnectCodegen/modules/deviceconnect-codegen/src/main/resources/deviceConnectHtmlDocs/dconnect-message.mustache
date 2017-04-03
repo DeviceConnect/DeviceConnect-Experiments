@@ -1,0 +1,8 @@
+<table>
+    <tbody>
+        <tr><th colspan="{{maxNestLevel}}">Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+        {{#paramList}}
+        <tr>{{#indents}}<td></td>{{/indents}}<td colspan="{{colSpan}}" class="mono">{{name}}</td><td>{{dataType}}</td><td>{{required}}</td><td>{{#title}}<b>{{{.}}}</b><br>{{/title}}{{{description}}}</td></tr>
+        {{/paramList}}
+    </tbody>
+</table>
