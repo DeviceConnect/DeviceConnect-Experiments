@@ -9,14 +9,16 @@ import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
+import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
+import org.deviceconnect.codegen.ProfileTemplate;
 import org.deviceconnect.codegen.models.DConnectOperation;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class AbstractPluginCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
+public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig {
 
     private final String[] standardProfileClassNames;
 
@@ -222,25 +224,8 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
 
     protected abstract List<String> getEventCreation(Swagger swagger, Response event);
 
-    protected abstract String profileFileFolder();
-
     protected abstract List<ProfileTemplate> prepareProfileTemplates(String profileName, Map<String, Object> properties);
 
-    private void generateProfile(ProfileTemplate template, Map<String, Object> properties) throws IOException {
-        String templateFile = getFullTemplateFile(this, template.templateFile);
-        Template tmpl = Mustache.compiler()
-                .withLoader(new Mustache.TemplateLoader() {
-                    @Override
-                    public Reader getTemplate(String name) {
-                        return getTemplateReader(getFullTemplateFile(AbstractPluginCodegenConfig.this, name + ".mustache"));
-                    }
-                })
-                .defaultValue("")
-                .compile(readTemplate(templateFile));
-
-        String outputFileName = profileFileFolder() + File.separator + template.outputFile;
-        writeToFile(outputFileName, tmpl.execute(properties));
-    }
 
     private static String getProfileNameFromPath(String path) {
         String[] array = path.split("/");
@@ -317,119 +302,6 @@ public abstract class AbstractPluginCodegenConfig extends DefaultCodegen impleme
                 writeFile(content, new File(getProfileSpecFolder(), fileName));
             }
         }
-    }
-
-    private void writeFile(final String source, final File destination) throws IOException {
-        if (destination.exists()) {
-            throw new IOException("Profile Spec File is already created: " + destination.getAbsolutePath());
-        }
-        if (!destination.createNewFile()) {
-            throw new IOException("Failed to create Profile Spec File: " + destination.getAbsolutePath());
-        }
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(destination);
-            out.write(source.getBytes());
-            out.flush();
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-        }
-    }
-
-    @SuppressWarnings("static-method")
-    private File writeToFile(String filename, String contents) throws IOException {
-        LOGGER.info("writing file " + filename);
-        File output = new File(filename);
-
-        if (output.getParent() != null && !new File(output.getParent()).exists()) {
-            File parent = new File(output.getParent());
-            parent.mkdirs();
-        }
-        Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(output), "UTF-8"));
-
-        out.write(contents);
-        out.close();
-        return output;
-    }
-
-    private String readTemplate(String name) {
-        try {
-            Reader reader = getTemplateReader(name);
-            if (reader == null) {
-                throw new RuntimeException("no file found");
-            }
-            Scanner s = new Scanner(reader).useDelimiter("\\A");
-            return s.hasNext() ? s.next() : "";
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        throw new RuntimeException("can't load template " + name);
-    }
-
-    private Reader getTemplateReader(String name) {
-        try {
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream(getCPResourcePath(name));
-            if (is == null) {
-                is = new FileInputStream(new File(name)); // May throw but never return a null value
-            }
-            return new InputStreamReader(is);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-        throw new RuntimeException("can't load template " + name);
-    }
-
-    /**
-     * Get the template file path with template dir prepended, and use the
-     * library template if exists.
-     *
-     * @param config Codegen config
-     * @param templateFile Template file
-     * @return String Full template file path
-     */
-    private String getFullTemplateFile(CodegenConfig config, String templateFile) {
-        String template = config.templateDir() + File.separator + templateFile;
-        if (new File(template).exists()) {
-            return template;
-        } else {
-            String library = config.getLibrary();
-            if (library != null && !"".equals(library)) {
-                String libTemplateFile = config.embeddedTemplateDir() + File.separator +
-                        "libraries" + File.separator + library + File.separator +
-                        templateFile;
-                if (embeddedTemplateExists(libTemplateFile)) {
-                    // Fall back to the template file embedded/packaged in the JAR file...
-                    return libTemplateFile;
-                }
-            }
-            // Fall back to the template file embedded/packaged in the JAR file...
-            return config.embeddedTemplateDir() + File.separator + templateFile;
-        }
-    }
-
-    private String readResourceContents(String resourceFilePath) {
-        StringBuilder sb = new StringBuilder();
-        Scanner scanner = new Scanner(this.getClass().getResourceAsStream(getCPResourcePath(resourceFilePath)), "UTF-8");
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            sb.append(line).append('\n');
-        }
-        return sb.toString();
-    }
-
-    private boolean embeddedTemplateExists(String name) {
-        return this.getClass().getClassLoader().getResource(getCPResourcePath(name)) != null;
-    }
-
-    @SuppressWarnings("static-method")
-    private String getCPResourcePath(String name) {
-        if (!"/".equals(File.separator)) {
-            return name.replaceAll(Pattern.quote(File.separator), "/");
-        }
-        return name;
     }
 
     protected static String toUpperCapital(String str) {
