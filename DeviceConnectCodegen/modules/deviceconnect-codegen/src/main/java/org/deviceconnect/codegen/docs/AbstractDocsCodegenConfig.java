@@ -162,9 +162,9 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                 Map<String, Object> properties = new LinkedHashMap<>();
                 properties.put("profileSpec", findSwagger(profileName));
 
-                preprareTemplates(profileName, templates);
+                prepareTemplates(profileName, templates);
                 if (templates.size() > 0) {
-                    preprareProperties(profileName, properties);
+                    prepareProperties(profileName, properties);
                     for (ProfileTemplate template : templates) {
                         generateProfile(template, properties);
                     }
@@ -175,11 +175,11 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
         }
     }
 
-    protected void preprareTemplates(final String profileName, final List<ProfileTemplate> templates) {
+    protected void prepareTemplates(final String profileName, final List<ProfileTemplate> templates) {
         // To be override by child class.
     }
 
-    protected void preprareProperties(final String profileName, final Map<String, Object> properties) {
+    protected void prepareProperties(final String profileName, final Map<String, Object> properties) {
         // To be override by child class.
     }
 

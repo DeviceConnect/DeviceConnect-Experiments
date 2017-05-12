@@ -24,7 +24,7 @@ public class MarkdownDocsCodegenConfig extends AbstractDocsCodegenConfig {
     }
 
     @Override
-    protected void preprareTemplates(final String profileName, final List<ProfileTemplate> templates) {
+    protected void prepareTemplates(final String profileName, final List<ProfileTemplate> templates) {
         ProfileTemplate template = new ProfileTemplate();
         template.templateFile = "profile.md.mustache";
         template.outputFile = profileName + ".md";
