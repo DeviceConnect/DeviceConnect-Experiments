@@ -1,6 +1,4 @@
 {{#profileSpec}}
-# {{title}}
-
 ## 概要
 {{{description}}}
 
@@ -9,7 +7,7 @@
     <tbody>
         <tr><th>API</th><th>概要</th></tr>
         {{#operationList}}
-        <tr><td><a href="#{{id}}">{{name}}</a></td><td>{{summary}}</td></tr>
+        <tr><td><a href="#{{id}}">{{name}}</a></td><td>{{{summary}}}</td></tr>
         {{/operationList}}
     </tbody>
 </table>
@@ -22,10 +20,10 @@
 {{type}}
 
 ### 概要
-{{summary}}
+{{{summary}}}
 {{#description}}
 
-{{.}}
+{{{.}}}
 {{/description}}
 
 ### リクエスト

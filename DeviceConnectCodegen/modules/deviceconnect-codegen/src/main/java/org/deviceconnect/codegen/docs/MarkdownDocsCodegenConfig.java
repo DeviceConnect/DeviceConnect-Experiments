@@ -1,6 +1,7 @@
 package org.deviceconnect.codegen.docs;
 
 
+import io.swagger.codegen.SupportingFile;
 import org.deviceconnect.codegen.ProfileTemplate;
 
 import java.io.File;
@@ -27,8 +28,15 @@ public class MarkdownDocsCodegenConfig extends AbstractDocsCodegenConfig {
     protected void prepareTemplates(final String profileName, final List<ProfileTemplate> templates) {
         ProfileTemplate template = new ProfileTemplate();
         template.templateFile = "profile.md.mustache";
-        template.outputFile = profileName + ".md";
+        template.outputFile = toUpperCapital(profileName, false) + ".md";
         templates.add(template);
     }
 
+    @Override
+    public void processOpts() {
+        super.processOpts();
+
+        supportingFiles.add(new SupportingFile("index.md.mustache", "Device-Connect-API-Reference.md"));
+        supportingFiles.add(new SupportingFile("sidebar.md.mustache", "_Sidebar.md"));
+    }
 }

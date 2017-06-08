@@ -62,9 +62,18 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                 }
                 final String fullPathName = basePath + pathName;
 
-                for (Map.Entry<HttpMethod, Operation> opEntry : path.getOperationMap().entrySet()) {
-                    final String method = opEntry.getKey().name().toUpperCase();
-                    final Operation op = opEntry.getValue();
+                HttpMethod[] httpMethods = {
+                        HttpMethod.GET,
+                        HttpMethod.POST,
+                        HttpMethod.PUT,
+                        HttpMethod.DELETE
+                };
+                for (HttpMethod key : httpMethods) {
+                    final String method = key.name().toUpperCase();
+                    final Operation op = path.getOperationMap().get(key);
+                    if (op == null) {
+                        continue;
+                    }
                     final List<Object> paramList = new ArrayList<>();
                     for (final Parameter param : op.getParameters()) {
                         paramList.add(new Object() {
@@ -128,6 +137,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
 
             OperationListDocs swaggerObj = new OperationListDocs() {
                 public String profileName() { return profileName; }
+                String profileNameCamelCase() { return toUpperCapital(profileName, false); }
                 String version = profileSpec.getInfo().getVersion();
                 String title = profileSpec.getInfo().getTitle();
                 String description = profileSpec.getInfo().getDescription();
@@ -142,6 +152,24 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
             }
         });
         additionalProperties.put("swaggerList", swaggerList);
+
+        filterProfiles();
+    }
+
+    protected String[] getIgnoredProfiles() {
+        return new String[] {"files"};
+    }
+
+    private void filterProfiles() {
+        for (String ignored : getIgnoredProfiles()) {
+            for(Iterator<OperationListDocs> it = swaggerList.iterator(); it.hasNext(); ) {
+                OperationListDocs swagger = it.next();
+                if (swagger.profileName().equalsIgnoreCase(ignored)) {
+                    it.remove();
+                }
+            }
+            profileSpecs.remove(ignored);
+        }
     }
 
     private OperationListDocs findSwagger(final String profileName) {
@@ -274,7 +302,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
         final List<ResponseParamDoc> paramDocList = new ArrayList<>();
         Map<String, Property> props = root.getProperties();
         if (props != null && props.size() > 0) {
-            createResponseParameterDocument(root, paramDocList, 1);
+            createResponseParameterDocument(swagger, root, paramDocList, 1);
         }
 
         final int maxNestLevel = getMaxNestLevel(paramDocList);
@@ -318,7 +346,8 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
         return level;
     }
 
-    private void createResponseParameterDocument(final ObjectProperty root,
+    private void createResponseParameterDocument(final Swagger swagger,
+                                                 final ObjectProperty root,
                                                  final List<ResponseParamDoc> paramDocList,
                                                  final int nestLevel) {
         Map<String, Property> props = root.getProperties();
@@ -329,26 +358,48 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
             String propName = propEntry.getKey();
             Property prop = propEntry.getValue();
 
-            String type = prop.getType();
+            ObjectProperty childProp = null;
+            if (prop instanceof ArrayProperty) {
+                ArrayProperty arrayProp = (ArrayProperty) prop;
+                Property itemsProp = arrayProp.getItems();
+                if (itemsProp instanceof ObjectProperty) {
+                    childProp = (ObjectProperty) itemsProp;
+                } else if (itemsProp instanceof RefProperty) {
+                    String simpleRef = ((RefProperty) itemsProp).getSimpleRef();
+                    Model m = findDefinition(swagger, simpleRef);
+                    if (m != null) {
+                        ObjectProperty objProp = createObjectProperty(m);
+                        arrayProp.setItems(objProp);
+                        childProp = objProp;
+                    }
+                }
+            } else if (prop instanceof ObjectProperty) {
+                childProp = (ObjectProperty) prop;
+            } else if (prop instanceof RefProperty) {
+                String simpleRef = ((RefProperty) prop).getSimpleRef();
+                Model m = findDefinition(swagger, simpleRef);
+                if (m != null) {
+                    ObjectProperty objProp = createObjectProperty(m);
+                    prop = objProp;
+                    childProp = objProp;
+                }
+            }
+
             ResponseParamDoc paramDoc = new ResponseParamDoc(propName, prop, nestLevel);
             paramDocList.add(paramDoc);
-
-            if ("array".equals(type)) {
-                ArrayProperty arrayProp;
-                if (!(prop instanceof  ArrayProperty)) {
-                    continue;
-                }
-                arrayProp = (ArrayProperty) prop;
-                Property itemsProp = arrayProp.getItems();
-                if ("object".equals(itemsProp.getType())) {
-                    createResponseParameterDocument((ObjectProperty) itemsProp, paramDocList, nestLevel + 1);
-                    continue;
-                }
-            } else if ("object".equals(type)) {
-                createResponseParameterDocument((ObjectProperty) prop, paramDocList, nestLevel + 1);
-                continue;
+            if (childProp != null) {
+                createResponseParameterDocument(swagger, childProp, paramDocList, nestLevel + 1);
             }
         }
+    }
+
+    private ObjectProperty createObjectProperty(final Model m) {
+        ObjectProperty p = new ObjectProperty();
+        p.setProperties(m.getProperties());
+        p.setTitle(m.getTitle());
+        p.setDescription(m.getDescription());
+        p.setVendorExtensionMap(m.getVendorExtensions());
+        return p;
     }
 
     private Model findDefinition(final Swagger swagger, final String simpleRef) {
@@ -399,8 +450,8 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
     class ResponseParamDoc {
         final String name;
         final String type;
-        final String format;
         final String dataType;
+        final String format;
         final String title;
         final String description;
         final boolean isRequired;
@@ -410,10 +461,10 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
         ResponseParamDoc(final String name,
                          final Property prop,
                          final int nestLevel) {
+            this.dataType = convertPropertyToCommonName(prop);
             this.name = name;
             this.type = prop.getType();
             this.format = prop.getFormat();
-            this.dataType = convertPropertyToCommonName(prop);
             this.title = prop.getTitle();
             this.description = prop.getDescription();
             this.isRequired = prop.getRequired();

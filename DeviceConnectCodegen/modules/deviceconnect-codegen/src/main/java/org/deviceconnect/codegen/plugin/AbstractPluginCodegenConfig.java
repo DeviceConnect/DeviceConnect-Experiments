@@ -304,13 +304,6 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
         }
     }
 
-    protected static String toUpperCapital(String str) {
-        StringBuffer buf = new StringBuffer(str.length());
-        buf.append(str.substring(0, 1).toUpperCase());
-        buf.append(str.substring(1).toLowerCase());
-        return buf.toString();
-    }
-
     protected Model findDefinition(final Swagger swagger, final String simpleRef) {
         Map<String, Model> definitions = swagger.getDefinitions();
         if (definitions == null) {

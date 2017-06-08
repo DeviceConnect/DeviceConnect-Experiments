@@ -28,7 +28,22 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         this.profileSpecs = profileSpecs;
     }
 
-    protected void generateProfile(ProfileTemplate template, Map<String, Object> properties) throws IOException {
+    protected static String toUpperCapital(final String str, final boolean onlyFirstChar) {
+        StringBuffer buf = new StringBuffer(str.length());
+        buf.append(str.substring(0, 1).toUpperCase());
+        if (onlyFirstChar) {
+            buf.append(str.substring(1).toLowerCase());
+        } else {
+            buf.append(str.substring(1));
+        }
+        return buf.toString();
+    }
+
+    protected static String toUpperCapital(final String str) {
+        return toUpperCapital(str, true);
+    }
+
+    protected void generateProfile(final ProfileTemplate template, final Map<String, Object> properties) throws IOException {
         final CodegenConfig config = this;
         String templateFile = getFullTemplateFile(this, template.templateFile);
         Template tmpl = Mustache.compiler()
@@ -64,8 +79,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         }
     }
 
-    @SuppressWarnings("static-method")
-    protected File writeToFile(String filename, String contents) throws IOException {
+    protected File writeToFile(final String filename, final String contents) throws IOException {
         LOGGER.info("writing file " + filename);
         File output = new File(filename);
 
@@ -81,7 +95,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         return output;
     }
 
-    private String readTemplate(String name) {
+    private String readTemplate(final String name) {
         try {
             Reader reader = getTemplateReader(name);
             if (reader == null) {
@@ -95,7 +109,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         throw new RuntimeException("can't load template " + name);
     }
 
-    private Reader getTemplateReader(String name) {
+    private Reader getTemplateReader(final String name) {
         try {
             InputStream is = this.getClass().getClassLoader().getResourceAsStream(getCPResourcePath(name));
             if (is == null) {
@@ -116,7 +130,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
      * @param templateFile Template file
      * @return String Full template file path
      */
-    private String getFullTemplateFile(CodegenConfig config, String templateFile) {
+    private String getFullTemplateFile(final CodegenConfig config, final String templateFile) {
         String template = config.templateDir() + File.separator + templateFile;
         if (new File(template).exists()) {
             return template;
@@ -136,7 +150,7 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         }
     }
 
-    private String readResourceContents(String resourceFilePath) {
+    private String readResourceContents(final String resourceFilePath) {
         StringBuilder sb = new StringBuilder();
         Scanner scanner = new Scanner(this.getClass().getResourceAsStream(getCPResourcePath(resourceFilePath)), "UTF-8");
         while (scanner.hasNextLine()) {
@@ -146,12 +160,11 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         return sb.toString();
     }
 
-    private boolean embeddedTemplateExists(String name) {
+    private boolean embeddedTemplateExists(final String name) {
         return this.getClass().getClassLoader().getResource(getCPResourcePath(name)) != null;
     }
 
-    @SuppressWarnings("static-method")
-    private String getCPResourcePath(String name) {
+    private String getCPResourcePath(final String name) {
         if (!"/".equals(File.separator)) {
             return name.replaceAll(Pattern.quote(File.separator), "/");
         }
