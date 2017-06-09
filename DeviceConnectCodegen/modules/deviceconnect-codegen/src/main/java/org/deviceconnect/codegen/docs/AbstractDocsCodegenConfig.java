@@ -46,11 +46,16 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
         embeddedTemplateDir = templateDir = getName();
 
         for (Map.Entry<String, Swagger> specEntry : profileSpecs.entrySet()) {
-            final String profileName = specEntry.getKey();
+            final String profileKey = specEntry.getKey();
+            final String profileName;
             final Swagger profileSpec = specEntry.getValue();
             String basePath = profileSpec.getBasePath();
             if (basePath == null) {
-                basePath = "/gotapi/" + profileName;
+                basePath = "/gotapi/" + profileKey;
+                profileName = profileKey;
+            } else {
+                System.out.println("basePath: " + basePath);
+                profileName = basePath.split("/")[2];
             }
 
             final List<Object> operationList = new ArrayList<>();

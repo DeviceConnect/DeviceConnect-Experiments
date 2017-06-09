@@ -154,9 +154,13 @@ public class DConnectCodegen {
 
                     Map<String, Swagger> profileSpecs = new HashMap<>();
                     for (File file : specFiles) {
-                        String profileName = parseProfileNameFromFileName(file.getName());
+                        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+                        String profileName = parseProfileName(swagger);
+                        if (profileName == null) {
+                            profileName = parseProfileNameFromFileName(file.getName());
+                        }
                         checkProfileName(config, profileName);
-                        profileSpecs.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
+                        profileSpecs.put(profileName, swagger);
                     }
                     config.setProfileSpecs(profileSpecs);
                     clientOptInput.swagger(mergeSwaggers(profileSpecs));
@@ -296,6 +300,18 @@ public class DConnectCodegen {
             }
         }
         return false;
+    }
+
+    private static String parseProfileName(final Swagger swagger) {
+        String basePath = swagger.getBasePath();
+        if (basePath == null) {
+            return null;
+        }
+        String[] array = basePath.split("/");
+        if (array.length < 3) {
+            return null;
+        }
+        return array[2];
     }
 
     private static String parseProfileNameFromFileName(final String fileName) {
