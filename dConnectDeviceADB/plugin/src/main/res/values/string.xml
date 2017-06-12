@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" translatable="false">ADB (Device Connect Device Plug-in)</string>
+
+    <string name="setting_description" translatable="false">ADB接続先の情報を入力してください。</string>
+    <string name="setting_item_ip_address_title" translatable="false">IPアドレス:</string>
+    <string name="setting_item_ip_address_hint" translatable="false">192.168.1.x</string>
+    <string name="setting_item_ip_address_default" translatable="false">192.168.1.x</string>
+    <string name="setting_item_port_number_title" translatable="false">ポート番号:</string>
+    <string name="setting_item_port_number_hint" translatable="false">5555</string>
+    <string name="setting_item_port_number_default" translatable="false">5555</string>
+    <string name="setting_button_connection_add" translatable="false">追加</string>
+    <string name="setting_button_connection_change" translatable="false">変更</string>
+    <string name="setting_button_ok" translatable="false">OK</string>
+    <string name="setting_button_later" translatable="false">あとで実行</string>
+    <string name="setting_prompt_dialog_title" translatable="false">接続確認</string>
+    <string name="setting_prompt_dialog_message_for_new_service" translatable="false">"サービスを{{operation}}しました。現在サービスはオフラインです。\n\n次の手順でADB接続してください。（このダイアログを閉じてからでも可）\n\n1. Android端末とPCをUSB接続。\n2. PCのターミナル上で adb tcpip {{port}} を実行。\n3. 約3秒後、Android端末上に「USBデバッグを許可しますか？」と表示された場合は「OK」を選択。</string>
+    <string name="setting_error_dialog_title" translatable="false">エラー</string>
+    <string name="setting_error_dialog_message_already_connected" translatable="false">IPアドレス {{target}} はすでに追加されています。\n\nポート番号を変更したい場合はサービス一覧でサービスを選択し、編集画面を開いてください。</string>
+
+</resources>

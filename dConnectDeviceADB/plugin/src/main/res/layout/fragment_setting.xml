@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_description" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_item_ip_address_title"
+            android:layout_marginRight="5dp" />
+
+        <EditText
+            android:id="@+id/edit_text_ip_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/setting_item_ip_address_hint"
+            android:text="@string/setting_item_ip_address_default" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_item_port_number_title"
+            android:layout_marginRight="5dp" />
+
+        <EditText
+            android:id="@+id/edit_text_port_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:digits="0123456789"
+            android:hint="@string/setting_item_port_number_hint"
+            android:text="@string/setting_item_port_number_default"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_connection_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_blue"
+        android:textColor="#FFFFFF"
+        android:text="@string/setting_button_connection_add"/>
+
+    <Button
+        android:id="@+id/button_connection_change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_blue"
+        android:textColor="#FFFFFF"
+        android:text="@string/setting_button_connection_change"
+        android:visibility="gone"/>
+
+</LinearLayout>
