@@ -4,7 +4,6 @@ package org.deviceconnect.android.deviceplugin.adb.core;
 import com.cgutman.adblib.AdbBase64;
 import com.cgutman.adblib.AdbConnection;
 import com.cgutman.adblib.AdbCrypto;
-import com.cgutman.adblib.AdbStream;
 
 import java.io.IOException;
 import java.net.Socket;

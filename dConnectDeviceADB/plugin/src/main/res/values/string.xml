@@ -18,5 +18,6 @@
     <string name="setting_prompt_dialog_message_for_new_service" translatable="false">"サービスを{{operation}}しました。現在サービスはオフラインです。\n\n次の手順でADB接続してください。（このダイアログを閉じてからでも可）\n\n1. Android端末とPCをUSB接続。\n2. PCのターミナル上で adb tcpip {{port}} を実行。\n3. 約3秒後、Android端末上に「USBデバッグを許可しますか？」と表示された場合は「OK」を選択。</string>
     <string name="setting_error_dialog_title" translatable="false">エラー</string>
     <string name="setting_error_dialog_message_already_connected" translatable="false">IPアドレス {{target}} はすでに追加されています。\n\nポート番号を変更したい場合はサービス一覧でサービスを選択し、編集画面を開いてください。</string>
+    <string name="setting_message_adb_connection_success" translatable="false">{{target}} とADB接続完了</string>
 
 </resources>

@@ -2,16 +2,20 @@ package org.deviceconnect.android.deviceplugin.adb.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.deviceconnect.android.deviceplugin.adb.R;
 import org.deviceconnect.android.deviceplugin.adb.core.AdbApplication;
 import org.deviceconnect.android.deviceplugin.adb.core.Connection;
+import org.deviceconnect.android.deviceplugin.adb.core.ConnectionListener;
 import org.deviceconnect.android.deviceplugin.adb.core.ConnectionManager;
 
 import java.io.IOException;
@@ -21,7 +25,7 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 
 
-public class AdbSettingFragment extends Fragment {
+public class AdbSettingFragment extends Fragment implements ConnectionListener {
 
     public enum Mode {
         ADD,
@@ -36,7 +40,7 @@ public class AdbSettingFragment extends Fragment {
     private EditText mPortNumEditor;
 
     private ConnectionManager mConnectionMgr;
-    private boolean mIsEnabledPromptDialog = true;
+    private Handler mHandler;
 
     private final Logger mLogger = Logger.getLogger("adb-plugin");
 
@@ -44,8 +48,10 @@ public class AdbSettingFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_setting, null);
+        mHandler = new Handler(Looper.getMainLooper());
 
         mConnectionMgr = getConnectionManager();
+        mConnectionMgr.addListener(this);
 
         Bundle args = getArguments();
         Mode mode = (Mode) args.getSerializable(EXTRA_MODE);
@@ -80,11 +86,7 @@ public class AdbSettingFragment extends Fragment {
                     showAlreadyConnectedDialog(ip);
                 } else {
                     mConnectionMgr.addConnection(ip, portNum);
-                    if (showsPrompt()) {
-                        prompt(Mode.ADD, portNum);
-                    } else {
-                        finish();
-                    }
+                    prompt(Mode.ADD, ip, portNum);
                 }
             }
         });
@@ -108,8 +110,8 @@ public class AdbSettingFragment extends Fragment {
                     }
                 }
 
-                if (isChanged && showsPrompt()) {
-                    prompt(Mode.EDIT, portNum);
+                if (isChanged) {
+                    prompt(Mode.EDIT, ip, portNum);
                 } else {
                     finish();
                 }
@@ -117,6 +119,12 @@ public class AdbSettingFragment extends Fragment {
         });
         connectionChangeButton.setVisibility(mode == Mode.EDIT ? View.VISIBLE : View.GONE);
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mConnectionMgr.removeListener(this);
+        super.onDestroyView();
     }
 
     private String getIpAddressParam() {
@@ -138,19 +146,15 @@ public class AdbSettingFragment extends Fragment {
         return Integer.parseInt(mPortNumEditor.getText().toString());
     }
 
-    private boolean showsPrompt() {
-        return mIsEnabledPromptDialog;
-    }
-
-    private void prompt(final Mode mode, final int port) {
-        ConfirmDialogFragment dialog = createPromptDialog(mode, port);
+    private void prompt(final Mode mode, final String ipAddress, final int port) {
+        ConfirmDialogFragment dialog = createPromptDialog(mode, ipAddress, port);
         dialog.setCallback(new ConfirmDialogCallback() {
             @Override
             public void onDialogConfirmed() {
                 finish();
             }
         });
-        dialog.show(getFragmentManager(), "dialog");
+        dialog.show(getFragmentManager(), "prompt");
     }
 
     /**
@@ -214,7 +218,7 @@ public class AdbSettingFragment extends Fragment {
         return dialog;
     }
 
-    private ConfirmDialogFragment createPromptDialog(final Mode mode, final int port) {
+    private ConfirmDialogFragment createPromptDialog(final Mode mode, final String ipAddress, final int port) {
         String message = getString(R.string.setting_prompt_dialog_message_for_new_service);
         message = message.replace("{{operation}}", mode == Mode.ADD ? getString(R.string.setting_button_connection_add) : getString(R.string.setting_button_connection_change));
         message = message.replace("{{port}}", Integer.toString(port));
@@ -222,9 +226,60 @@ public class AdbSettingFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(AlertDialogFragment.TITLE, getString(R.string.setting_prompt_dialog_title));
         args.putString(AlertDialogFragment.MESSAGE, message);
+        args.putString(ConfirmDialogFragment.IP_ADDRESS, ipAddress);
 
         ConfirmDialogFragment dialog = new ConfirmDialogFragment();
         dialog.setArguments(args);
         return dialog;
+    }
+
+    @Override
+    public void onAdded(final Connection connection) {
+        // NOP.
+    }
+
+    @Override
+    public void onConnected(final Connection connection) {
+        mLogger.info("AdbSettingFragment: onConnected: IP = " + connection.getIpAddress());
+        showConnectionSuccess(connection);
+        finishIfConnected(connection);
+    }
+
+    private void showConnectionSuccess(final Connection connection) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                String message = getString(R.string.setting_message_adb_connection_success);
+                message = message.replace("{{target}}", connection.getIpAddress() + ":" + connection.getPortNumber());
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void finishIfConnected(final Connection connection) {
+        Fragment f = getFragmentManager().findFragmentByTag("prompt");
+        mLogger.info("AdbSettingFragment: prompt fragment = " + f);
+        if (f != null && f instanceof ConfirmDialogFragment) {
+            ConfirmDialogFragment prompt = (ConfirmDialogFragment) f;
+            String waitingIp = prompt.getIpAddress();
+            if (connection.hasIpAddress(waitingIp)) {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void onPortChanged(final Connection connection) {
+        // NOP.
+    }
+
+    @Override
+    public void onDisconnected(final Connection connection) {
+        // NOP.
+    }
+
+    @Override
+    public void onRemoved(final Connection connection) {
+        // NOP.
     }
 }
