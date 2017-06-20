@@ -28,6 +28,11 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         this.profileSpecs = profileSpecs;
     }
 
+    @Override
+    public String escapeUnsafeCharacters(final String input) {
+        return input.replace("*/", "*_/").replace("/*", "/_*");
+    }
+
     protected static String toUpperCapital(final String str, final boolean onlyFirstChar) {
         StringBuffer buf = new StringBuffer(str.length());
         buf.append(str.substring(0, 1).toUpperCase());

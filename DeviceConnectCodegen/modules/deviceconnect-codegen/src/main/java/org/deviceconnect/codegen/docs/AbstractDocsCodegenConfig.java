@@ -118,8 +118,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
 
                     operationList.add(new Object() {
                         String id() {
-                            String id = method + "-" + fullPathName.replaceAll("/", "-");
-                            return id.toLowerCase();
+                            return op.getOperationId();
                         }
                         String name = method + " " + fullPathName;
                         String type = (String) op.getVendorExtensions().get("x-type");
