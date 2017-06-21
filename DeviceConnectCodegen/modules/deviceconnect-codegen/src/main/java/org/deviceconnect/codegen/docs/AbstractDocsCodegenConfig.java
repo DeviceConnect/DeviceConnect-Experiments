@@ -415,7 +415,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
     }
 
     private Map<String, Property> getProperties(final Swagger swagger, final ComposedModel parent) {
-        Map<String, Property> result = new HashMap<>();
+        Map<String, Property> result = new LinkedHashMap<>();
         Stack<ComposedModel> stack = new Stack<>();
         stack.push(parent);
         do {
