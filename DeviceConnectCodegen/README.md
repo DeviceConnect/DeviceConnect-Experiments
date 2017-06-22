@@ -17,6 +17,8 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 - HTMLアプリケーション
 - DeviceConnectエミュレータ
 - DeviceConnectAPIリファレンス
+  - HTML
+  - Markdown
 
 ## ファイル構成
 本ツールはzipで配布されます。圧縮されているファイルの構成は下記のとおりです。
@@ -77,10 +79,18 @@ $ ./emulator.sh
 
 出力先: samples/output/NodeJS/Emulator
 
-### DeviceConnectAPIリファレンスの場合
+### DeviceConnectAPIリファレンス (HTML) の場合
 ```
 $ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
 $ ./html-docs.sh
+```
+
+出力先: samples/output/html/Device_Connect_RESTful_API_Specification
+
+### DeviceConnectAPIリファレンス (Markdown) の場合
+```
+$ cd deviceconnect-codegen-project-X.Y.Z-dist/samples
+$ ./md-docs.sh
 ```
 
 出力先: samples/output/html/Device_Connect_RESTful_API_Specification
@@ -110,7 +120,8 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <li>node-gotapiプラグイン: gotapiNodePlugin</li>
 <li>HTMLアプリケーション: deviceConnectHtmlApp</li>
 <li>DeviceConnectエミュレータ: deviceConnectEmulator</li>
-<li>DeviceConnectAPIリファレンス: deviceConnectHtmlDocs</li>
+<li>DeviceConnectAPIリファレンス (HTML): deviceConnectHtmlDocs</li>
+<li>DeviceConnectAPIリファレンス (Markdown): deviceConnectMarkdownDocs</li>
 </ul>
 </td>
 <td valign="top">-</td>
