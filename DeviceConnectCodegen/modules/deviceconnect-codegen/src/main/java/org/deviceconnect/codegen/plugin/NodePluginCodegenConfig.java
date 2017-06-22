@@ -6,6 +6,7 @@ import io.swagger.codegen.SupportingFile;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.*;
+import org.deviceconnect.codegen.ProfileTemplate;
 
 import java.io.File;
 import java.util.ArrayList;

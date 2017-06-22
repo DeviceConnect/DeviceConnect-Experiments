@@ -1,0 +1,8 @@
+<table>
+    <tbody>
+        <tr><th colspan="{{maxNestLevel}}">論理名</th><th>物理名</th><th>データ型</th><th>必須</th><th>説明</th></tr>
+        {{#paramList}}
+        <tr>{{#indents}}<td></td>{{/indents}}<td colspan="{{colSpan}}">{{title}}</td><td>{{name}}</td><td>{{dataType}}</td><td>{{required}}</td><td>{{{description}}}</td></tr>
+        {{/paramList}}
+    </tbody>
+</table>
