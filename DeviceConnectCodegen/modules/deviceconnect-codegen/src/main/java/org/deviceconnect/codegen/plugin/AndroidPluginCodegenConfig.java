@@ -8,6 +8,7 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.*;
 import org.apache.commons.lang3.StringUtils;
+import org.deviceconnect.codegen.ProfileTemplate;
 
 import java.io.File;
 import java.util.*;
