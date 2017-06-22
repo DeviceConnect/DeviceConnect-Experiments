@@ -1,0 +1,59 @@
+{{#profileSpec}}
+## 概要
+{{{description}}}
+
+## 目次
+<table>
+    <tbody>
+        <tr><th>API</th><th>概要</th></tr>
+        {{#operationList}}
+        <tr><td><a href="#{{id}}">{{name}}</a></td><td>{{{summary}}}</td></tr>
+        {{/operationList}}
+    </tbody>
+</table>
+
+{{#operationList}}
+
+## <a name="{{id}}">{{name}}</a>
+
+### 種別
+{{type}}
+
+### 概要
+{{{summary}}}
+{{#description}}
+
+{{{.}}}
+{{/description}}
+
+### リクエスト
+<table>
+    <tbody>
+        <tr><th>物理名</th><th>データ型</th><th>必須</th><th>説明</th></tr>
+        {{#paramList}}
+        <tr><td>{{name}}</td><td>{{type}}</td><td>{{required}}</td><td>{{{description}}}</td></tr>
+        {{/paramList}}
+    </tbody>
+</table>
+{{#response}}
+
+### レスポンス
+{{> dconnect-message}}
+{{#example}}
+
+### レスポンスサンプル
+<pre>{{{.}}}</pre>
+{{/example}}
+{{/response}}
+{{#event}}
+
+### イベント
+{{> dconnect-message}}
+{{#example}}
+
+### イベントサンプル
+<pre>{{{.}}}</pre>
+{{/example}}
+{{/event}}
+{{/operationList}}
+{{/profileSpec}}

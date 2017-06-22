@@ -13,6 +13,7 @@ import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
+import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
 import org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,9 +154,13 @@ public class DConnectCodegen {
 
                     Map<String, Swagger> profileSpecs = new HashMap<>();
                     for (File file : specFiles) {
-                        String profileName = parseProfileNameFromFileName(file.getName());
+                        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+                        String profileName = parseProfileName(swagger);
+                        if (profileName == null) {
+                            profileName = parseProfileNameFromFileName(file.getName());
+                        }
                         checkProfileName(config, profileName);
-                        profileSpecs.put(profileName, new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true));
+                        profileSpecs.put(profileName, swagger);
                     }
                     config.setProfileSpecs(profileSpecs);
                     clientOptInput.swagger(mergeSwaggers(profileSpecs));
@@ -248,7 +253,8 @@ public class DConnectCodegen {
     }
 
     private static void checkProfileName(final DConnectCodegenConfig config, final String profileName) {
-        if (config instanceof HtmlAppCodegenConfig || config instanceof HtmlDocsCodegenConfig) {
+        if (config instanceof HtmlAppCodegenConfig || config instanceof HtmlDocsCodegenConfig ||
+            config instanceof MarkdownDocsCodegenConfig) {
             return;
         }
 
@@ -294,6 +300,18 @@ public class DConnectCodegen {
             }
         }
         return false;
+    }
+
+    private static String parseProfileName(final Swagger swagger) {
+        String basePath = swagger.getBasePath();
+        if (basePath == null) {
+            return null;
+        }
+        String[] array = basePath.split("/");
+        if (array.length < 3) {
+            return null;
+        }
+        return array[2];
     }
 
     private static String parseProfileNameFromFileName(final String fileName) {
