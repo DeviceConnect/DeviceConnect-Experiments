@@ -1,4 +1,7 @@
 # 変更履歴
+2017/06/23: v1.3.0 [Markdown] DeviceConnectAPIリファレンス生成機能を追加
+                   [HTML] レスポンス・イベントのパラメータの説明に「Logical Name」を追加
+
 2017/04/03: v1.2.0 [HTML] DeviceConnectAPIリファレンス生成機能を追加
 
 2017/03/24: v1.1.0 [NodeJS] DeviceConnectエミュレータのスケルトン生成機能を追加
