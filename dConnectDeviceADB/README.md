@@ -9,6 +9,7 @@ ADB (Android Debug Bridge) コマンドをDevice Connectプロファイルとし
   - <a href="#target">対象OS</a>
   - <a href="#glossary">用語定義</a>
   - <a href="#dependencies">使用しているライブラリ</a>
+- <a href="#build-manual">ビルド手順</a>
 - <a href="#get-started">使用方法</a>
   - <a href="#device-setting">端末の設定</a>
   - <a href="#connect-to-local">ADB接続 (ホスト端末を操作する場合)</a>
@@ -39,6 +40,38 @@ ADBプラグインの実装では下記のライブラリを使用していま�
 |ライブラリ名|備考|
 |:--|:--|
 |[AdbLib](https://github.com/cgutman/AdbLib)|ADB通信用ライブラリ。本プラグインのプロジェクトにソースコードを同梱しています。本プラグインの要件に合わせて一部改修済です。改修箇所は [MODIFIED] というコメントで明示。|
+
+## <a name="build-manual">ビルド手順</a>
+### 1. ソースコードの入手
+本リポジトリ(DeviceConnect-Experiments)のmasterブランチをビルド用PC上にチェックアウトします。
+
+以下、チェックアウト先のフォルダへのパスを、[DeviceConnect-Experiments]で表します。
+
+### 2. Android Studioのインストール
+Android Studio (Androidアプリケーションの開発環境) を下記のダウンロードページから入手し、所定の手順に従ってビルド用PCにインストールしてください。
+
+https://developer.android.com/studio/index.html
+
+### 3. Android Studioでソースコードを開く
+3.1. Android Studioを起動します。
+
+3.2. Android Studioのツールバー上の File メニューから、 Open... を選択します。
+
+3.3. 手順1でチェックアウトしたadbプラグインのソースコードのルートフォルダを選択します。
+より具体的には、[DeviceConnect-Experiments]/dConnectDeviceADB を選択します。
+
+3.4. OKを押します。
+
+3.5. Gradle Syncが自動的に開始されるので、終了するまで待機します。
+（途中でAndroid Studio上でダイアログが表示された場合は、その案内に従ってください。）
+
+### 4. Android端末とPCを接続
+USBデバッグを有効にしたAndroid端末を、ビルド用PCにUSB接続してください。
+
+### 5. ビルド実行
+Android Studioのツールバー上の Run メニューの Run 'app' を選択してください。
+これによりビルドが開始されます。
+ビルドに成功した場合は、自動的に端末にAPKがインストールされます。
 
 ## <a name="get-started">使用方法</a>
 本プラグインのAPKをホスト端末にインストールした後、下記の手順を実行してください。
