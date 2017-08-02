@@ -9,6 +9,7 @@ ADB (Android Debug Bridge) コマンドをDevice Connectプロファイルとし
   - <a href="#target">対象OS</a>
   - <a href="#glossary">用語定義</a>
   - <a href="#dependencies">使用しているライブラリ</a>
+- <a href="#build-manual">ビルド手順</a>
 - <a href="#get-started">使用方法</a>
   - <a href="#device-setting">端末の設定</a>
   - <a href="#connect-to-local">ADB接続 (ホスト端末を操作する場合)</a>
@@ -40,7 +41,7 @@ ADBプラグインの実装では下記のライブラリを使用していま�
 |:--|:--|
 |[AdbLib](https://github.com/cgutman/AdbLib)|ADB通信用ライブラリ。本プラグインのプロジェクトにソースコードを同梱しています。本プラグインの要件に合わせて一部改修済です。改修箇所は [MODIFIED] というコメントで明示。|
 
-## <a name="build_manual">ビルド手順</a>
+## <a name="build-manual">ビルド手順</a>
 ### 1. ソースコードの入手
 本リポジトリ(DeviceConnect-Experiments)のmasterブランチをビルド用PC上にチェックアウトします。
 
