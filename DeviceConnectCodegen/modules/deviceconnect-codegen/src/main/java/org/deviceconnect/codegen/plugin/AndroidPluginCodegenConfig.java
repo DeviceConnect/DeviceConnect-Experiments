@@ -191,7 +191,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
         supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
         supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", "deviceplugin.xml"));
-        supportingFiles.add(new SupportingFile("string.xml.mustache", resFolder + "/values", "string.xml"));
+        supportingFiles.add(new SupportingFile("strings.xml.mustache", resFolder + "/values", "strings.xml"));
 
         // リソース
         supportingFiles.add(new SupportingFile("res/layout/activity_setting.xml", resFolder + "/layout/", "activity_setting.xml"));
