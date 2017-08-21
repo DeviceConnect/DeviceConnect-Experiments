@@ -33,7 +33,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-1.3.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.3.0) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-1.4.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.4.0) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
@@ -161,6 +161,19 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 プラグインの場合、System APIによって取得できるデバイスプラグインの名前として使用される。アプリケーションの場合、主にアプリケーションのタイトルとして表示する名前として使用される。<br>
 <br>
 デフォルト値は、プラグインの場合は "MyPlugin"、アプリケーションの場合は "MyApp"。
+</td>
+<td valign="top">o</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--connection-type</pre></td>
+<td valign="top">
+<b>[Androidプラグインのみ有効]</b><br>
+Device Connect Managerとの連携タイプの指定。下記のいずれかの値を引数とする。デフォルト値は、"binder"。
+<ul>
+<li>broadcast: IntentのブロードキャストによってDevice Connect Managerと通信する。</li>
+<li>binder: Device Connect Managerとバインドし、AIDLで定義されたインターフェース経由でIntent形式のメッセージを送受信する。</li>
+</ul>
 </td>
 <td valign="top">o</td>
 </tr>

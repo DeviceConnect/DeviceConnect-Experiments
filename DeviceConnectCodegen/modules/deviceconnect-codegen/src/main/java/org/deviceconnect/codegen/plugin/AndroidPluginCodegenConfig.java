@@ -7,13 +7,21 @@ import io.swagger.models.parameters.FormParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.*;
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.deviceconnect.codegen.ProfileTemplate;
+import org.deviceconnect.codegen.ValidationResult;
+import org.deviceconnect.codegen.ValidationResultSet;
 
 import java.io.File;
 import java.util.*;
 
 public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
+
+    public enum ConnectionType {
+        BROADCAST,
+        BINDER
+    }
 
     private final String pluginModuleFolder = "plugin";
     private final String projectFolder = pluginModuleFolder + "/src/main";
@@ -21,9 +29,38 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String resFolder = projectFolder + "/res";
     private final String profileSpecFolder = projectFolder + "/assets/api";
     private String invokerPackage;
+    private ConnectionType connectionType = ConnectionType.BINDER;
 
     private final String apiDocPath = "docs/";
     private final String modelDocPath = "docs/";
+
+    @Override
+    public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {
+        ValidationResultSet resultSet = new ValidationResultSet();
+        resultSet.addResult(readPackageName(cmd, clientOpts));
+        resultSet.addResult(readConnectionType(cmd));
+        return resultSet;
+    }
+
+    private ValidationResult readPackageName(final CommandLine cmd, final ClientOpts clientOpts) {
+        // パッケージ名の指定
+        String packageName = cmd.getOptionValue("p", getDefaultPackageName());
+        clientOpts.getProperties().put("packageName", packageName);
+        return ValidationResult.valid("p");
+    }
+
+    private ValidationResult readConnectionType(final CommandLine cmd) {
+        // 連携タイプの指定
+        String value = cmd.getOptionValue("b", "binder");
+        if ("broadcast".equals(value)) {
+            connectionType = ConnectionType.BROADCAST;
+        } else if ("binder".equals(value)) {
+            connectionType = ConnectionType.BINDER;
+        } else {
+            return ValidationResult.invalid("b", "Undefined connection type: " + value);
+        }
+        return ValidationResult.valid("b");
+    }
 
     //----- AbstractPluginCodegenConfig ----//
 
@@ -186,7 +223,18 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         // ビルド設定ファイル
         supportingFiles.add(new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
-        supportingFiles.add(new SupportingFile("manifest.mustache", projectFolder, "AndroidManifest.xml"));
+        String manifest;
+        switch (connectionType) {
+            case BROADCAST:
+                manifest = "manifest.broadcast.mustache";
+                break;
+            case BINDER:
+                manifest = "manifest.binder.mustache";
+                break;
+            default:
+                throw new RuntimeException("Unknown connection type");
+        }
+        supportingFiles.add(new SupportingFile(manifest, projectFolder, "AndroidManifest.xml"));
         supportingFiles.add(new SupportingFile("root.build.gradle.mustache", "", "build.gradle"));
         supportingFiles.add(new SupportingFile("plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
         supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));

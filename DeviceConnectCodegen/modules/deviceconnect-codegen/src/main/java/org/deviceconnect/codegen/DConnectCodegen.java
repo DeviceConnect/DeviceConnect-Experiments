@@ -1,14 +1,13 @@
 package org.deviceconnect.codegen;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
-import io.swagger.converter.ModelConverter;
-import io.swagger.models.*;
-import io.swagger.models.properties.Property;
+import io.swagger.models.Info;
+import io.swagger.models.Model;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
@@ -64,6 +63,7 @@ public class DConnectCodegen {
         options.addOption("p", "package-name", true, "package name (for deviceConnectAndroidPlugin only)");
         options.addOption("n", "display-name", true, "display name of the generated project");
         options.addOption("x", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
+        options.addOption("b", "connection-type", true, "connection type with device connect manager (for deviceConnectAndroidPlugin only)");
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
@@ -203,14 +203,14 @@ public class DConnectCodegen {
             }
             clientOpts.getProperties().put("classPrefix", classPrefix);
 
-            if (config instanceof AndroidPluginCodegenConfig) {
-                String packageName;
-                if (cmd.hasOption("p")) {
-                    packageName = cmd.getOptionValue("p");
-                } else {
-                    packageName = ((AndroidPluginCodegenConfig) config).getDefaultPackageName();
+            ValidationResultSet resultSet = config.validateOptions(cmd, clientOpts);
+            if (!resultSet.isValid()) {
+                for (ValidationResult result : resultSet.getResults().values()) {
+                    if (!result.isValid()) {
+                        LOGGER.error(result.getParamName() + " is invalid; " + result.getErrorMessage());
+                    }
                 }
-                clientOpts.getProperties().put("packageName", packageName);
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();

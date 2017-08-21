@@ -1,4 +1,5 @@
 # 変更履歴
+2017/06/23: v1.4.0 [Android] 連携タイプを指定するオプション connection-type を追加
 2017/06/23: v1.3.0 [Markdown] DeviceConnectAPIリファレンス生成機能を追加
                    [HTML] レスポンス・イベントのパラメータの説明に「Logical Name」を追加
 
