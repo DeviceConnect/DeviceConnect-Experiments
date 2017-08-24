@@ -3,9 +3,11 @@ package org.deviceconnect.codegen;
 
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
+import io.swagger.codegen.ClientOpts;
 import io.swagger.codegen.CodegenConfig;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.models.Swagger;
+import org.apache.commons.cli.CommandLine;
 
 import java.io.*;
 import java.util.Map;
@@ -17,6 +19,11 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
     protected Map<String, Swagger> profileSpecs;
 
     protected abstract String profileFileFolder();
+
+    @Override
+    public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {
+        return new ValidationResultSet();
+    }
 
     @Override
     public Map<String, Swagger> getProfileSpecs() {

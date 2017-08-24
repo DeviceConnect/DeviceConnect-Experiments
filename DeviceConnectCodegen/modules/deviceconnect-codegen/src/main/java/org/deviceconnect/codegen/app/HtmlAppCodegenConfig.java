@@ -4,18 +4,26 @@ package org.deviceconnect.codegen.app;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.codegen.ClientOpts;
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.codegen.SupportingFile;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
+import org.deviceconnect.codegen.ValidationResultSet;
 
 import java.util.Map;
 
 public class HtmlAppCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
 
     private Map<String, Swagger> profileSpecs;
+
+    @Override
+    public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {
+        return new ValidationResultSet();
+    }
 
     @Override
     public String getDefaultDisplayName() {
