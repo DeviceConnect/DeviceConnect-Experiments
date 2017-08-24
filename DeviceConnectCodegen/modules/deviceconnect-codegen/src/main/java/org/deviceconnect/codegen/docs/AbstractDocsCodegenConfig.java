@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.swagger.codegen.ClientOpts;
 import io.swagger.codegen.CodegenType;
 import io.swagger.models.*;
 import io.swagger.models.parameters.FormParameter;
@@ -14,8 +15,10 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.ProfileTemplate;
+import org.deviceconnect.codegen.ValidationResultSet;
 import org.deviceconnect.codegen.models.DConnectOperation;
 
 import java.io.IOException;
@@ -27,6 +30,11 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
 
     protected List<OperationListDocs> getSwaggerList() {
         return this.swaggerList;
+    }
+
+    @Override
+    public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {
+        return new ValidationResultSet();
     }
 
     @Override

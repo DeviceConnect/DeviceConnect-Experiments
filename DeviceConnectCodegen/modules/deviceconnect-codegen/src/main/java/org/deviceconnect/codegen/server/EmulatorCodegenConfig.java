@@ -18,7 +18,9 @@ import io.swagger.codegen.*;
 import io.swagger.models.*;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Yaml;
+import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
+import org.deviceconnect.codegen.ValidationResultSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +75,11 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
                     "service.mustache",   // the template to use
                     "Service.js");       // the extension for each file to write
         }
+    }
+
+    @Override
+    public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {
+        return new ValidationResultSet();
     }
 
     @Override
