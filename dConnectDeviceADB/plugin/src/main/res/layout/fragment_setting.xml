@@ -27,8 +27,9 @@
             android:id="@+id/edit_text_ip_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/setting_item_ip_address_hint"
-            android:text="@string/setting_item_ip_address_default" />
+            android:inputType="text"
+            android:digits="0123456789.abcdefghijklmnopqrstuvwxyz"
+            android:hint="@string/setting_item_ip_address_hint" />
 
     </LinearLayout>
 
