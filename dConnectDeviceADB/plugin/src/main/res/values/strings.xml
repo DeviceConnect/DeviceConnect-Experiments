@@ -6,7 +6,6 @@
     <string name="setting_description" translatable="false">ADB接続先の情報を入力してください。</string>
     <string name="setting_item_ip_address_title" translatable="false">IPアドレス:</string>
     <string name="setting_item_ip_address_hint" translatable="false">192.168.1.x</string>
-    <string name="setting_item_ip_address_default" translatable="false">192.168.1.x</string>
     <string name="setting_item_port_number_title" translatable="false">ポート番号:</string>
     <string name="setting_item_port_number_hint" translatable="false">5555</string>
     <string name="setting_item_port_number_default" translatable="false">5555</string>
@@ -17,7 +16,11 @@
     <string name="setting_prompt_dialog_title" translatable="false">接続確認</string>
     <string name="setting_prompt_dialog_message_for_new_service" translatable="false">"サービスを{{operation}}しました。現在サービスはオフラインです。\n\n次の手順でADB接続してください。（このダイアログを閉じてからでも可）\n\n1. Android端末とPCをUSB接続。\n2. PCのターミナル上で adb tcpip {{port}} を実行。\n3. 約3秒後、Android端末上に「USBデバッグを許可しますか？」と表示された場合は「OK」を選択。</string>
     <string name="setting_error_dialog_title" translatable="false">エラー</string>
-    <string name="setting_error_dialog_message_already_connected" translatable="false">IPアドレス {{target}} はすでに追加されています。\n\nポート番号を変更したい場合はサービス一覧でサービスを選択し、編集画面を開いてください。</string>
+    <string name="setting_error_already_connected" translatable="false">既に追加されています</string>
+    <string name="setting_error_empty" translatable="false">未指定です</string>
+    <string name="setting_error_ip_address_invalid_format" translatable="false">例: 192.168.1.1</string>
+    <string name="setting_error_not_allowed_zero_padding" translatable="false">先頭のゼロを削除</string>
+    <string name="setting_error_port_number_out_of_range" translatable="false">1024〜65535の範囲で指定</string>
     <string name="setting_message_adb_connection_success" translatable="false">{{target}} とADB接続完了</string>
 
 </resources>

@@ -65,3 +65,36 @@ android {
         options.encoding = 'UTF-8'
     }
 }
+
+def distRootDir = '../dist'
+def distDir = distRootDir + '/dConnectDeviceADB'
+task cleanDist(type: Delete) {
+    delete distRootDir
+}
+task assembleDistRelease(dependsOn: ['assembleRelease', 'copyRelease', 'copySource']) {
+}
+task assembleDistDebug(dependsOn: ['assembleDebug', 'copyDebug', 'copySource']) {
+}
+task copyRelease(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/plugin-release.apk'
+    rename 'plugin-release.apk', 'dConnectDeviceADB.apk'
+}
+task copyDebug(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/plugin-debug.apk'
+    rename 'plugin-debug.apk', 'dConnectDeviceADB-debug.apk'
+}
+task copySource(type: Copy) {
+    from '../'
+    into distDir + '/src/dConnectDeviceADB'
+    exclude '**/build/**/*'
+    exclude '**/dist/**/*'
+    exclude '**/gradle.properties'
+    exclude '**/local.properties'
+    exclude '**/*.apk'
+    includeEmptyDirs false
+    rename 'gradle-default.properties', 'gradle.properties'
+}
