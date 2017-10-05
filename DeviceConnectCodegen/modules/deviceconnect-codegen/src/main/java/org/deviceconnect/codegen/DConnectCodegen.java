@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.*;
 
 public class DConnectCodegen {
@@ -218,7 +219,18 @@ public class DConnectCodegen {
             return;
         }
         try {
-            new Codegen().opts(clientOptInput.opts(clientOpts)).generate();
+            new Codegen() {
+                @Override
+                public File writeToFile(final String filename, final String contents) throws IOException {
+                    // LICENSE ファイルは出力させない
+                    if (filename != null) {
+                        if (filename.endsWith("LICENSE") || filename.endsWith(".swagger-codegen-ignore")) {
+                            return null;
+                        }
+                    }
+                    return super.writeToFile(filename, contents);
+                }
+            }.opts(clientOptInput.opts(clientOpts)).generate();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
