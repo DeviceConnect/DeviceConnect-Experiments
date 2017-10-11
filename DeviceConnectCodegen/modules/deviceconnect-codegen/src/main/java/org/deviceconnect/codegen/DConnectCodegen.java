@@ -156,7 +156,11 @@ public class DConnectCodegen {
                     List<Swagger> swaggerList = new ArrayList<>();
                     for (File file : specFiles) {
                         Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
-                        swaggerList.add(swagger);
+                        if (swagger != null) {
+                            swaggerList.add(swagger);
+                        } else {
+                            // TODO デシリアライズに失敗した場合のエラーを出力
+                        }
                     }
 
                     Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
