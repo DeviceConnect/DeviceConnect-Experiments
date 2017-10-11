@@ -13,7 +13,6 @@ import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
-import org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +46,8 @@ public class DConnectCodegen {
             "\n -DdebugModels prints models passed to the template engine" +
             "\n -DdebugOperations prints operations passed to the template engine" +
             "\n -DdebugSupportingFiles prints additional data passed to the template engine";
+
+    private static final MultipleSwaggerConverter SWAGGER_CONVERTER = new MultipleSwaggerConverter();
 
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
@@ -152,16 +153,15 @@ public class DConnectCodegen {
                             return name.endsWith(".json") || name.endsWith(".yaml");
                         }
                     });
-
-                    Map<String, Swagger> profileSpecs = new HashMap<>();
+                    List<Swagger> swaggerList = new ArrayList<>();
                     for (File file : specFiles) {
                         Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
-                        String profileName = parseProfileName(swagger);
-                        if (profileName == null) {
-                            profileName = parseProfileNameFromFileName(file.getName());
-                        }
+                        swaggerList.add(swagger);
+                    }
+
+                    Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
+                    for (String profileName : profileSpecs.keySet()) {
                         checkProfileName(config, profileName);
-                        profileSpecs.put(profileName, swagger);
                     }
                     config.setProfileSpecs(profileSpecs);
                     clientOptInput.swagger(mergeSwaggers(profileSpecs));
