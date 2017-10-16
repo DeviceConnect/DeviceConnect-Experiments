@@ -1,6 +1,9 @@
 package org.deviceconnect.codegen;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
@@ -13,6 +16,7 @@ import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
+import org.deviceconnect.codegen.util.SwaggerJsonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +49,8 @@ public class DConnectCodegen {
             "\n -DdebugOperations prints operations passed to the template engine" +
             "\n -DdebugSupportingFiles prints additional data passed to the template engine";
 
+    private static final SwaggerJsonValidator JSON_VALIDATOR = new SwaggerJsonValidator();
+
     private static final MultipleSwaggerConverter SWAGGER_CONVERTER = new MultipleSwaggerConverter();
 
     @SuppressWarnings("deprecation")
@@ -57,6 +63,7 @@ public class DConnectCodegen {
         File[] specFiles;
 
         CommandLine cmd;
+        boolean hasValidSwagger = true;
         try {
             CommandLineParser parser = new BasicParser();
             DConnectCodegenConfig config;
@@ -89,6 +96,9 @@ public class DConnectCodegen {
             }
             if (cmd.hasOption("i")) {
                 String location = cmd.getOptionValue("i");
+                if(!checkSwagger(new File(location))) {
+                    return;
+                }
                 Swagger swagger = new SwaggerParser().read(location, clientOptInput.getAuthorizationValues(), true);
                 clientOptInput.swagger(swagger);
 
@@ -140,12 +150,16 @@ public class DConnectCodegen {
                     });
                     List<Swagger> swaggerList = new ArrayList<>();
                     for (File file : specFiles) {
+                        if(!checkSwagger(file)) {
+                            continue;
+                        }
                         Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
                         if (swagger != null) {
                             swaggerList.add(swagger);
-                        } else {
-                            // TODO デシリアライズに失敗した場合のエラーを出力
                         }
+                    }
+                    if (swaggerList.size() != specFiles.length) {
+                        return;
                     }
 
                     Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
@@ -155,13 +169,13 @@ public class DConnectCodegen {
                     config.setProfileSpecs(profileSpecs);
                     clientOptInput.swagger(mergeSwaggers(profileSpecs));
                 } else {
+                    // TODO エラーメッセージ詳細化: ディレクトリではなくファイルへのパスが指定されている.
                     usage(options);
                     return;
                 }
-            } else {
-                usage(options);
-                return;
             }
+
+
             if (cmd.hasOption("c")) {
                 String configFile = cmd.getOptionValue("c");
                 Config genConfig = ConfigParser.read(configFile);
@@ -234,6 +248,25 @@ public class DConnectCodegen {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
+        JsonNode jsonNode = new ObjectMapper().readTree(file);
+        SwaggerJsonValidator.Result result = JSON_VALIDATOR.validate(jsonNode);
+        if (result.isSuccess()) {
+            return true;
+        }
+
+        String template = Const.ErrorMessages.INVALID_SWAGGER.getMessage();
+        String errorMessage = template.replace("%file%", file.getName());
+        String reasons = "";
+        for (SwaggerJsonValidator.Error error : result.getErrors()) {
+            String pointer = error.getJsonPointer();
+            String reason = error.getMessage();
+            reasons += " - Pointer = " + pointer + ", Reason = " + reason + "\n";
+        }
+        printError(errorMessage + ": \n" + reasons);
+        return false;
     }
 
     private static void printError(final String message) {

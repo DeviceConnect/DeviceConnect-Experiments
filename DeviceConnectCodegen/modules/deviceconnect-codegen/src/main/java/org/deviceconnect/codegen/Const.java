@@ -14,7 +14,7 @@ final class Const {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Const.class);
 
-    private static final ResourceBundle MESSAGES = ResourceBundle.getBundle("Messages", Locale.getDefault(),
+    static final ResourceBundle MESSAGES = ResourceBundle.getBundle("Messages", Locale.getDefault(),
             ResourceBundleWithUtf8.UTF8_ENCODING_CONTROL);
 
     static final Options OPTIONS = createOptions();
@@ -98,7 +98,8 @@ final class Const {
         MISSING_OPTION("errorMissingOption"),
         MISSING_ARGUMENT("errorMissingArgument"),
         ALREADY_SELECTED_OPTION("errorAlreadySelectedOption"),
-        UNDEFINED_OPTION("errorUndefinedOption");
+        UNDEFINED_OPTION("errorUndefinedOption"),
+        INVALID_SWAGGER("errorInvalidSwagger");
 
         private final String key;
 
@@ -106,16 +107,20 @@ final class Const {
             this.key = key;
         }
 
+        public String getMessage() {
+            return MESSAGES.getString(key);
+        }
+
         public String getMessage(final List<Object> options) {
-            return MESSAGES.getString(key) + ": \n" + concatOptions(options);
+            return getMessage() + ": \n" + concatOptions(options);
         }
 
         public String getMessage(final Option opt) {
-            return MESSAGES.getString(key) + ": " + opt.getLongOpt();
+            return getMessage() + ": " + opt.getLongOpt();
         }
 
         public String getMessage(final String optName) {
-            return MESSAGES.getString(key) + ": " + optName;
+            return getMessage() + ": " + optName;
         }
 
         private static String concatOptions(List<Object> list) {
