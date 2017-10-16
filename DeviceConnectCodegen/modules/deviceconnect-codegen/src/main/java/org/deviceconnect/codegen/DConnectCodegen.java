@@ -39,8 +39,6 @@ public class DConnectCodegen {
             "delete"
     };
 
-    static Map<String, DConnectCodegenConfig> configs = new HashMap<String, DConnectCodegenConfig>();
-    static String configString;
     static String debugInfoOptions = "\nThe following additional debug options are available for all codegen targets:" +
             "\n -DdebugSwagger prints the swagger specification as interpreted by the codegen" +
             "\n -DdebugModels prints models passed to the template engine" +
@@ -52,20 +50,7 @@ public class DConnectCodegen {
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
 
-        Options options = new Options();
-        options.addOption("h", "help", false, "shows this message");
-        options.addOption("l", "lang", true, "client language to generate.\nAvailable languages include:\n\t[" + configString + "]");
-        options.addOption("o", "output", true, "where to write the generated files");
-        options.addOption("i", "input-spec", true, "location of the swagger spec, as URL or file");
-        options.addOption("s", "input-spec-dir", true, "directory of the swagger specs");
-        options.addOption("t", "template-dir", true, "folder containing the template files");
-        options.addOption("d", "debug-info", false, "prints additional info for debugging");
-        //options.addOption("a", "auth", true, "adds authorization headers when fetching the swagger definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values");
-        options.addOption("c", "config", true, "location of the configuration file");
-        options.addOption("p", "package-name", true, "package name (for deviceConnectAndroidPlugin only)");
-        options.addOption("n", "display-name", true, "display name of the generated project");
-        options.addOption("x", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
-        options.addOption("b", "connection-type", true, "connection type with device connect manager (for deviceConnectAndroidPlugin only)");
+        Options options = Const.OPTIONS;
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
@@ -83,7 +68,7 @@ public class DConnectCodegen {
                 return;
             }
             if (cmd.hasOption("h")) {
-                config = getConfig(cmd.getOptionValue("l"));
+                config = Const.getConfig(cmd.getOptionValue("l"));
                 if (config != null) {
                     options.addOption("h", "help", true, config.getHelp());
                     usage(options);
@@ -93,7 +78,7 @@ public class DConnectCodegen {
                 return;
             }
             if (cmd.hasOption("l")) {
-                config = getConfig(cmd.getOptionValue("l"));
+                config = Const.getConfig(cmd.getOptionValue("l"));
                 clientOptInput.setConfig(config);
             } else {
                 usage(options);
@@ -217,9 +202,20 @@ public class DConnectCodegen {
                 }
                 return;
             }
+        } catch (MissingOptionException e) {
+            printError(Const.ErrorMessages.MISSING_OPTION.getMessage(e.getMissingOptions()));
+            return;
+        } catch (MissingArgumentException e) {
+            printError(Const.ErrorMessages.MISSING_ARGUMENT.getMessage(e.getOption()));
+            return;
+        } catch (AlreadySelectedException e) {
+            printError(Const.ErrorMessages.ALREADY_SELECTED_OPTION.getMessage(e.getOption()));
+            return;
+        } catch (UnrecognizedOptionException e) {
+            printError(Const.ErrorMessages.UNDEFINED_OPTION.getMessage(e.getOption()));
+            return;
         } catch (Exception e) {
             e.printStackTrace();
-            usage(options);
             return;
         }
         try {
@@ -238,6 +234,10 @@ public class DConnectCodegen {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static void printError(final String message) {
+        System.err.println(message);
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
@@ -368,48 +368,9 @@ public class DConnectCodegen {
         return merged;
     }
 
-    public static List<DConnectCodegenConfig> getExtensions() {
-        ServiceLoader<DConnectCodegenConfig> loader = ServiceLoader.load(DConnectCodegenConfig.class);
-        List<DConnectCodegenConfig> output = new ArrayList<DConnectCodegenConfig>();
-        for (DConnectCodegenConfig aLoader : loader) {
-            output.add(aLoader);
-        }
-        return output;
-    }
-
     static void usage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("DConnectCodegen", options);
-    }
-
-    public static DConnectCodegenConfig getConfig(String name) {
-        if (configs.containsKey(name)) {
-            return configs.get(name);
-        } else {
-            // see if it's a class
-            try {
-                LOGGER.debug("loading class " + name);
-                Class<?> customClass = Class.forName(name);
-                LOGGER.debug("loaded");
-                return (DConnectCodegenConfig) customClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("can't load class " + name);
-            }
-        }
-    }
-
-    static {
-        List<DConnectCodegenConfig> extensions = getExtensions();
-        StringBuilder sb = new StringBuilder();
-
-        for (DConnectCodegenConfig config : extensions) {
-            if (sb.toString().length() != 0) {
-                sb.append(", ");
-            }
-            sb.append(config.getName());
-            configs.put(config.getName(), config);
-            configString = sb.toString();
-        }
     }
 
 }
