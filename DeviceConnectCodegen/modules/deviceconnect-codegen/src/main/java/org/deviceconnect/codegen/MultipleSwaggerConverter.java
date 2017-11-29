@@ -7,6 +7,7 @@ import io.swagger.models.Swagger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,8 @@ public class MultipleSwaggerConverter {
 
     private static final String SEPARATOR = DConnectPath.SEPARATOR;
 
-    public Map<String, Swagger> convert(final List<Swagger> swaggerList) throws DConnectPathFormatException {
+    public Map<String, Swagger> convert(final List<Swagger> swaggerList)
+            throws IllegalPathFormatException, DuplicatedPathException {
         Map<String, Swagger> result = new HashMap<>();
         for (Swagger swagger : swaggerList) {
             convert(swagger, result);
@@ -26,16 +28,19 @@ public class MultipleSwaggerConverter {
     }
 
     private void convert(final Swagger swagger,
-                         final Map<String, Swagger> result) throws DConnectPathFormatException {
+                         final Map<String, Swagger> result)
+            throws IllegalPathFormatException, DuplicatedPathException {
         String basePath = swagger.getBasePath();
         if (basePath == null || basePath.equals("")) {
             basePath = SEPARATOR;
         }
 
         Map<String, Path> paths = swagger.getPaths();
+        NameDuplicationCounter counter = new NameDuplicationCounter();
         for (Map.Entry<String, Path> entry : paths.entrySet()) {
             String pathName = entry.getKey();
             DConnectPath path = DConnectPath.parsePath(basePath, pathName);
+            counter.count(path.toCanonicalPathName());
             LOGGER.info("Base Path: " + path.getBathPath() + ", Sub Path: " + path.getSubPath() + ", Profile: " + path.getProfileName());
 
             String key = path.getProfileName();
@@ -50,10 +55,14 @@ public class MultipleSwaggerConverter {
             Path pathSpec = pathSpecs.get(subPathName);
             if (pathSpec == null) {
                 pathSpecs.put(subPathName, entry.getValue());
-            } else {
-                // TODO 重複エラーを出力
             }
             cache.setPaths(pathSpecs);
+        }
+
+        // 重複チェック
+        List<NameDuplication> duplications = counter.getDuplications();
+        if (duplications.size() > 0) {
+            throw new DuplicatedPathException(duplications);
         }
     }
 
@@ -83,5 +92,32 @@ public class MultipleSwaggerConverter {
         profile.setDefinitions(swagger.getDefinitions());
         profile.setPaths(new HashMap<String, Path>());
         return profile;
+    }
+
+    private static class NameDuplicationCounter {
+
+        private final Map<String, NameDuplication> duplications = new HashMap<>();
+
+        private NameDuplicationCounter() {}
+
+        public void count(final String name) {
+            NameDuplication dup = duplications.get(name);
+            if (dup == null) {
+                dup = new NameDuplication(name);
+                duplications.put(name, dup);
+            }
+            dup.count();
+        }
+
+        public List<NameDuplication> getDuplications() {
+            List<NameDuplication> result = new ArrayList<>();
+            for (Map.Entry<String, NameDuplication> entry : duplications.entrySet()) {
+                NameDuplication dup = entry.getValue();
+                if (dup.isDuplicated()) {
+                    result.add(dup);
+                }
+            }
+            return result;
+        }
     }
 }

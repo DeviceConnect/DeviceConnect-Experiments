@@ -25,6 +25,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 
+import static org.deviceconnect.codegen.Const.MESSAGES;
+
 public class DConnectCodegen {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Codegen.class);
@@ -217,16 +219,36 @@ public class DConnectCodegen {
                 return;
             }
         } catch (MissingOptionException e) {
-            printError(Const.ErrorMessages.MISSING_OPTION.getMessage(e.getMissingOptions()));
+            printError(Const.ErrorMessages.CommandOption.MISSING_OPTION.getMessage(e.getMissingOptions()));
             return;
         } catch (MissingArgumentException e) {
-            printError(Const.ErrorMessages.MISSING_ARGUMENT.getMessage(e.getOption()));
+            printError(Const.ErrorMessages.CommandOption.MISSING_ARGUMENT.getMessage(e.getOption()));
             return;
         } catch (AlreadySelectedException e) {
-            printError(Const.ErrorMessages.ALREADY_SELECTED_OPTION.getMessage(e.getOption()));
+            printError(Const.ErrorMessages.CommandOption.ALREADY_SELECTED_OPTION.getMessage(e.getOption()));
             return;
         } catch (UnrecognizedOptionException e) {
-            printError(Const.ErrorMessages.UNDEFINED_OPTION.getMessage(e.getOption()));
+            printError(Const.ErrorMessages.CommandOption.UNDEFINED_OPTION.getMessage(e.getOption()));
+            return;
+        } catch (IllegalPathFormatException e) {
+            String errorMessage;
+            switch (e.getReason()) {
+                case TOO_LONG:
+                    errorMessage = Const.ErrorMessages.Path.TOO_LONG.getMessage(e.getPath());
+                    break;
+                case TOO_SHORT:
+                    errorMessage = Const.ErrorMessages.Path.TOO_SHORT.getMessage(e.getPath());
+                    break;
+                case NOT_STARTED_WITH_ROOT:
+                    errorMessage = Const.ErrorMessages.Path.NOT_STARTED_WITH_ROOT.getMessage(e.getPath());
+                    break;
+                default:
+                    throw new RuntimeException("Undefined error");
+            }
+            printError(errorMessage);
+            return;
+        } catch (DuplicatedPathException e) {
+            printDuplicatedPathError(e);
             return;
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,7 +279,7 @@ public class DConnectCodegen {
             return true;
         }
 
-        String template = Const.ErrorMessages.INVALID_SWAGGER.getMessage();
+        String template = Const.ErrorMessages.CommandOption.INVALID_SWAGGER.getMessage();
         String errorMessage = template.replace("%file%", file.getName());
         String reasons = "";
         for (SwaggerJsonValidator.Error error : result.getErrors()) {
@@ -271,6 +293,23 @@ public class DConnectCodegen {
 
     private static void printError(final String message) {
         System.err.println(message);
+    }
+
+    private static void printDuplicatedPathError(final DuplicatedPathException e) {
+        String template = MESSAGES.getString("errorProfileSpecDuplicatedPath");
+        List<NameDuplication> duplications = e.getDuplications();
+
+        String pathNames = "";
+        for (Iterator<NameDuplication> it = duplications.iterator(); it.hasNext(); ) {
+            NameDuplication dup = it.next();
+            pathNames += dup.getName();
+            if (it.hasNext()) {
+                pathNames += ", ";
+            }
+        }
+
+        String errorMessage = template.replace("%paths%", pathNames);
+        printError(errorMessage);
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {

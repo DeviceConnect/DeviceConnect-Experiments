@@ -94,64 +94,86 @@ final class Const {
         return option;
     }
 
-    enum ErrorMessages {
-        MISSING_OPTION("errorMissingOption"),
-        MISSING_ARGUMENT("errorMissingArgument"),
-        ALREADY_SELECTED_OPTION("errorAlreadySelectedOption"),
-        UNDEFINED_OPTION("errorUndefinedOption"),
-        INVALID_SWAGGER("errorInvalidSwagger");
+    static class ErrorMessages {
 
-        private final String key;
+        // 引数指定
+        enum CommandOption {
 
-        ErrorMessages(final String key) {
-            this.key = key;
-        }
+            MISSING_OPTION("errorMissingOption"),
+            MISSING_ARGUMENT("errorMissingArgument"),
+            ALREADY_SELECTED_OPTION("errorAlreadySelectedOption"),
+            UNDEFINED_OPTION("errorUndefinedOption"),
+            INVALID_SWAGGER("errorInvalidSwagger");
 
-        public String getMessage() {
-            return MESSAGES.getString(key);
-        }
+            private final String key;
 
-        public String getMessage(final List<Object> options) {
-            return getMessage() + ": \n" + concatOptions(options);
-        }
+            CommandOption(final String key) {
+                this.key = key;
+            }
 
-        public String getMessage(final Option opt) {
-            return getMessage() + ": " + opt.getLongOpt();
-        }
+            public String getMessage() {
+                return MESSAGES.getString(key);
+            }
 
-        public String getMessage(final String optName) {
-            return getMessage() + ": " + optName;
-        }
+            public String getMessage(final List<Object> options) {
+                return getMessage() + ": \n" + concatOptions(options);
+            }
 
-        private static String concatOptions(List<Object> list) {
-            String result = "";
-            for (int i = 0; i < list.size(); i++) {
-                Object opt = list.get(i);
-                if (opt == null) {
-                    continue;
-                }
+            public String getMessage(final Option opt) {
+                return getMessage() + ": " + opt.getLongOpt();
+            }
 
-                result += " - ";
-                if (opt instanceof OptionGroup) {
-                    OptionGroup group = (OptionGroup) opt;
-                    String groupStr = "";
-                    for (Iterator it = group.getOptions().iterator(); it.hasNext(); ) {
-                        Option o = (Option) it.next();
-                        groupStr += o.getLongOpt();
-                        if (it.hasNext()) {
-                            groupStr += " or ";
+            public String getMessage(final String optName) {
+                return getMessage() + ": " + optName;
+            }
+
+            private static String concatOptions(List<Object> list) {
+                String result = "";
+                for (int i = 0; i < list.size(); i++) {
+                    Object opt = list.get(i);
+                    if (opt == null) {
+                        continue;
+                    }
+
+                    result += " - ";
+                    if (opt instanceof OptionGroup) {
+                        OptionGroup group = (OptionGroup) opt;
+                        String groupStr = "";
+                        for (Iterator it = group.getOptions().iterator(); it.hasNext(); ) {
+                            Option o = (Option) it.next();
+                            groupStr += o.getLongOpt();
+                            if (it.hasNext()) {
+                                groupStr += " or ";
+                            }
+                        }
+                        result += groupStr + "\n";
+                    } else {
+                        Option found = OPTIONS.getOption(opt.toString());
+                        if (found != null) {
+                            result += found.getLongOpt() + "\n";
                         }
                     }
-                    result += groupStr + "\n";
-                } else {
-                    Option found = OPTIONS.getOption(opt.toString());
-                    if (found != null) {
-                        result += found.getLongOpt() + "\n";
-                    }
                 }
+                return result;
             }
-            return result;
+        }
+
+        // パス定義
+        enum Path {
+            TOO_LONG("errorProfileSpecTooLongPath"),
+            TOO_SHORT("errorProfileSpecTooShortPath"),
+            NOT_STARTED_WITH_ROOT("errorProfileSpecPathNotStartedWithRoot");
+
+            private final String key;
+
+            Path(final String key) {
+                this.key = key;
+            }
+
+            public String getMessage(final String path) {
+                String template = MESSAGES.getString(key);
+                return template.replace("%path%", path);
+            }
         }
     }
-
 }

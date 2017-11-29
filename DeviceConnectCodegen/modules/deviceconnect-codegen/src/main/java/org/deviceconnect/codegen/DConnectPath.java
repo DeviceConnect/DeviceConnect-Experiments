@@ -1,7 +1,7 @@
 package org.deviceconnect.codegen;
 
 
-import static org.deviceconnect.codegen.DConnectPathFormatException.Reason;
+import static org.deviceconnect.codegen.IllegalPathFormatException.Reason;
 
 public class DConnectPath {
 
@@ -14,31 +14,31 @@ public class DConnectPath {
     private final String attributeName;
     private final int size;
 
-    public static DConnectPath parsePath(final String basePath, final String pathExp) throws DConnectPathFormatException {
+    public static DConnectPath parsePath(final String basePath, final String pathExp) throws IllegalPathFormatException {
         if (!basePath.startsWith(SEPARATOR)) {
-            throw new DConnectPathFormatException(Reason.NOT_STARTED_WITH_ROOT);
+            throw new IllegalPathFormatException(Reason.NOT_STARTED_WITH_ROOT, basePath);
         }
         if (!pathExp.startsWith(SEPARATOR)) {
-            throw new DConnectPathFormatException(Reason.NOT_STARTED_WITH_ROOT);
+            throw new IllegalPathFormatException(Reason.NOT_STARTED_WITH_ROOT, pathExp);
         }
         return parsePath(basePath + pathExp);
     }
 
-    public static DConnectPath parsePath(final String pathExp) throws DConnectPathFormatException {
+    public static DConnectPath parsePath(final String pathExp) throws IllegalPathFormatException {
         return new DConnectPath(pathExp);
     }
 
-    private DConnectPath(final String pathExp) throws DConnectPathFormatException {
+    private DConnectPath(final String pathExp) throws IllegalPathFormatException {
         if (pathExp == null) {
             throw new NullPointerException("pathExp is null");
         }
         if (!pathExp.startsWith(SEPARATOR)) {
-            throw new DConnectPathFormatException(Reason.NOT_STARTED_WITH_ROOT);
+            throw new IllegalPathFormatException(Reason.NOT_STARTED_WITH_ROOT, pathExp);
         }
         String[] parts = pathExp.split(SEPARATOR);
         int length = parts.length;
         if (length < 3) {
-            throw new DConnectPathFormatException(Reason.TOO_SHORT);
+            throw new IllegalPathFormatException(Reason.TOO_SHORT, pathExp);
         } else if (length == 3) {
             this.apiName = parts[1];
             this.profileName = parts[2];
@@ -55,7 +55,7 @@ public class DConnectPath {
             this.interfaceName = parts[3];
             this.attributeName = parts[4];
         } else {
-            throw new DConnectPathFormatException(Reason.TOO_LONG);
+            throw new IllegalPathFormatException(Reason.TOO_LONG, pathExp);
         }
         this.pathExp = pathExp;
         this.size = length - 1;
@@ -99,12 +99,19 @@ public class DConnectPath {
         }
         String path = SEPARATOR;
         for (int i = 0; i < parts.length; i++) {
+            if (parts[i] == null) {
+                continue;
+            }
             path += parts[i];
             if (i < parts.length - 1) {
                 path += SEPARATOR;
             }
         }
         return path;
+    }
+
+    public String toCanonicalPathName() {
+        return concatParts(apiName, profileName, interfaceName, attributeName);
     }
 
     @Override
