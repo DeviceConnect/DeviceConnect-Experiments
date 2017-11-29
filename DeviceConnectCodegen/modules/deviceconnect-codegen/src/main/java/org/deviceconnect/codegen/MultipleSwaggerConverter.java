@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MultipleSwaggerConverter {
+class MultipleSwaggerConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultipleSwaggerConverter.class);
 
     private static final String SEPARATOR = DConnectPath.SEPARATOR;
 
-    public Map<String, Swagger> convert(final List<Swagger> swaggerList)
+    Map<String, Swagger> convert(final List<Swagger> swaggerList)
             throws IllegalPathFormatException, DuplicatedPathException {
         Map<String, Swagger> result = new HashMap<>();
         NameDuplicationCounter counter = new NameDuplicationCounter();
@@ -101,7 +101,7 @@ public class MultipleSwaggerConverter {
 
         private NameDuplicationCounter() {}
 
-        public void count(final String name) {
+        void count(final String name) {
             NameDuplication dup = duplications.get(name);
             if (dup == null) {
                 dup = new NameDuplication(name);
@@ -110,7 +110,7 @@ public class MultipleSwaggerConverter {
             dup.countUp();
         }
 
-        public List<NameDuplication> getDuplications() {
+        List<NameDuplication> getDuplications() {
             List<NameDuplication> result = new ArrayList<>();
             for (Map.Entry<String, NameDuplication> entry : duplications.entrySet()) {
                 NameDuplication dup = entry.getValue();
