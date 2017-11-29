@@ -21,14 +21,16 @@ public class MultipleSwaggerConverter {
     public Map<String, Swagger> convert(final List<Swagger> swaggerList)
             throws IllegalPathFormatException, DuplicatedPathException {
         Map<String, Swagger> result = new HashMap<>();
+        NameDuplicationCounter counter = new NameDuplicationCounter();
         for (Swagger swagger : swaggerList) {
-            convert(swagger, result);
+            convert(swagger, result, counter);
         }
         return result;
     }
 
     private void convert(final Swagger swagger,
-                         final Map<String, Swagger> result)
+                         final Map<String, Swagger> result,
+                         final NameDuplicationCounter counter)
             throws IllegalPathFormatException, DuplicatedPathException {
         String basePath = swagger.getBasePath();
         if (basePath == null || basePath.equals("")) {
@@ -36,7 +38,6 @@ public class MultipleSwaggerConverter {
         }
 
         Map<String, Path> paths = swagger.getPaths();
-        NameDuplicationCounter counter = new NameDuplicationCounter();
         for (Map.Entry<String, Path> entry : paths.entrySet()) {
             String pathName = entry.getKey();
             DConnectPath path = DConnectPath.parsePath(basePath, pathName);
@@ -106,7 +107,7 @@ public class MultipleSwaggerConverter {
                 dup = new NameDuplication(name);
                 duplications.put(name, dup);
             }
-            dup.count();
+            dup.countUp();
         }
 
         public List<NameDuplication> getDuplications() {
