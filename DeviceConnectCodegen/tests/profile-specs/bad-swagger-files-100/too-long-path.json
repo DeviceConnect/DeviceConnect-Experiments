@@ -4,7 +4,7 @@
 		"version": "2.0.0",
 		"title": "Device Connect API"
 	},
-	"basePath": "/gotapi/too/long/path",
+	"basePath": "/gotapi/too/long/path/json",
 	"paths": {
 		"/": {
 			"get": {
