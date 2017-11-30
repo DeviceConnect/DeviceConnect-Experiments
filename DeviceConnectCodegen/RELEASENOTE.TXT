@@ -1,4 +1,9 @@
 # 変更履歴
+2017/11/30: v1.5.0 [Android] DeviceConnectManagerへの複数プラグイン同梱仕様対応
+                   [共通] エラーメッセージの詳細化
+                   [共通] 不具合修正: basePathの長さが1のプロファイルを定義した場合に異常終了
+                   [共通] 生成したスケルトンコードにLICENSEファイルを出力しないように修正
+
 2017/08/22: v1.4.0 [Android] 連携タイプを指定するオプション connection-type を追加
                    [Android] Device Connect SDK v2.3.0 を使用するように変更
 

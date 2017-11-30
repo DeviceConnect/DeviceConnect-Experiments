@@ -1,6 +1,9 @@
 package org.deviceconnect.codegen;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import config.Config;
 import config.ConfigParser;
 import io.swagger.codegen.*;
@@ -13,13 +16,16 @@ import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
-import org.deviceconnect.codegen.plugin.AndroidPluginCodegenConfig;
+import org.deviceconnect.codegen.util.SwaggerJsonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.*;
+
+import static org.deviceconnect.codegen.Const.MESSAGES;
 
 public class DConnectCodegen {
 
@@ -39,37 +45,27 @@ public class DConnectCodegen {
             "delete"
     };
 
-    static Map<String, DConnectCodegenConfig> configs = new HashMap<String, DConnectCodegenConfig>();
-    static String configString;
     static String debugInfoOptions = "\nThe following additional debug options are available for all codegen targets:" +
             "\n -DdebugSwagger prints the swagger specification as interpreted by the codegen" +
             "\n -DdebugModels prints models passed to the template engine" +
             "\n -DdebugOperations prints operations passed to the template engine" +
             "\n -DdebugSupportingFiles prints additional data passed to the template engine";
 
+    private static final SwaggerJsonValidator JSON_VALIDATOR = new SwaggerJsonValidator();
+
+    private static final MultipleSwaggerConverter SWAGGER_CONVERTER = new MultipleSwaggerConverter();
+
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
 
-        Options options = new Options();
-        options.addOption("h", "help", false, "shows this message");
-        options.addOption("l", "lang", true, "client language to generate.\nAvailable languages include:\n\t[" + configString + "]");
-        options.addOption("o", "output", true, "where to write the generated files");
-        options.addOption("i", "input-spec", true, "location of the swagger spec, as URL or file");
-        options.addOption("s", "input-spec-dir", true, "directory of the swagger specs");
-        options.addOption("t", "template-dir", true, "folder containing the template files");
-        options.addOption("d", "debug-info", false, "prints additional info for debugging");
-        //options.addOption("a", "auth", true, "adds authorization headers when fetching the swagger definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values");
-        options.addOption("c", "config", true, "location of the configuration file");
-        options.addOption("p", "package-name", true, "package name (for deviceConnectAndroidPlugin only)");
-        options.addOption("n", "display-name", true, "display name of the generated project");
-        options.addOption("x", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
-        options.addOption("b", "connection-type", true, "connection type with device connect manager (for deviceConnectAndroidPlugin only)");
+        Options options = Const.OPTIONS;
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
         File[] specFiles;
 
         CommandLine cmd;
+        boolean hasValidSwagger = true;
         try {
             CommandLineParser parser = new BasicParser();
             DConnectCodegenConfig config;
@@ -81,7 +77,7 @@ public class DConnectCodegen {
                 return;
             }
             if (cmd.hasOption("h")) {
-                config = getConfig(cmd.getOptionValue("l"));
+                config = Const.getConfig(cmd.getOptionValue("l"));
                 if (config != null) {
                     options.addOption("h", "help", true, config.getHelp());
                     usage(options);
@@ -91,7 +87,7 @@ public class DConnectCodegen {
                 return;
             }
             if (cmd.hasOption("l")) {
-                config = getConfig(cmd.getOptionValue("l"));
+                config = Const.getConfig(cmd.getOptionValue("l"));
                 clientOptInput.setConfig(config);
             } else {
                 usage(options);
@@ -102,6 +98,9 @@ public class DConnectCodegen {
             }
             if (cmd.hasOption("i")) {
                 String location = cmd.getOptionValue("i");
+                if(!checkSwagger(new File(location))) {
+                    return;
+                }
                 Swagger swagger = new SwaggerParser().read(location, clientOptInput.getAuthorizationValues(), true);
                 clientOptInput.swagger(swagger);
 
@@ -151,27 +150,34 @@ public class DConnectCodegen {
                             return name.endsWith(".json") || name.endsWith(".yaml");
                         }
                     });
-
-                    Map<String, Swagger> profileSpecs = new HashMap<>();
+                    List<Swagger> swaggerList = new ArrayList<>();
                     for (File file : specFiles) {
-                        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
-                        String profileName = parseProfileName(swagger);
-                        if (profileName == null) {
-                            profileName = parseProfileNameFromFileName(file.getName());
+                        if(!checkSwagger(file)) {
+                            continue;
                         }
+                        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+                        if (swagger != null) {
+                            swaggerList.add(swagger);
+                        }
+                    }
+                    if (swaggerList.size() != specFiles.length) {
+                        return;
+                    }
+
+                    Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
+                    for (String profileName : profileSpecs.keySet()) {
                         checkProfileName(config, profileName);
-                        profileSpecs.put(profileName, swagger);
                     }
                     config.setProfileSpecs(profileSpecs);
                     clientOptInput.swagger(mergeSwaggers(profileSpecs));
                 } else {
+                    // TODO エラーメッセージ詳細化: ディレクトリではなくファイルへのパスが指定されている.
                     usage(options);
                     return;
                 }
-            } else {
-                usage(options);
-                return;
             }
+
+
             if (cmd.hasOption("c")) {
                 String configFile = cmd.getOptionValue("c");
                 Config genConfig = ConfigParser.read(configFile);
@@ -212,16 +218,98 @@ public class DConnectCodegen {
                 }
                 return;
             }
+        } catch (MissingOptionException e) {
+            printError(Const.ErrorMessages.CommandOption.MISSING_OPTION.getMessage(e.getMissingOptions()));
+            return;
+        } catch (MissingArgumentException e) {
+            printError(Const.ErrorMessages.CommandOption.MISSING_ARGUMENT.getMessage(e.getOption()));
+            return;
+        } catch (AlreadySelectedException e) {
+            printError(Const.ErrorMessages.CommandOption.ALREADY_SELECTED_OPTION.getMessage(e.getOption()));
+            return;
+        } catch (UnrecognizedOptionException e) {
+            printError(Const.ErrorMessages.CommandOption.UNDEFINED_OPTION.getMessage(e.getOption()));
+            return;
+        } catch (IllegalPathFormatException e) {
+            String errorMessage;
+            switch (e.getReason()) {
+                case TOO_LONG:
+                    errorMessage = Const.ErrorMessages.Path.TOO_LONG.getMessage(e.getPath());
+                    break;
+                case TOO_SHORT:
+                    errorMessage = Const.ErrorMessages.Path.TOO_SHORT.getMessage(e.getPath());
+                    break;
+                case NOT_STARTED_WITH_ROOT:
+                    errorMessage = Const.ErrorMessages.Path.NOT_STARTED_WITH_ROOT.getMessage(e.getPath());
+                    break;
+                default:
+                    throw new RuntimeException("Undefined error");
+            }
+            printError(errorMessage);
+            return;
+        } catch (DuplicatedPathException e) {
+            printDuplicatedPathError(e);
+            return;
         } catch (Exception e) {
             e.printStackTrace();
-            usage(options);
             return;
         }
         try {
-            new Codegen().opts(clientOptInput.opts(clientOpts)).generate();
+            new Codegen() {
+                @Override
+                public File writeToFile(final String filename, final String contents) throws IOException {
+                    // LICENSE ファイルは出力させない
+                    if (filename != null) {
+                        if (filename.endsWith("LICENSE") || filename.endsWith(".swagger-codegen-ignore")) {
+                            return null;
+                        }
+                    }
+                    return super.writeToFile(filename, contents);
+                }
+            }.opts(clientOptInput.opts(clientOpts)).generate();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
+        JsonNode jsonNode = new ObjectMapper().readTree(file);
+        SwaggerJsonValidator.Result result = JSON_VALIDATOR.validate(jsonNode);
+        if (result.isSuccess()) {
+            return true;
+        }
+
+        String template = Const.ErrorMessages.CommandOption.INVALID_SWAGGER.getMessage();
+        String errorMessage = template.replace("%file%", file.getName());
+        String reasons = "";
+        for (SwaggerJsonValidator.Error error : result.getErrors()) {
+            String pointer = error.getJsonPointer();
+            String reason = error.getMessage();
+            reasons += " - Pointer = " + pointer + ", Reason = " + reason + "\n";
+        }
+        printError(errorMessage + ": \n" + reasons);
+        return false;
+    }
+
+    private static void printError(final String message) {
+        System.err.println(message);
+    }
+
+    private static void printDuplicatedPathError(final DuplicatedPathException e) {
+        String template = MESSAGES.getString("errorProfileSpecDuplicatedPath");
+        List<NameDuplication> duplications = e.getDuplications();
+
+        String pathNames = "";
+        for (Iterator<NameDuplication> it = duplications.iterator(); it.hasNext(); ) {
+            NameDuplication dup = it.next();
+            pathNames += dup.getName();
+            if (it.hasNext()) {
+                pathNames += ", ";
+            }
+        }
+
+        String errorMessage = template.replace("%paths%", pathNames);
+        printError(errorMessage);
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
@@ -352,48 +440,9 @@ public class DConnectCodegen {
         return merged;
     }
 
-    public static List<DConnectCodegenConfig> getExtensions() {
-        ServiceLoader<DConnectCodegenConfig> loader = ServiceLoader.load(DConnectCodegenConfig.class);
-        List<DConnectCodegenConfig> output = new ArrayList<DConnectCodegenConfig>();
-        for (DConnectCodegenConfig aLoader : loader) {
-            output.add(aLoader);
-        }
-        return output;
-    }
-
     static void usage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("DConnectCodegen", options);
-    }
-
-    public static DConnectCodegenConfig getConfig(String name) {
-        if (configs.containsKey(name)) {
-            return configs.get(name);
-        } else {
-            // see if it's a class
-            try {
-                LOGGER.debug("loading class " + name);
-                Class<?> customClass = Class.forName(name);
-                LOGGER.debug("loaded");
-                return (DConnectCodegenConfig) customClass.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException("can't load class " + name);
-            }
-        }
-    }
-
-    static {
-        List<DConnectCodegenConfig> extensions = getExtensions();
-        StringBuilder sb = new StringBuilder();
-
-        for (DConnectCodegenConfig config : extensions) {
-            if (sb.toString().length() != 0) {
-                sb.append(", ");
-            }
-            sb.append(config.getName());
-            configs.put(config.getName(), config);
-            configString = sb.toString();
-        }
     }
 
 }

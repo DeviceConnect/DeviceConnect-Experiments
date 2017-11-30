@@ -1,22 +1,21 @@
 package org.deviceconnect.codegen.plugin;
 
 
-import com.samskivert.mustache.Mustache;
-import com.samskivert.mustache.Template;
-import io.swagger.codegen.CodegenConfig;
-import io.swagger.codegen.DefaultCodegen;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 import org.deviceconnect.codegen.AbstractCodegenConfig;
-import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.ProfileTemplate;
 import org.deviceconnect.codegen.models.DConnectOperation;
+import org.deviceconnect.codegen.util.JsonStringifyPrettyPrinter;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig {
 
@@ -296,12 +295,19 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
             throw new IOException("Failed to copy profile spec directory: " + dirPath);
         }
         if (profileSpecs != null) {
+            ObjectWriter writer = createJsonWriter();
             for (Map.Entry<String, Swagger> spec : profileSpecs.entrySet()) {
                 String fileName = spec.getKey() + ".json";
-                String content = Json.mapper().writeValueAsString(spec.getValue());
-                writeFile(content, new File(getProfileSpecFolder(), fileName));
+                String content = writer.writeValueAsString(spec.getValue());
+                File destination = new File(getProfileSpecFolder(), fileName);
+                LOGGER.info("Output profile spec file: " + destination.getAbsolutePath());
+                writeFile(content, destination);
             }
         }
+    }
+
+    private static ObjectWriter createJsonWriter() {
+        return Json.mapper().writer(new JsonStringifyPrettyPrinter(4));
     }
 
     protected Model findDefinition(final Swagger swagger, final String simpleRef) {

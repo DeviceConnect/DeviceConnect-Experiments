@@ -27,7 +27,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String projectFolder = pluginModuleFolder + "/src/main";
     private final String sourceFolder = projectFolder + "/java";
     private final String resFolder = projectFolder + "/res";
-    private final String profileSpecFolder = projectFolder + "/assets/api";
     private String invokerPackage;
     private ConnectionType connectionType = ConnectionType.BINDER;
 
@@ -78,7 +77,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     protected String getProfileSpecFolder() {
         String separator = File.separator;
-        return outputFolder + separator + profileSpecFolder;
+        return outputFolder + separator + getSpecFolder();
     }
 
     @Override
@@ -209,6 +208,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         invokerPackage = (String) additionalProperties.get("packageName");
         embeddedTemplateDir = templateDir = getName();
         additionalProperties.put("profilePackage", getProfilePackage());
+        additionalProperties.put("devicePluginXml", getDevicePluginXmlName());
+        additionalProperties.put("specPath", getSpecPath());
 
         final String classPrefix = getClassPrefix();
         final String messageServiceClass = classPrefix + "MessageService";
@@ -238,7 +239,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("root.build.gradle.mustache", "", "build.gradle"));
         supportingFiles.add(new SupportingFile("plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
         supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
-        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", "deviceplugin.xml"));
+        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", getDevicePluginXmlName() + ".xml"));
         supportingFiles.add(new SupportingFile("strings.xml.mustache", resFolder + "/values", "strings.xml"));
 
         // リソース
@@ -719,5 +720,26 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             //  - file
             return null;
         }
+    }
+
+    private String getDevicePluginXmlName() {
+        return escapePackageName(invokerPackage);
+    }
+
+    private String getSpecPath() {
+        final String SP = File.separator;
+        return escapePackageName(invokerPackage) + SP + "api";
+    }
+
+    private String getSpecFolder() {
+        final String SP = File.separator;
+        return projectFolder + SP + "assets" + SP + getSpecPath();
+
+    }
+    private String escapePackageName(final String packageName) {
+        if (packageName == null) {
+            throw new NullPointerException("packageName is null.");
+        }
+        return packageName.replace('.', '_');
     }
 }
