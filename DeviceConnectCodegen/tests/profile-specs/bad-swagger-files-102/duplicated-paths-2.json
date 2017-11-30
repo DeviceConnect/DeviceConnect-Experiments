@@ -1,0 +1,90 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "2.0.0",
+		"title": "Device Connect API"
+	},
+	"basePath": "/gotapi/testProfile",
+	"paths": {
+		"/testAttribute": {
+			"get": {
+				"summary": "",
+				"description": "",
+				"parameters": [{
+					"name": "serviceId",
+					"in": "query",
+					"required": true,
+					"type": "string"
+				}],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/CommonResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
+						}
+					}
+				},
+				"x-type": "one-shot"
+			}
+		},
+		"/testInterface/testAttribute": {
+			"get": {
+				"summary": "",
+				"description": "",
+				"parameters": [{
+					"name": "serviceId",
+					"in": "query",
+					"required": true,
+					"type": "string"
+				}],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/CommonResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
+						}
+					}
+				},
+				"x-type": "one-shot"
+			}
+		}
+	},
+	"definitions": {
+		"CommonResponse": {
+			"type": "object",
+			"required": ["product", "result", "version"],
+			"properties": {
+				"result": {
+					"type": "integer",
+					"description": "0:正常応答<br>0以外:異常応答"
+				},
+				"product": {
+					"type": "string",
+					"description": "DeviceConnectシステムの名前。"
+				},
+				"version": {
+					"type": "string",
+					"description": "DeviceConnectシステムのバージョン名。"
+				},
+				"hmac": {
+					"type": "string",
+					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+				}
+			}
+		}
+	}
+}
