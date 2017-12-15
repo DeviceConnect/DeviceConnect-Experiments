@@ -318,6 +318,7 @@ public class DConnectCodegen {
         Info info = new Info();
         info.setTitle(swagger.getInfo().getTitle());
         info.setVersion(swagger.getInfo().getVersion());
+        info.setDescription(swagger.getInfo().getDescription());
         profile.setInfo(info);
         profile.setConsumes(swagger.getConsumes());
         profile.setExternalDocs(swagger.getExternalDocs());
