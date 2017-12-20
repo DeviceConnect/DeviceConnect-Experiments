@@ -156,6 +156,7 @@ java -jar bin/deviceconnect-codegen.jar [オプション]
 <tr>
 <td valign="top"><pre>--display-name</pre></td>
 <td valign="top">
+<b>[プラグインまたはアプリケーションのみ有効]</b><br>
 スケルトンコードの名前の指定。<br>
 <br>
 プラグインの場合、System APIによって取得できるデバイスプラグインの名前として使用される。アプリケーションの場合、主にアプリケーションのタイトルとして表示する名前として使用される。<br>
