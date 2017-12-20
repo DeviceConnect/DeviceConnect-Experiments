@@ -3,6 +3,7 @@ package org.deviceconnect.codegen;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import config.Config;
 import config.ConfigParser;
@@ -273,7 +274,17 @@ public class DConnectCodegen {
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
-        JsonNode jsonNode = new ObjectMapper().readTree(file);
+        String fileName = file.getName();
+        ObjectMapper mapper;
+        if (fileName.endsWith(".yaml")) {
+            mapper = new ObjectMapper(new YAMLFactory());
+        } else if (fileName.endsWith(".json")) {
+            mapper = new ObjectMapper();
+        } else {
+            throw new IllegalArgumentException("file must be JSON or YAML.");
+        }
+
+        JsonNode jsonNode = mapper.readTree(file);
         SwaggerJsonValidator.Result result = JSON_VALIDATOR.validate(jsonNode);
         if (result.isSuccess()) {
             return true;
