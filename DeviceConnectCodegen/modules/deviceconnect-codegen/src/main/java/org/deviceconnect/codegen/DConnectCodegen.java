@@ -58,7 +58,6 @@ public class DConnectCodegen {
 
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
-
         Options options = Const.OPTIONS;
 
         ClientOptInput clientOptInput = new ClientOptInput();
@@ -66,7 +65,6 @@ public class DConnectCodegen {
         File[] specFiles;
 
         CommandLine cmd;
-        boolean hasValidSwagger = true;
         try {
             CommandLineParser parser = new BasicParser();
             DConnectCodegenConfig config;
@@ -209,6 +207,14 @@ public class DConnectCodegen {
                 classPrefix = "My";
             }
             clientOpts.getProperties().put("classPrefix", classPrefix);
+
+            String gradlePluginVersion;
+            if (cmd.hasOption("r")) {
+                gradlePluginVersion = cmd.getOptionValue("r");
+            } else {
+                gradlePluginVersion = "3.0.0";
+            }
+            clientOpts.getProperties().put("gradlePluginVersion", gradlePluginVersion);
 
             ValidationResultSet resultSet = config.validateOptions(cmd, clientOpts);
             if (!resultSet.isValid()) {
