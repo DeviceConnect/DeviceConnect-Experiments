@@ -38,6 +38,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         ValidationResultSet resultSet = new ValidationResultSet();
         resultSet.addResult(readPackageName(cmd, clientOpts));
         resultSet.addResult(readConnectionType(cmd));
+        resultSet.addResult(readSDK(cmd, clientOpts));
+        resultSet.addResult(readSigningConfigs(cmd, clientOpts));
         return resultSet;
     }
 
@@ -59,6 +61,39 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             return ValidationResult.invalid("b", "Undefined connection type: " + value);
         }
         return ValidationResult.valid("b");
+    }
+
+    private ValidationResult readSDK(final CommandLine cmd, final ClientOpts clientOpts) {
+        String value = cmd.getOptionValue("k");
+        File absolutePath = readPath(value);
+        if (absolutePath == null) {
+            return ValidationResult.invalid("k", value + " is not found.");
+        }
+        clientOpts.getProperties().put("sdkLocation", absolutePath.getAbsolutePath());
+        return ValidationResult.valid("k");
+    }
+
+    private ValidationResult readSigningConfigs(final CommandLine cmd, final ClientOpts clientOpts) {
+        String value = cmd.getOptionValue("g");
+        File absolutePath = readPath(value);
+        if (absolutePath == null) {
+            return ValidationResult.invalid("g", value + " is not found.");
+        }
+        clientOpts.getProperties().put("signingConfigsLocation", absolutePath.getAbsolutePath());
+        return ValidationResult.valid("g");
+    }
+
+    private File readPath(final String value) {
+        File path = new File(value);
+        if (!path.exists()) {
+            return null;
+        }
+        if (path.isAbsolute()) {
+            return path;
+        } else {
+            String currentDir = System.getProperty("user.dir");
+            return new File(currentDir, path.getAbsolutePath());
+        }
     }
 
     //----- AbstractPluginCodegenConfig ----//
@@ -206,7 +241,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     public void processOpts() {
         super.processOpts();
         invokerPackage = (String) additionalProperties.get("packageName");
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
         additionalProperties.put("profilePackage", getProfilePackage());
         additionalProperties.put("devicePluginXml", getDevicePluginXmlName());
         additionalProperties.put("specPath", getSpecPath());

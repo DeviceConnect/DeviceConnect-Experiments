@@ -160,7 +160,7 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     public void processOpts() {
         super.processOpts();
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
 
         final String classPrefix = getClassPrefix();
         additionalProperties.put("serviceId", classPrefix.toLowerCase() + "_service_id");
