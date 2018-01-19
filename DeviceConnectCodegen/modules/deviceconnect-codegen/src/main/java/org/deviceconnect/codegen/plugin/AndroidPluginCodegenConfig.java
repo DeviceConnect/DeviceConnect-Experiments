@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.deviceconnect.codegen.ProfileTemplate;
 import org.deviceconnect.codegen.ValidationResult;
 import org.deviceconnect.codegen.ValidationResultSet;
+import org.deviceconnect.codegen.util.VersionName;
 
 import java.io.File;
 import java.util.*;
@@ -271,8 +272,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
                 throw new RuntimeException("Unknown connection type");
         }
         supportingFiles.add(new SupportingFile(manifest, projectFolder, "AndroidManifest.xml"));
-        supportingFiles.add(new SupportingFile("root.build.gradle.mustache", "", "build.gradle"));
-        supportingFiles.add(new SupportingFile("plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir()+ "/root.build.gradle.mustache", "", "build.gradle"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
         supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
         supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", getDevicePluginXmlName() + ".xml"));
         supportingFiles.add(new SupportingFile("strings.xml.mustache", resFolder + "/values", "strings.xml"));
@@ -290,6 +291,27 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
         supportingFiles.add(new SupportingFile("SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
         supportingFiles.add(new SupportingFile("SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+    }
+
+    private String getGradlePluginVersion() {
+        return (String) additionalProperties.get("gradlePluginVersion");
+    }
+
+    private String getGradleTemplateDir() {
+        final VersionName ver3 = VersionName.parse("3.0.0");
+
+        String versionParam = getGradlePluginVersion();
+        VersionName version = VersionName.parse(versionParam);
+        if (version == null) {
+            version = ver3;
+        }
+        String dirName;
+        if (version.isEqualOrMoreThan(ver3)) {
+            dirName = "3_x_x";
+        } else {
+            dirName = "2_x_x";
+        }
+        return "gradleFiles/" + dirName;
     }
 
     @Override
