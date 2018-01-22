@@ -271,26 +271,46 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             default:
                 throw new RuntimeException("Unknown connection type");
         }
-        supportingFiles.add(new SupportingFile(manifest, projectFolder, "AndroidManifest.xml"));
+        supportingFiles.add(new SupportingFile(manifest, getProjectDir(), "AndroidManifest.xml"));
         supportingFiles.add(new SupportingFile(getGradleTemplateDir()+ "/root.build.gradle.mustache", "", "build.gradle"));
-        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", getPluginModuleDir(), "build.gradle"));
         supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
-        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", getDevicePluginXmlName() + ".xml"));
-        supportingFiles.add(new SupportingFile("strings.xml.mustache", resFolder + "/values", "strings.xml"));
+        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", getPluginResourceDir() + "/xml", getDevicePluginXmlName() + ".xml"));
+        supportingFiles.add(new SupportingFile("strings.xml.mustache", getPluginResourceDir() + "/values", "strings.xml"));
 
         // リソース
-        supportingFiles.add(new SupportingFile("res/layout/activity_setting.xml", resFolder + "/layout/", "activity_setting.xml"));
-        supportingFiles.add(new SupportingFile("res/drawable-mdpi/ic_launcher.png", resFolder + "/drawable-mdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-hdpi/ic_launcher.png", resFolder + "/drawable-hdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", resFolder + "/drawable-xhdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", resFolder + "/drawable-xxhdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/layout/activity_setting.xml", getPluginResourceDir() + "/layout/", "activity_setting.xml"));
+        supportingFiles.add(new SupportingFile("res/drawable-mdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-mdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-hdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-hdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xhdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xxhdpi/", "ic_launcher.png"));
 
         // 実装ファイル (全プラグイン共通)
-        final String packageFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
+        final String packageFolder = getPluginPackageRootDir();
         supportingFiles.add(new SupportingFile("MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
         supportingFiles.add(new SupportingFile("MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
         supportingFiles.add(new SupportingFile("SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
         supportingFiles.add(new SupportingFile("SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+    }
+
+    protected String getPluginSourceDir() {
+        return sourceFolder;
+    }
+
+    protected String getProjectDir() {
+        return projectFolder;
+    }
+
+    protected String getPluginModuleDir() {
+        return pluginModuleFolder;
+    }
+
+    protected String getPluginResourceDir() {
+        return resFolder;
+    }
+
+    protected String getPluginPackageRootDir() {
+        return (getPluginSourceDir() + File.separator + invokerPackage).replace(".", File.separator);
     }
 
     private String getGradlePluginVersion() {
