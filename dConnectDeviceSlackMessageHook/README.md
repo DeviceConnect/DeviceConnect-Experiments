@@ -75,7 +75,7 @@ dConnectDeviceSlackMessageHookは<br>
  <img src="images/slack-3.png" border="0"
   width="304" alt="" /></a>
 
-#### <a name="section3.2.1.2">ConnectDeviceSlackMessageHookのBuild</a>
+#### <a name="section3.2.1.2">dConnectDeviceSlackMessageHookのBuild</a>
 
 slack-pluginを選択します。
 
