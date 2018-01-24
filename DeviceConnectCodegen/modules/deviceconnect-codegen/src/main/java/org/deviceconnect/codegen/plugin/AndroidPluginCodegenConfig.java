@@ -27,7 +27,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String pluginModuleFolder = "plugin";
     private final String projectFolder = pluginModuleFolder + "/src/main";
     private final String sourceFolder = projectFolder + "/java";
-    private final String resFolder = projectFolder + "/res";
+    private final String resFolder = projectFolder + "/resource";
     private String invokerPackage;
     private ConnectionType connectionType = ConnectionType.BINDER;
 
@@ -139,7 +139,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName;});
 
         ProfileTemplate template = new ProfileTemplate();
-        template.templateFile = "profile.mustache";
+        template.templateFile = "java" + File.separator + "profile.mustache";
         template.outputFile = profileClassName + ".java";
         profileTemplates.add(template);
         return profileTemplates;
@@ -259,7 +259,34 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
         // ビルド設定ファイル
-        supportingFiles.add(new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
+        supportingFiles.add(new SupportingFile("gradleFiles/settings.gradle.mustache", "", "settings.gradle"));
+        String manifest = getManifestTemplateFile();
+        supportingFiles.add(new SupportingFile("manifest/" + manifest, getProjectDir(), "AndroidManifest.xml"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir()+ "/root.build.gradle.mustache", "", "build.gradle"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", getPluginModuleDir(), "build.gradle"));
+        supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
+        supportingFiles.add(new SupportingFile("resource/xml/deviceplugin.xml.mustache", getPluginResourceDir() + "/xml", getDevicePluginXmlName() + ".xml"));
+        supportingFiles.add(new SupportingFile("resource/values/strings.xml.mustache", getPluginResourceDir() + "/values", "strings.xml"));
+
+        // リソース
+        supportingFiles.add(new SupportingFile("resource/layout/activity_setting.xml", getPluginResourceDir() + "/layout/", "activity_setting.xml"));
+        supportingFiles.add(new SupportingFile("resource/drawable-mdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-mdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-hdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-hdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-xhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xhdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-xxhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xxhdpi/", "ic_launcher.png"));
+
+        // 実装ファイル (全プラグイン共通)
+        final String packageFolder = getPluginPackageRootDir();
+        supportingFiles.add(new SupportingFile("java/MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
+        supportingFiles.add(new SupportingFile("java/MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
+        supportingFiles.add(new SupportingFile("java/SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
+        supportingFiles.add(new SupportingFile("java/SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+        if (connectionType == ConnectionType.BROADCAST) {
+            supportingFiles.add(new SupportingFile("java/LaunchService.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+        }
+    }
+
+    protected String getManifestTemplateFile() {
         String manifest;
         switch (connectionType) {
             case BROADCAST:
@@ -271,26 +298,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             default:
                 throw new RuntimeException("Unknown connection type");
         }
-        supportingFiles.add(new SupportingFile(manifest, getProjectDir(), "AndroidManifest.xml"));
-        supportingFiles.add(new SupportingFile(getGradleTemplateDir()+ "/root.build.gradle.mustache", "", "build.gradle"));
-        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", getPluginModuleDir(), "build.gradle"));
-        supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
-        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", getPluginResourceDir() + "/xml", getDevicePluginXmlName() + ".xml"));
-        supportingFiles.add(new SupportingFile("strings.xml.mustache", getPluginResourceDir() + "/values", "strings.xml"));
-
-        // リソース
-        supportingFiles.add(new SupportingFile("res/layout/activity_setting.xml", getPluginResourceDir() + "/layout/", "activity_setting.xml"));
-        supportingFiles.add(new SupportingFile("res/drawable-mdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-mdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-hdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-hdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xhdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xxhdpi/", "ic_launcher.png"));
-
-        // 実装ファイル (全プラグイン共通)
-        final String packageFolder = getPluginPackageRootDir();
-        supportingFiles.add(new SupportingFile("MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
-        supportingFiles.add(new SupportingFile("MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
-        supportingFiles.add(new SupportingFile("SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
-        supportingFiles.add(new SupportingFile("SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+        return manifest;
     }
 
     protected String getPluginSourceDir() {
