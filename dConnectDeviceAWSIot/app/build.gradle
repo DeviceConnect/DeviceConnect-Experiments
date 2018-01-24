@@ -71,3 +71,35 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':udt-core')
 }
+def distRootDir = '../dist'
+def distDir = distRootDir + '/dConnectDeviceAWSIot'
+task cleanDist(type: Delete) {
+    delete distRootDir
+}
+task assembleDistRelease(dependsOn: ['assembleRelease', 'copyRelease', 'copySource']) {
+}
+task assembleDistDebug(dependsOn: ['assembleDebug', 'copyDebug', 'copySource']) {
+}
+task copyRelease(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/app-release.apk'
+    rename 'app-release.apk', 'dConnectDeviceAWSIot.apk'
+}
+task copyDebug(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/app-debug.apk'
+    rename 'app-debug.apk', 'dConnectDeviceAWSIot-debug.apk'
+}
+task copySource(type: Copy) {
+    from '../'
+    into distDir + '/src/dConnectDeviceAWSIot'
+    exclude '**/build/**/*'
+    exclude '**/dist/**/*'
+    exclude '**/gradle.properties'
+    exclude '**/local.properties'
+    exclude '**/*.apk'
+    includeEmptyDirs false
+    rename 'gradle-default.properties', 'gradle.properties'
+}

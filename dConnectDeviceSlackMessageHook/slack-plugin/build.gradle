@@ -68,3 +68,35 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
 }
+def distRootDir = '../dist'
+def distDir = distRootDir + '/dConnectDeviceSlackMessageHook'
+task cleanDist(type: Delete) {
+    delete distRootDir
+}
+task assembleDistRelease(dependsOn: ['assembleRelease', 'copyRelease', 'copySource']) {
+}
+task assembleDistDebug(dependsOn: ['assembleDebug', 'copyDebug', 'copySource']) {
+}
+task copyRelease(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/slack-plugin-release.apk'
+    rename 'slack-plugin-release.apk', 'dConnectDeviceSlackMessageHook-release.apk'
+}
+task copyDebug(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/slack-plugin-debug.apk'
+    rename 'slack-plugin-debug.apk', 'dConnectDeviceSlackMessageHook-debug.apk'
+}
+task copySource(type: Copy) {
+    from '../'
+    into distDir + '/src/dConnectDeviceSlackMessageHook'
+    exclude '**/build/**/*'
+    exclude '**/dist/**/*'
+    exclude '**/gradle.properties'
+    exclude '**/local.properties'
+    exclude '**/*.apk'
+    includeEmptyDirs false
+    rename 'gradle-default.properties', 'gradle.properties'
+}

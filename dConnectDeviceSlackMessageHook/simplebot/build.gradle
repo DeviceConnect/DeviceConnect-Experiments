@@ -64,3 +64,37 @@ dependencies {
     compile 'org.cheffo:jeplite:0.8.7a'
     compile 'net.sf.opencsv:opencsv:2.3'
 }
+
+
+def distRootDir = '../dist'
+def distDir = distRootDir + '/dConnectDeviceSlackMessageHook'
+task cleanDist(type: Delete) {
+    delete distRootDir
+}
+task assembleDistRelease(dependsOn: ['assembleRelease', 'copyRelease', 'copySource']) {
+}
+task assembleDistDebug(dependsOn: ['assembleDebug', 'copyDebug', 'copySource']) {
+}
+task copyRelease(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/simplebot-release.apk'
+    rename 'simplebot-release.apk', 'simplebot-release.apk'
+}
+task copyDebug(type: Copy) {
+    from 'build/outputs/apk'
+    into distDir
+    include '**/simplebot-debug.apk'
+    rename 'simplebot-debug.apk', 'simplebot-debug.apk'
+}
+task copySource(type: Copy) {
+    from '../'
+    into distDir + '/src/dConnectDeviceSlackMessageHook'
+    exclude '**/build/**/*'
+    exclude '**/dist/**/*'
+    exclude '**/gradle.properties'
+    exclude '**/local.properties'
+    exclude '**/*.apk'
+    includeEmptyDirs false
+    rename 'gradle-default.properties', 'gradle.properties'
+}
