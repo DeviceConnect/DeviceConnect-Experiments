@@ -27,7 +27,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     private final String pluginModuleFolder = "plugin";
     private final String projectFolder = pluginModuleFolder + "/src/main";
     private final String sourceFolder = projectFolder + "/java";
-    private final String resFolder = projectFolder + "/resource";
+    private final String resFolder = projectFolder + "/res";
     private String invokerPackage;
     private ConnectionType connectionType = ConnectionType.BINDER;
 
@@ -282,7 +282,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("java/SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
         supportingFiles.add(new SupportingFile("java/SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
         if (connectionType == ConnectionType.BROADCAST) {
-            supportingFiles.add(new SupportingFile("java/LaunchService.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+            additionalProperties.put("launchServiceClass", classPrefix + "LaunchService");
+            supportingFiles.add(new SupportingFile("java/LaunchService.java.mustache", packageFolder, classPrefix + "LaunchService.java"));
         }
     }
 
