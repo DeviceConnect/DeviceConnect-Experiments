@@ -66,6 +66,9 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     private ValidationResult readSDK(final CommandLine cmd, final ClientOpts clientOpts) {
         String value = cmd.getOptionValue("k");
+        if (value == null) {
+            return ValidationResult.valid("k");
+        }
         File absolutePath = readPath(value);
         if (absolutePath == null) {
             return ValidationResult.invalid("k", value + " is not found.");
@@ -76,6 +79,9 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     private ValidationResult readSigningConfigs(final CommandLine cmd, final ClientOpts clientOpts) {
         String value = cmd.getOptionValue("g");
+        if (value == null) {
+            return ValidationResult.valid("g");
+        }
         File absolutePath = readPath(value);
         if (absolutePath == null) {
             return ValidationResult.invalid("g", value + " is not found.");
