@@ -14,7 +14,7 @@
      * [Android Studio](#section3.2.1)
        * [dConnectDeviceAWSIotのImport](#section3.2.1.1)
        * [libbarchart-udt-core-android.so, libstlport_shared.soのBuild](#section3.2.1.2)
-       * [dConnectDeviceAWSIotのBuild](#section3.2.1.2)
+       * [dConnectDeviceAWSIotのBuild](#section3.2.1.3)
 
 
 
