@@ -100,7 +100,7 @@ Quick Startの[Open an existing Android Studio project]を選択してくださ�
 
 <a href="images/awsiot-1.png" target="_blank">
 <img src="images/awsiot-1.png" border="0"
- width="364" height="274" alt="" /></a>
+ width="522" height="313" alt="" /></a>
 
 dConnectDeviceAWSIotを選択してください。<br>
 dConnectDeviceAWSIotは<br>
