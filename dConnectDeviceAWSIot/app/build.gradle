@@ -1,20 +1,6 @@
 apply plugin: 'com.android.application'
 
-dependencies {
-    compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'org.deviceconnect:dconnect-device-plugin-sdk:2.3.1'
-    compile 'io.airlift:airline:0.7'
-
-    testCompile 'junit:junit:4.12'
-}
-
-repositories {
-    maven { url 'https://raw.githubusercontent.com/DeviceConnect/DeviceConnect-Android/master/dConnectSDK/dConnectSDKForAndroid/repository/' }
-    maven { url 'https://raw.githubusercontent.com/DeviceConnect/DeviceConnect-Android/master/dConnectDevicePlugin/dConnectDevicePluginSDK/repository/' }
-}
-
 android {
-
     compileSdkVersion 23
     buildToolsVersion '26.0.2'
 
@@ -30,11 +16,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.deviceconnect.android.deviceplugin.adb"
-        minSdkVersion 14
+        applicationId 'org.deviceconnect.android.deviceplugin.awsiot'
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName '1.0.0'
+        versionName getVersionName()
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -49,25 +36,43 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
     }
 
     packagingOptions {
-        exclude 'LICENSE.txt'
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES.txt'
     }
-    
+
+    productFlavors {
+    }
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
 }
+repositories {
+    maven { url 'https://raw.githubusercontent.com/DeviceConnect/DeviceConnect-Android/master/dConnectSDK/dConnectSDKForAndroid/repository/' }
+    maven { url 'https://raw.githubusercontent.com/DeviceConnect/DeviceConnect-Android/master/dConnectDevicePlugin/dConnectDevicePluginSDK/repository/' }
+}
 
+dependencies {
+    compile fileTree(include: '*.jar', dir: 'libs')
+    compile 'org.deviceconnect:dconnect-device-plugin-sdk:2.3.1'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.amazonaws:aws-android-sdk-iot:2.2.+'
+    androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'junit:junit:4.12'
+    compile project(path: ':udt-core')
+}
 def distRootDir = '../dist'
-def distDir = distRootDir + '/dConnectDeviceADB'
+def distDir = distRootDir + '/dConnectDeviceAWSIot'
 task cleanDist(type: Delete) {
     delete distRootDir
 }
@@ -78,18 +83,18 @@ task assembleDistDebug(dependsOn: ['assembleDebug', 'copyDebug', 'copySource']) 
 task copyRelease(type: Copy) {
     from 'build/outputs/apk'
     into distDir
-    include '**/plugin-release.apk'
-    rename 'plugin-release.apk', 'dConnectDeviceADB.apk'
+    include '**/app-release.apk'
+    rename 'app-release.apk', 'dConnectDeviceAWSIot.apk'
 }
 task copyDebug(type: Copy) {
     from 'build/outputs/apk'
     into distDir
-    include '**/plugin-debug.apk'
-    rename 'plugin-debug.apk', 'dConnectDeviceADB-debug.apk'
+    include '**/app-debug.apk'
+    rename 'app-debug.apk', 'dConnectDeviceAWSIot-debug.apk'
 }
 task copySource(type: Copy) {
     from '../'
-    into distDir + '/src/dConnectDeviceADB'
+    into distDir + '/src/dConnectDeviceAWSIot'
     exclude '**/build/**/*'
     exclude '**/dist/**/*'
     exclude '**/gradle.properties'
