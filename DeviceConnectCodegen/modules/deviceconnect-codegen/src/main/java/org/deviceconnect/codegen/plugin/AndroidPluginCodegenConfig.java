@@ -15,6 +15,7 @@ import org.deviceconnect.codegen.ValidationResultSet;
 import org.deviceconnect.codegen.util.VersionName;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
@@ -65,42 +66,55 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     private ValidationResult readSDK(final CommandLine cmd, final ClientOpts clientOpts) {
-        String value = cmd.getOptionValue("k");
+        final String opt = "k";
+
+        String value = cmd.getOptionValue(opt);
         if (value == null) {
-            return ValidationResult.valid("k");
+            return ValidationResult.valid(opt);
         }
-        File absolutePath = readPath(value);
+        String absolutePath;
+        try {
+            absolutePath = readPath(value);
+        } catch (IOException e) {
+            return ValidationResult.invalid(opt, value + " is not resolved.");
+        }
         if (absolutePath == null) {
-            return ValidationResult.invalid("k", value + " is not found.");
+            return ValidationResult.invalid(opt, value + " is not found.");
         }
-        clientOpts.getProperties().put("sdkLocation", absolutePath.getAbsolutePath());
-        return ValidationResult.valid("k");
+        clientOpts.getProperties().put("sdkLocation", absolutePath);
+        return ValidationResult.valid(opt);
     }
 
     private ValidationResult readSigningConfigs(final CommandLine cmd, final ClientOpts clientOpts) {
-        String value = cmd.getOptionValue("g");
+        final String opt = "g";
+
+        String value = cmd.getOptionValue(opt);
         if (value == null) {
-            return ValidationResult.valid("g");
+            return ValidationResult.valid(opt);
         }
-        File absolutePath = readPath(value);
+        String absolutePath;
+        try {
+            absolutePath = readPath(value);
+        } catch (IOException e) {
+            return ValidationResult.invalid(opt, value + " is not resolved.");
+        }
         if (absolutePath == null) {
-            return ValidationResult.invalid("g", value + " is not found.");
+            return ValidationResult.invalid(opt, value + " is not found.");
         }
-        clientOpts.getProperties().put("signingConfigsLocation", absolutePath.getAbsolutePath());
-        return ValidationResult.valid("g");
+        clientOpts.getProperties().put("signingConfigsLocation", absolutePath);
+        return ValidationResult.valid(opt);
     }
 
-    private File readPath(final String value) {
-        File path = new File(value);
-        if (!path.exists()) {
+    private String readPath(final String value) throws IOException {
+        File file = new File(value);
+        if (!file.exists()) {
             return null;
         }
-        if (path.isAbsolute()) {
-            return path;
-        } else {
-            String currentDir = System.getProperty("user.dir");
-            return new File(currentDir, path.getAbsolutePath());
+        String path = file.getCanonicalPath();
+        if (File.separator.equals("\\")) {
+            path = path.replace("\\", "/");
         }
+        return path;
     }
 
     //----- AbstractPluginCodegenConfig ----//
