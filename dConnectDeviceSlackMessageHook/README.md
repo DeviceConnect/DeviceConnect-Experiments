@@ -62,7 +62,7 @@ Quick Startの[Open an existing Android Studio project]を選択してくださ�
 
 dConnectDeviceSlackMessageHookを選択してください。<br>
 dConnectDeviceSlackMessageHookは<br>
-{レポジトリフォルダ}/dConnectDevicePlugin/dConnectDeviceSlackMessageHookにあります。<br>
+{レポジトリフォルダ}/dConnectDeviceSlackMessageHookにあります。<br>
 <br>
 <a href="images/slack-2.png" target="_blank">
 <img src="images/slack-2.png" border="0"
