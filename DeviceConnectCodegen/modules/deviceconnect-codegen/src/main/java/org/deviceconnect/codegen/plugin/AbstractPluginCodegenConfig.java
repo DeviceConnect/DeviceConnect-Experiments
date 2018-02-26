@@ -7,6 +7,8 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 import org.deviceconnect.codegen.AbstractCodegenConfig;
+import org.deviceconnect.codegen.DConnectPath;
+import org.deviceconnect.codegen.IllegalPathFormatException;
 import org.deviceconnect.codegen.ProfileTemplate;
 import org.deviceconnect.codegen.models.DConnectOperation;
 import org.deviceconnect.codegen.util.JsonStringifyPrettyPrinter;
@@ -83,12 +85,17 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
 
     @Override
     public void preprocessSwagger(final Swagger swagger) {
-       Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
         for (Map.Entry<String, Path> pathEntry : swagger.getPaths().entrySet()) {
-            String pathName = pathEntry.getKey();
             Path path = pathEntry.getValue();
+            DConnectPath dConnectPath;
+            try {
+                dConnectPath = DConnectPath.parsePath(swagger.getBasePath(), pathEntry.getKey());
+            } catch (IllegalPathFormatException e) {
+                continue;
+            }
 
-            String profileName = getProfileNameFromPath(pathName);
+            final String profileName = dConnectPath.getProfileName();
             Map<String, Object> profile = profiles.get(profileName);
             if (profile == null) {
                 profile = new HashMap<>();
@@ -102,18 +109,16 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
                 HttpMethod method = operationEntry.getKey();
                 DConnectOperation operation = DConnectOperation.parse(swagger, operationEntry.getValue());
 
-                Map<String, Object> api = new HashMap<>();
-                String interfaceName = getInterfaceNameFromPath(pathName);
-                String attributeName = getAttributeNameFromPath(pathName);
-                String apiPath = createApiPath(interfaceName, attributeName);
-                String apiFullPath = createApiFullPath(swagger, profileName, interfaceName, attributeName);
-                String apiId = createApiIdentifier(swagger, method, profileName, interfaceName, attributeName);
+                final Map<String, Object> api = new HashMap<>();
+                final String interfaceName = dConnectPath.getInterfaceName();
+                final String attributeName = dConnectPath.getAttributeName();
+                final String apiId = createApiIdentifier(method, dConnectPath);
 
                 api.put("method", method.name().toLowerCase());
                 api.put("interface", interfaceName);
                 api.put("attribute", attributeName);
-                api.put("apiPath", apiPath); // プロファイル名以下のパス
-                api.put("apiFullPath", apiFullPath); // フルパス
+                api.put("apiPath", dConnectPath.getSubPath()); // プロファイル名以下のパス
+                api.put("apiFullPath", dConnectPath.getPath()); // フルパス
                 api.put("apiId", apiId);
 
                 switch (method) {
@@ -225,62 +230,8 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
 
     protected abstract List<ProfileTemplate> prepareProfileTemplates(String profileName, Map<String, Object> properties);
 
-
-    private static String getProfileNameFromPath(String path) {
-        String[] array = path.split("/");
-        if (array.length < 2) {
-            return null;
-        }
-        return array[1];
-    }
-
-    private static String getInterfaceNameFromPath(String path) {
-        String[] array = path.split("/");
-        if (array.length == 4) {  // '', '<profile>', '<interface>', '<attribute>'
-            return array[2];
-        }
-        return null;
-    }
-
-    private static String getAttributeNameFromPath(String path) {
-        String[] array = path.split("/");
-        if (array.length == 4) { // '', '<profile>', '<interface>', '<attribute>'
-            return array[3];
-        }
-        if (array.length == 3) { // '', '<profile>', '<attribute>'
-            return array[2];
-        }
-        return null;
-    }
-
-    private static String createApiPath(String interfaceName, String attributeName) {
-        String path = "/";
-        if (interfaceName != null) {
-            path += interfaceName + "/";
-        }
-        if (attributeName != null) {
-            path += attributeName;
-        }
-        return path;
-    }
-
-    private static String createApiFullPath(Swagger swagger, String profileName,
-                                            String interfaceName, String attributeName) {
-        String basePath = swagger.getBasePath();
-        String path = (basePath == null) ? "" : basePath;
-        path += "/" + profileName;
-        if (interfaceName != null) {
-            path += "/" + interfaceName;
-        }
-        if (attributeName != null) {
-            path += "/" + attributeName;
-        }
-        return path;
-    }
-
-    private static String createApiIdentifier(Swagger swagger, HttpMethod method, String profileName,
-                                              String interfaceName, String attributeName) {
-        return method.name() + " " + createApiFullPath(swagger, profileName, interfaceName, attributeName);
+    private static String createApiIdentifier(HttpMethod method, DConnectPath path) {
+        return method.name() + " " + path.getPath();
     }
 
     protected abstract String getProfileSpecFolder();

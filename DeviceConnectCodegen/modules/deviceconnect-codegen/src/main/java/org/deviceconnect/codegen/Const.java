@@ -84,6 +84,9 @@ final class Const {
         options.addOption("n", "display-name", true, "display name of the generated project");
         options.addOption("x", "class-prefix", true, "prefix of each generated class that implements a device connect profile");
         options.addOption("b", "connection-type", true, "connection type with device connect manager (for deviceConnectAndroidPlugin only)");
+        options.addOption("r", "gradle-plugin-version", true, "version of Android Plugin for Gradle");
+        options.addOption("k", "sdk", true, "location of Device Connect SDKs");
+        options.addOption("g", "signing-configs", true, "location of singing configs");
 
         return options;
     }

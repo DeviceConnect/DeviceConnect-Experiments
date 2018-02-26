@@ -70,7 +70,7 @@ public class HtmlAppCodegenConfig extends DefaultCodegen implements DConnectCode
     @Override
     public void processOpts() {
         super.processOpts();
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
         supportingFiles.add(new SupportingFile("index.html.mustache", "", "index.html"));
         supportingFiles.add(new SupportingFile("resource.html", "", "resource.html"));
         supportingFiles.add(new SupportingFile("css/accordion.css", "css", "accordion.css"));

@@ -2,6 +2,7 @@ package org.deviceconnect.codegen;
 
 
 import io.swagger.models.Info;
+import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import org.slf4j.Logger;
@@ -33,8 +34,11 @@ class MultipleSwaggerConverter {
                          final NameDuplicationCounter counter)
             throws IllegalPathFormatException, DuplicatedPathException {
         String basePath = swagger.getBasePath();
-        if (basePath == null || basePath.equals("")) {
-            basePath = SEPARATOR;
+        if (basePath == null) {
+            throw new IllegalArgumentException("basePath is null");
+        }
+        if (!basePath.startsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("basePath must starts with `" + SEPARATOR + "`");
         }
 
         Map<String, Path> paths = swagger.getPaths();
@@ -51,6 +55,8 @@ class MultipleSwaggerConverter {
                 cache.setBasePath(path.getBathPath());
                 result.put(key, cache);
             }
+
+            // pathsのマージ
             String subPathName = path.getSubPath();
             Map<String, Path> pathSpecs = cache.getPaths();
             Path pathSpec = pathSpecs.get(subPathName);
@@ -58,6 +64,13 @@ class MultipleSwaggerConverter {
                 pathSpecs.put(subPathName, entry.getValue());
             }
             cache.setPaths(pathSpecs);
+
+            // definitionsのマージ
+            Map <String, Model> cacheDefinitions = cache.getDefinitions();
+            for (Map.Entry<String, Model> definition : swagger.getDefinitions().entrySet()) {
+                cacheDefinitions.put(definition.getKey(), definition.getValue());
+            }
+            cache.setDefinitions(cacheDefinitions);
         }
 
         // 重複チェック

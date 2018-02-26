@@ -6,7 +6,7 @@
 
     <groupId>org.deviceconnect</groupId>
     <artifactId>deviceconnect-codegen</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
 
     <packaging>jar</packaging>
 
@@ -71,6 +71,11 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-codegen</artifactId>
             <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,4 +1,7 @@
 # 変更履歴
+2018/03/01: v1.6.0 [Android] オプション追加: --gradle-plugin-version, --sdk, --signing-config, --template-dir
+                   [共通] 不具合修正: basePathプロパティでプロファイル名が定義されている場合に異常終了
+
 2017/12/20: v1.5.1 [Markdown][HTML] 不具合修正: APIリファレンスの「概要」が空の状態で出力される
                    [共通] 不具合修正: input-specオプションにYAML形式のファイルを指定すると異常終了
 

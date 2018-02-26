@@ -12,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.deviceconnect.codegen.ProfileTemplate;
 import org.deviceconnect.codegen.ValidationResult;
 import org.deviceconnect.codegen.ValidationResultSet;
+import org.deviceconnect.codegen.util.VersionName;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
@@ -38,6 +40,8 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         ValidationResultSet resultSet = new ValidationResultSet();
         resultSet.addResult(readPackageName(cmd, clientOpts));
         resultSet.addResult(readConnectionType(cmd));
+        resultSet.addResult(readSDK(cmd, clientOpts));
+        resultSet.addResult(readSigningConfigs(cmd, clientOpts));
         return resultSet;
     }
 
@@ -59,6 +63,58 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             return ValidationResult.invalid("b", "Undefined connection type: " + value);
         }
         return ValidationResult.valid("b");
+    }
+
+    private ValidationResult readSDK(final CommandLine cmd, final ClientOpts clientOpts) {
+        final String opt = "k";
+
+        String value = cmd.getOptionValue(opt);
+        if (value == null) {
+            return ValidationResult.valid(opt);
+        }
+        String absolutePath;
+        try {
+            absolutePath = readPath(value);
+        } catch (IOException e) {
+            return ValidationResult.invalid(opt, value + " is not resolved.");
+        }
+        if (absolutePath == null) {
+            return ValidationResult.invalid(opt, value + " is not found.");
+        }
+        clientOpts.getProperties().put("sdkLocation", absolutePath);
+        return ValidationResult.valid(opt);
+    }
+
+    private ValidationResult readSigningConfigs(final CommandLine cmd, final ClientOpts clientOpts) {
+        final String opt = "g";
+
+        String value = cmd.getOptionValue(opt);
+        if (value == null) {
+            return ValidationResult.valid(opt);
+        }
+        String absolutePath;
+        try {
+            absolutePath = readPath(value);
+        } catch (IOException e) {
+            return ValidationResult.invalid(opt, value + " is not resolved.");
+        }
+        if (absolutePath == null) {
+            return ValidationResult.invalid(opt, value + " is not found.");
+        }
+        clientOpts.getProperties().put("signingConfigsLocation", absolutePath);
+        return ValidationResult.valid(opt);
+    }
+
+    private String readPath(final String value) throws IOException {
+        File file = new File(value);
+        if (!file.exists()) {
+            return null;
+        }
+        String path = file.getCanonicalPath();
+        if (File.separator.equals("\\")) {
+            path = path.replace("\\", "/");
+        }
+        return path;
     }
 
     //----- AbstractPluginCodegenConfig ----//
@@ -103,7 +159,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         ((List<Object>) additionalProperties.get("supportedProfileClasses")).add(new Object() { String name = profileClassName;});
 
         ProfileTemplate template = new ProfileTemplate();
-        template.templateFile = "profile.mustache";
+        template.templateFile = "java" + File.separator + "profile.mustache";
         template.outputFile = profileClassName + ".java";
         profileTemplates.add(template);
         return profileTemplates;
@@ -206,7 +262,7 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     public void processOpts() {
         super.processOpts();
         invokerPackage = (String) additionalProperties.get("packageName");
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
         additionalProperties.put("profilePackage", getProfilePackage());
         additionalProperties.put("devicePluginXml", getDevicePluginXmlName());
         additionalProperties.put("specPath", getSpecPath());
@@ -223,7 +279,35 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
         // ビルド設定ファイル
-        supportingFiles.add(new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
+        supportingFiles.add(new SupportingFile("gradleFiles/settings.gradle.mustache", "", "settings.gradle"));
+        String manifest = getManifestTemplateFile();
+        supportingFiles.add(new SupportingFile("manifest/" + manifest, getProjectDir(), "AndroidManifest.xml"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir()+ "/root.build.gradle.mustache", "", "build.gradle"));
+        supportingFiles.add(new SupportingFile(getGradleTemplateDir() + "/plugin.build.gradle.mustache", getPluginModuleDir(), "build.gradle"));
+        supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
+        supportingFiles.add(new SupportingFile("resource/xml/deviceplugin.xml.mustache", getPluginResourceDir() + "/xml", getDevicePluginXmlName() + ".xml"));
+        supportingFiles.add(new SupportingFile("resource/values/strings.xml.mustache", getPluginResourceDir() + "/values", "strings.xml"));
+
+        // リソース
+        supportingFiles.add(new SupportingFile("resource/layout/activity_setting.xml", getPluginResourceDir() + "/layout/", "activity_setting.xml"));
+        supportingFiles.add(new SupportingFile("resource/drawable-mdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-mdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-hdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-hdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-xhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xhdpi/", "ic_launcher.png"));
+        supportingFiles.add(new SupportingFile("resource/drawable-xxhdpi/ic_launcher.png", getPluginResourceDir() + "/drawable-xxhdpi/", "ic_launcher.png"));
+
+        // 実装ファイル (全プラグイン共通)
+        final String packageFolder = getPluginPackageRootDir();
+        supportingFiles.add(new SupportingFile("java/MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
+        supportingFiles.add(new SupportingFile("java/MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
+        supportingFiles.add(new SupportingFile("java/SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
+        supportingFiles.add(new SupportingFile("java/SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+        if (connectionType == ConnectionType.BROADCAST) {
+            additionalProperties.put("launchServiceClass", classPrefix + "LaunchService");
+            supportingFiles.add(new SupportingFile("java/LaunchService.java.mustache", packageFolder, classPrefix + "LaunchService.java"));
+        }
+    }
+
+    protected String getManifestTemplateFile() {
         String manifest;
         switch (connectionType) {
             case BROADCAST:
@@ -235,26 +319,48 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
             default:
                 throw new RuntimeException("Unknown connection type");
         }
-        supportingFiles.add(new SupportingFile(manifest, projectFolder, "AndroidManifest.xml"));
-        supportingFiles.add(new SupportingFile("root.build.gradle.mustache", "", "build.gradle"));
-        supportingFiles.add(new SupportingFile("plugin.build.gradle.mustache", pluginModuleFolder, "build.gradle"));
-        supportingFiles.add(new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
-        supportingFiles.add(new SupportingFile("deviceplugin.xml.mustache", resFolder + "/xml", getDevicePluginXmlName() + ".xml"));
-        supportingFiles.add(new SupportingFile("strings.xml.mustache", resFolder + "/values", "strings.xml"));
+        return manifest;
+    }
 
-        // リソース
-        supportingFiles.add(new SupportingFile("res/layout/activity_setting.xml", resFolder + "/layout/", "activity_setting.xml"));
-        supportingFiles.add(new SupportingFile("res/drawable-mdpi/ic_launcher.png", resFolder + "/drawable-mdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-hdpi/ic_launcher.png", resFolder + "/drawable-hdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xhdpi/ic_launcher.png", resFolder + "/drawable-xhdpi/", "ic_launcher.png"));
-        supportingFiles.add(new SupportingFile("res/drawable-xxhdpi/ic_launcher.png", resFolder + "/drawable-xxhdpi/", "ic_launcher.png"));
+    protected String getPluginSourceDir() {
+        return sourceFolder;
+    }
 
-        // 実装ファイル (全プラグイン共通)
-        final String packageFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
-        supportingFiles.add(new SupportingFile("MessageServiceProvider.java.mustache", packageFolder, messageServiceProviderClass + ".java"));
-        supportingFiles.add(new SupportingFile("MessageService.java.mustache", packageFolder, messageServiceClass + ".java"));
-        supportingFiles.add(new SupportingFile("SystemProfile.java.mustache", packageFolder + File.separator + "profiles", classPrefix + "SystemProfile.java"));
-        supportingFiles.add(new SupportingFile("SettingActivity.java.mustache", packageFolder, classPrefix + "SettingActivity.java"));
+    protected String getProjectDir() {
+        return projectFolder;
+    }
+
+    protected String getPluginModuleDir() {
+        return pluginModuleFolder;
+    }
+
+    protected String getPluginResourceDir() {
+        return resFolder;
+    }
+
+    protected String getPluginPackageRootDir() {
+        return (getPluginSourceDir() + File.separator + invokerPackage).replace(".", File.separator);
+    }
+
+    private String getGradlePluginVersion() {
+        return (String) additionalProperties.get("gradlePluginVersion");
+    }
+
+    private String getGradleTemplateDir() {
+        final VersionName ver3 = VersionName.parse("3.0.0");
+
+        String versionParam = getGradlePluginVersion();
+        VersionName version = VersionName.parse(versionParam);
+        if (version == null) {
+            version = ver3;
+        }
+        String dirName;
+        if (version.isEqualOrMoreThan(ver3)) {
+            dirName = "3_x_x";
+        } else {
+            dirName = "2_x_x";
+        }
+        return "gradleFiles/" + dirName;
     }
 
     @Override

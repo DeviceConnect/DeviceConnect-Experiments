@@ -20,7 +20,7 @@ public class IosPluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     public void processOpts() {
         super.processOpts();
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
 
         // README
         supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));

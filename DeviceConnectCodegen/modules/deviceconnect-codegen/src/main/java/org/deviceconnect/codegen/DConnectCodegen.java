@@ -58,7 +58,6 @@ public class DConnectCodegen {
 
     @SuppressWarnings("deprecation")
     public static void main(String[] args) {
-
         Options options = Const.OPTIONS;
 
         ClientOptInput clientOptInput = new ClientOptInput();
@@ -66,7 +65,6 @@ public class DConnectCodegen {
         File[] specFiles;
 
         CommandLine cmd;
-        boolean hasValidSwagger = true;
         try {
             CommandLineParser parser = new BasicParser();
             DConnectCodegenConfig config;
@@ -157,6 +155,12 @@ public class DConnectCodegen {
                             continue;
                         }
                         Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+
+                        String basePath = swagger.getBasePath();
+                        if (basePath == null || basePath.equals("")) {
+                            swagger.setBasePath("/");
+                        }
+
                         if (swagger != null) {
                             swaggerList.add(swagger);
                         }
@@ -209,6 +213,14 @@ public class DConnectCodegen {
                 classPrefix = "My";
             }
             clientOpts.getProperties().put("classPrefix", classPrefix);
+
+            String gradlePluginVersion;
+            if (cmd.hasOption("r")) {
+                gradlePluginVersion = cmd.getOptionValue("r");
+            } else {
+                gradlePluginVersion = "3.0.0";
+            }
+            clientOpts.getProperties().put("gradlePluginVersion", gradlePluginVersion);
 
             ValidationResultSet resultSet = config.validateOptions(cmd, clientOpts);
             if (!resultSet.isValid()) {
@@ -423,6 +435,7 @@ public class DConnectCodegen {
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
         Swagger merged = new Swagger();
+        merged.setBasePath("/");
 
         // info
         Info info = new Info();
@@ -433,9 +446,8 @@ public class DConnectCodegen {
         // paths
         Map<String, Path> paths = new HashMap<>();
         for (Map.Entry<String, Swagger> swagger : swaggerMap.entrySet()) {
-            String profileName = swagger.getKey();
             for (Map.Entry<String, Path> subPath : swagger.getValue().getPaths().entrySet()) {
-                paths.put("/" + profileName + subPath.getKey(), subPath.getValue());
+                paths.put(swagger.getValue().getBasePath() + subPath.getKey(), subPath.getValue());
             }
         }
         merged.paths(paths);

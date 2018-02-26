@@ -21,7 +21,7 @@ public class DConnectPath {
         if (!pathExp.startsWith(SEPARATOR)) {
             throw new IllegalPathFormatException(Reason.NOT_STARTED_WITH_ROOT, pathExp);
         }
-        return parsePath(basePath + pathExp);
+        return parsePath(basePath.equals("/") ? pathExp : basePath + pathExp);
     }
 
     public static DConnectPath parsePath(final String pathExp) throws IllegalPathFormatException {
@@ -93,6 +93,10 @@ public class DConnectPath {
         }
     }
 
+    public String getPath() {
+        return pathExp;
+    }
+
     private String concatParts(String... parts) {
         if (parts == null) {
             return SEPARATOR;
@@ -116,6 +120,6 @@ public class DConnectPath {
 
     @Override
     public String toString() {
-        return pathExp;
+        return getPath();
     }
 }

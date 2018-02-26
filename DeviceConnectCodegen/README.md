@@ -33,7 +33,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-1.5.1-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.5.1) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-1.6.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.6.0) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
@@ -184,6 +184,55 @@ Device Connect Managerとの連携タイプの指定。下記のいずれかの�
 <td valign="top">
 <b>[Androidプラグインのみ有効]</b><br>
 スケルトンコードのパッケージ名の指定。デフォルト値は、"com.mydomain.myplugin"。
+</td>
+<td valign="top">o</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--template-dir</pre></td>
+<td valign="top">
+<b>[Androidプラグインのみ有効]</b><br>
+Androidプラグインのテンプレートを独自テンプレートに差し替えたい場合に、テンプレートをまとめたディレクトリへのパスを指定する。<br>
+<br>
+本オプションが省略された場合、本ツールにデフォルトのテンプレートが使⽤される。本オプションによって指定したテンプレートとデフォルトのテンプレートの間でファイル名の衝突が発⽣した場合は、本オプションで指定した⽅が優先される。
+</td>
+<td valign="top">o</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--sdk</pre></td>
+<td valign="top">
+<b>[Androidプラグインのみ有効]</b><br>
+独自テンプレート向けのオプション。<br>
+<br>
+ソースコードで提供されたDeviceConnect SDKを使用する場合に、そのフォルダへの絶対パスまたは相対パスを指定する。
+<br>
+<br>
+指定した⽂字列は、テンプレート側から {{{sdkLocation}}} という名前で参照可能。デフォルトのテンプレートでは参照されない。
+</td>
+<td valign="top">o</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--signing-configs</pre></td>
+<td valign="top">
+<b>[Androidプラグインのみ有効]</b><br>
+独自テンプレート向けのオプション。<br>
+<br>
+Androidプラグインのビルド時に使用される署名情報の保存されているフォルダへの絶対パスまたは相対パスを指定する。<br>
+<br>
+指定した⽂字列は、テンプレート側から {{{signingConfigsLocation}}} という名前で参照可能。デフォルトのテンプレートでは参照されない。
+</td>
+<td valign="top">o</td>
+</tr>
+
+<tr>
+<td valign="top"><pre>--gradle-plugin-version</pre></td>
+<td valign="top">
+<b>[Androidプラグインのみ有効]</b><br>
+プラグインのビルドツールとして使⽤するAndroidPlugin for Gradle のバージョン名を指定する。省略された場合は 3.0.0 とする。<br>
+<br>
+指定した⽂字列は、テンプレート側から {{{gradlePluginVersion}}} という名前で参照可能。デフォルトのテンプレートからも参照される。
 </td>
 <td valign="top">o</td>
 </tr>
