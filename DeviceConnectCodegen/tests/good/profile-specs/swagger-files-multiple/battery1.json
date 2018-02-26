@@ -1,0 +1,122 @@
+{
+    "swagger": "2.0",
+    "basePath": "/gotapi/battery",
+    "info": {
+        "title": "Battery Profile",
+        "version": "2.0.0",
+        "description": "スマートデバイスのバッテリー情報を提供するAPI。"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "batteryGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスのバッテリー情報を取得する。",
+                "description": "スマートデバイスのバッテリー情報として取得できない値がある場合は適切な値を代入してレスポンスを返却する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/AllResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "charging": true,
+                                "chargingTime": 10,
+                                "dischargingTime": 0,
+                                "level": 0.8
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "AllResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "charging"
+                    ],
+                    "properties": {
+                        "charging": {
+                            "type": "boolean",
+                            "title": "充電状態フラグ",
+                            "description": "充電中:true<br>非充電中:false"
+                        },
+                        "chargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全充電までの時間 (秒)",
+                            "description": "満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        },
+                        "dischargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全放電までの時間 (秒)",
+                            "description": "充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE"
+                        },
+                        "level": {
+                            "type": "number",
+                            "title": "バッテリー残量",
+                            "description": "範囲: 0.0 <= level <= 1.0"
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "システム名",
+                    "description": "DeviceConnectシステムの名前。"
+                },
+                "version": {
+                    "type": "string",
+                    "title": "システムバージョン",
+                    "description": "DeviceConnectシステムのバージョン名。"
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "署名",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}
