@@ -51,7 +51,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
     public void processOpts() {
         super.processOpts();
 
-        embeddedTemplateDir = templateDir = getName();
+        embeddedTemplateDir = getName();
 
         for (Map.Entry<String, Swagger> specEntry : profileSpecs.entrySet()) {
             final String profileKey = specEntry.getKey();
