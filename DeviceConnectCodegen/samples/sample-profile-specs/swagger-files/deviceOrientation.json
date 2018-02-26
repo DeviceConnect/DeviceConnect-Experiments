@@ -1,216 +1,366 @@
 {
 	"swagger": "2.0",
-	"info": {
-		"version": "2.0.0",
-		"title": "Device Connect API"
-	},
 	"basePath": "/gotapi/deviceOrientation",
+	"info": {
+		"title": "DeviceOrientation Profile",
+		"version": "2.0.0",
+		"description": "スマートデバイスの加速度センサー機能を提供するAPI。"
+	},
+	"consumes": [
+		"application/x-www-form-urlencoded",
+		"multipart/form-data"
+	],
 	"paths": {
 		"/onDeviceOrientation": {
+			"get": {
+				"operationId": "deviceOrientationOnDeviceOrientationGet",
+				"x-type": "one-shot",
+				"summary": "スマートデバイスが検知した加速度や重力込みの加速度（加速度センサー）、そして角速度（ジャイロセンサー）を通知するイベントを取得する。",
+				"description": "スマートデバイスでサポートしていないパラメータがある場合には、そのパラメータを省略する。",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"description": "サービスID。取得対象スマートデバイス",
+						"in": "query",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/DeviceOrientationResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0",
+								"orientation": {
+									"acceleration": {
+										"x": 0.12345678901234567,
+										"y": 0.98765432109876543,
+										"z": 0.24680135792468013
+									},
+									"rotationRate": {
+										"alpha": -0.24680135792468013,
+										"beta": 0.12345678901234567,
+										"gamma": -0.98765432109876543
+									},
+									"accelerationIncludingGravity": {
+										"x": 0.24680135792468013,
+										"y": 0.12345678901234567,
+										"z": 9.87654321098
+									},
+									"interval": 0
+								}
+							}
+						}
+					}
+				}
+			},
 			"put": {
-				"summary": "",
-				"description": "",
-				"parameters": [{
-					"name": "serviceId",
-					"in": "formData",
-					"required": true,
-					"type": "string"
-				}, {
-					"name": "interval",
-					"in": "formData",
-					"required": false,
-					"type": "integer",
-					"format": "int64"
-				}],
+				"operationId": "deviceOrientationOnDeviceOrientationPut",
+				"x-type": "event",
+				"summary": "スマートデバイスが検知した加速度や重力込みの加速度（加速度センサー）、そして角速度（ジャイロセンサー）を通知するイベントを開始する。",
+				"description": "スマートデバイスでサポートしていないパラメータがある場合には、そのパラメータを省略する。",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"description": "サービスID。取得対象スマートデバイス",
+						"in": "formData",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "interval",
+						"description": "デバイスプラグインがイベントを送信する間隔。",
+						"in": "formData",
+						"required": false,
+						"type": "integer",
+						"format": "int64"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "",
 						"schema": {
 							"$ref": "#/definitions/EventRegistrationResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
 						}
 					}
 				},
-				"x-type": "event",
 				"x-event": {
 					"schema": {
 						"$ref": "#/definitions/DeviceOrientationEvent"
+					},
+					"examples": {
+						"application/json": {
+							"serviceId": "Host.dummyId.localhost.deviceconnect.org",
+							"profile": "deviceorientation",
+							"attribute": "ondeviceorientation",
+							"orientation": {
+								"acceleration": {
+									"x": 0.12345678901234567,
+									"y": 0.98765432109876543,
+									"z": 0.24680135792468013
+								},
+								"rotationRate": {
+									"alpha": -0.24680135792468013,
+									"beta": 0.12345678901234567,
+									"gamma": -0.98765432109876543
+								},
+								"accelerationIncludingGravity": {
+									"x": 0.24680135792468013,
+									"y": 0.12345678901234567,
+									"z": 9.87654321098
+								},
+								"interval": 100
+							}
+						}
 					}
 				}
 			},
 			"delete": {
-				"summary": "",
-				"description": "",
-				"parameters": [{
-					"name": "serviceId",
-					"in": "query",
-					"required": true,
-					"type": "string"
-				}],
+				"operationId": "deviceOrientationOnDeviceOrientationDelete",
+				"x-type": "event",
+				"summary": "スマートデバイスが検知した加速度や重力込みの加速度（加速度センサー）、そして角速度（ジャイロセンサー）を通知するイベントを停止する。",
+				"description": "スマートデバイスでサポートしていないパラメータがある場合には、そのパラメータを省略する。",
+				"parameters": [
+					{
+						"name": "serviceId",
+						"description": "サービスID。取得対象スマートデバイス",
+						"in": "query",
+						"required": true,
+						"type": "string"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "",
 						"schema": {
 							"$ref": "#/definitions/EventUnregistrationResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
 						}
 					}
-				},
-				"x-type": "event"
+				}
 			}
 		}
 	},
 	"definitions": {
-		"CommonResponse": {
-			"type": "object",
-			"required": ["product", "result", "version"],
-			"properties": {
-				"result": {
-					"type": "integer",
-					"description": "0:正常応答<br>0以外:異常応答"
-				},
-				"product": {
-					"type": "string",
-					"description": "DeviceConnectシステムの名前。"
-				},
-				"version": {
-					"type": "string",
-					"description": "DeviceConnectシステムのバージョン名。"
-				},
-				"hmac": {
-					"type": "string",
-					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
-				}
-			}
-		},
-		"CommonEvent": {
-			"type": "object",
-			"required": ["attribute", "interface", "profile", "serviceId"],
-			"properties": {
-				"serviceId": {
-					"type": "string",
-					"description": "0:正常応答<br>0以外:異常応答"
-				},
-				"profile": {
-					"type": "string",
-					"description": "プロファイル名。"
-				},
-				"interface": {
-					"type": "string",
-					"description": "インターフェース名。"
-				},
-				"attribute": {
-					"type": "string",
-					"description": "アトリビュート名。"
-				}
-			}
-		},
-		"EventRegistrationResponse": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonResponse"
-			}]
-		},
-		"EventUnregistrationResponse": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonResponse"
-			}]
-		},
 		"DeviceOrientationResponse": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonResponse"
-			}, {
-				"$ref": "#/definitions/DeviceOrientationInfo"
-			}]
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CommonResponse"
+				},
+				{
+					"$ref": "#/definitions/DeviceOrientationInfo"
+				}
+			]
 		},
 		"DeviceOrientationEvent": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonEvent"
-			}, {
-				"$ref": "#/definitions/DeviceOrientationInfo"
-			}]
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CommonEvent"
+				},
+				{
+					"$ref": "#/definitions/DeviceOrientationInfo"
+				}
+			]
 		},
 		"DeviceOrientationInfo": {
 			"type": "object",
-			"required": ["orientation"],
+			"required": [
+				"orientation"
+			],
 			"properties": {
 				"orientation": {
 					"type": "object",
+					"title": "デバイスの向き",
+					"required": [
+						"interval"
+					],
 					"properties": {
 						"interval": {
 							"type": "integer",
 							"format": "int64",
-							"description": "インターバル (単位: ミリ秒)",
-							"title": "インターバル"
+							"title": "インターバル",
+							"description": "インターバル (単位: ミリ秒)"
 						},
 						"acceleration": {
 							"type": "object",
-							"description": "加速度のオブジェクト。",
 							"title": "加速度",
+							"description": "加速度のオブジェクト。",
+							"required": [
+								"x",
+								"y",
+								"z"
+							],
 							"properties": {
 								"x": {
 									"type": "number",
-									"description": "x軸方向への加速度（m/s2）。",
-									"title": "x軸成分"
+									"title": "x軸成分",
+									"description": "x軸方向への加速度（m/s2）。"
 								},
 								"y": {
 									"type": "number",
-									"description": "y軸方向への加速度（m/s2）。",
-									"title": "y軸成分"
+									"title": "y軸成分",
+									"description": "y軸方向への加速度（m/s2）。"
 								},
 								"z": {
 									"type": "number",
-									"description": "z軸方向への加速度（m/s2）。",
-									"title": "z軸成分"
+									"title": "z軸成分",
+									"description": "z軸方向への加速度（m/s2）。"
 								}
-							},
-							"required": ["x", "y", "z"]
+							}
 						},
 						"accelerationIncludingGravity": {
 							"type": "object",
-							"description": "重力込みの加速度のオブジェクト。",
 							"title": "重力込みの加速度",
+							"description": "重力込みの加速度のオブジェクト。",
+							"required": [
+								"x",
+								"y",
+								"z"
+							],
 							"properties": {
 								"x": {
 									"type": "number",
-									"description": "x軸方向への重力込みの加速度（m/s2）。",
-									"title": "x軸成分"
+									"title": "x軸成分",
+									"description": "x軸方向への重力込みの加速度（m/s2）。"
 								},
 								"y": {
 									"type": "number",
-									"description": "y軸方向への重力込みの加速度（m/s2）。",
-									"title": "y軸成分"
+									"title": "y軸成分",
+									"description": "y軸方向への重力込みの加速度（m/s2）。"
 								},
 								"z": {
 									"type": "number",
-									"description": "z軸方向への重力込みの加速度（m/s2）。",
-									"title": "z軸成分"
+									"title": "z軸成分",
+									"description": "z軸方向への重力込みの加速度（m/s2）。"
 								}
-							},
-							"required": ["x", "y", "z"]
+							}
 						},
 						"rotationRate": {
 							"type": "object",
-							"description": "角速度のオブジェクト。",
 							"title": "角速度",
+							"description": "角速度のオブジェクト。",
+							"required": [
+								"alpha",
+								"beta",
+								"gamma"
+							],
 							"properties": {
 								"alpha": {
 									"type": "number",
-									"description": "z軸回りの角速度(degree/s)。",
-									"title": "z軸回り成分"
+									"title": "z軸回り成分",
+									"description": "z軸回りの角速度(degree/s)。"
 								},
 								"beta": {
 									"type": "number",
-									"description": "x軸回りの角速度(degree/s)。",
-									"title": "x軸回り成分"
+									"title": "x軸回り成分",
+									"description": "x軸回りの角速度(degree/s)。"
 								},
 								"gamma": {
 									"type": "number",
-									"description": "y軸回りの角速度(degree/s)。",
-									"title": "y軸回り成分"
+									"title": "y軸回り成分",
+									"description": "y軸回りの角速度(degree/s)。"
 								}
-							},
-							"required": ["alpha", "beta", "gamma"]
+							}
 						}
-					},
-					"required": ["interval"]
+					}
+				}
+			}
+		},
+		"CommonResponse": {
+			"type": "object",
+			"required": [
+				"result",
+				"product",
+				"version"
+			],
+			"properties": {
+				"result": {
+					"type": "integer",
+					"title": "処理結果",
+					"description": "0:正常応答<br>0以外:異常応答"
+				},
+				"product": {
+					"type": "string",
+					"title": "システム名",
+					"description": "DeviceConnectシステムの名前。"
+				},
+				"version": {
+					"type": "string",
+					"title": "システムバージョン",
+					"description": "DeviceConnectシステムのバージョン名。"
+				},
+				"hmac": {
+					"type": "string",
+					"title": "署名",
+					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+				}
+			}
+		},
+		"EventRegistrationResponse": {
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CommonResponse"
+				}
+			]
+		},
+		"EventUnregistrationResponse": {
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CommonResponse"
+				}
+			]
+		},
+		"CommonEvent": {
+			"type": "object",
+			"required": [
+				"serviceId",
+				"profile",
+				"interface",
+				"attribute"
+			],
+			"properties": {
+				"serviceId": {
+					"type": "string",
+					"title": "サービスID",
+					"description": "イベントを送信したサービスのID"
+				},
+				"profile": {
+					"type": "string",
+					"title": "プロファイル名",
+					"description": "プロファイル名。"
+				},
+				"interface": {
+					"type": "string",
+					"title": "インターフェース名",
+					"description": "インターフェース名。"
+				},
+				"attribute": {
+					"type": "string",
+					"title": "アトリビュート名",
+					"description": "アトリビュート名。"
 				}
 			}
 		}

@@ -1,105 +1,161 @@
 {
 	"swagger": "2.0",
-	"info": {
-		"version": "2.0.0",
-		"title": "Device Connect API"
-	},
 	"basePath": "/gotapi/canvas",
+	"info": {
+		"title": "Canvas Profile",
+		"version": "2.0.0",
+		"description": "デバイスに画像を描画・削除する機能を提供するAPI。"
+	},
+	"consumes": [
+		"application/x-www-form-urlencoded",
+		"multipart/form-data"
+	],
 	"paths": {
 		"/drawImage": {
-			"post": {
-				"summary": "",
+			"post" : {
+				"operationId": "canvasDrawImagePost",
+				"x-type": "one-shot",
+				"summary": "デバイスに画像を描画する。",
 				"description": "",
-				"parameters": [{
-					"name": "serviceId",
-					"in": "formData",
-					"required": true,
-					"type": "string"
-				}, {
-					"name": "mimeType",
-					"in": "formData",
-					"required": false,
-					"type": "string"
-				}, {
-					"name": "data",
-					"in": "formData",
-					"required": false,
-					"type": "file"
-				}, {
-					"name": "x",
-					"in": "formData",
-					"required": false,
-					"type": "integer"
-				}, {
-					"name": "y",
-					"in": "formData",
-					"required": false,
-					"type": "integer"
-				}, {
-					"name": "mode",
-					"in": "formData",
-					"required": false,
-					"type": "string",
-					"enum": ["scales", "fills"]
-				}],
+				"parameters": [
+					{
+						"name": "serviceId",
+						"description": "サービスID。取得対象スマートデバイス",
+						"in": "formData",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "mimeType",
+						"description": "MIMEタイプ。表示する画像のMimeType。",
+						"in": "formData",
+						"type": "string",
+						"required": false
+					},
+					{
+						"name": "data",
+						"description": "ファイルのbinary。表示する画像ファイルのbinary。uriと同時に省略することはできない。両方指定した場合の挙動は未定義。",
+						"in": "formData",
+						"type": "file",
+						"required": false
+					},
+					{
+						"name": "uri",
+						"description": "ファイルのURI。表示する画像ファイルのURI。dataと同時に省略することはできない。両方指定した場合の挙動は未定義。",
+						"in": "formData",
+						"type": "string",
+						"required": false
+					},
+					{
+						"name": "x",
+						"description": "デバイスが持つ空間の左上を原点としたx座標。0～デバイスの空間領域。等倍描画モードの場合のみ有効。",
+						"in": "formData",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "y",
+						"description": "デバイスが持つ空間の左上を原点としたy座標。0～デバイスの空間領域。等倍描画モードの場合のみ有効。",
+						"in": "formData",
+						"type": "integer",
+						"required": false
+					},
+					{
+						"name": "mode",
+						"description": "画像描画モード。(省略時)：等倍描画モード。座標(x, y)に画像の左上隅がくるように描画する。<br>scales：スケールモード。アスペクト比を保持して最大限に拡大して画面中央に描画する。x, y座標は無効。<br>fills：フィルモード。等倍の画像を並べて画面全体に敷き詰めるように描画する。x, y座標は無効。",
+						"in": "formData",
+						"type": "string",
+						"required": false,
+						"enum": ["scales", "fills"]
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "",
 						"schema": {
 							"$ref": "#/definitions/CanvasControlResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
 						}
 					}
-				},
-				"x-type": "one-shot"
+				}
 			},
 			"delete": {
-				"summary": "",
+				"operationId": "canvasDrawImageDelete",
+				"x-type": "one-shot",
+				"summary": "デバイスに描画した画像を削除する。",
 				"description": "",
-				"parameters": [{
-					"name": "serviceId",
-					"in": "query",
-					"required": true,
-					"type": "string"
-				}],
+				"parameters": [
+					{
+						"name": "serviceId",
+						"description": "サービスID。取得対象スマートデバイス",
+						"in": "query",
+						"required": true,
+						"type": "string"
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "",
 						"schema": {
 							"$ref": "#/definitions/CanvasControlResponse"
+						},
+						"examples": {
+							"application/json": {
+								"result": 0,
+								"product": "Example System",
+								"version": "1.0.0"
+							}
 						}
 					}
-				},
-				"x-type": "one-shot"
+				}
 			}
 		}
 	},
+
 	"definitions": {
+		"CanvasControlResponse": {
+			"type": "object",
+			"allOf": [
+				{
+					"$ref": "#/definitions/CommonResponse"
+				}
+			]
+		},
 		"CommonResponse": {
 			"type": "object",
-			"required": ["product", "result", "version"],
+			"required": [
+				"result",
+				"product",
+				"version"
+			],
 			"properties": {
 				"result": {
 					"type": "integer",
+					"title": "処理結果",
 					"description": "0:正常応答<br>0以外:異常応答"
 				},
 				"product": {
 					"type": "string",
+					"title": "システム名",
 					"description": "DeviceConnectシステムの名前。"
 				},
 				"version": {
 					"type": "string",
+					"title": "システムバージョン",
 					"description": "DeviceConnectシステムのバージョン名。"
 				},
 				"hmac": {
 					"type": "string",
+					"title": "署名",
 					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
 				}
 			}
-		},
-		"CanvasControlResponse": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonResponse"
-			}]
 		}
 	}
 }

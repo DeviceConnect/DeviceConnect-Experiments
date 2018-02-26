@@ -1,94 +1,771 @@
 {
-	"swagger": "2.0",
-	"info": {
-		"version": "2.0.0",
-		"title": "Device Connect API"
-	},
-	"basePath": "/gotapi/battery",
-	"paths": {
-		"/": {
-			"get": {
-				"summary": "スマートデバイスのバッテリー情報を取得する。",
-				"description": "",
-				"parameters": [{
-					"name": "serviceId",
-					"in": "query",
-					"required": true,
-					"type": "string"
-				}],
-				"responses": {
-					"200": {
-						"description": "",
-						"schema": {
-							"$ref": "#/definitions/AllResponse"
-						},
-						"examples": {
-							"application/json": {
-								"result": 0,
-								"product": "Example System",
-								"version": "1.0.0",
-								"charging": true,
-								"chargingTime": 10,
-								"dischargingTime": 0,
-								"level": 0.8
-							}
-						}
-					}
-				},
-				"x-type": "one-shot"
-			}
-		}
-	},
-	"definitions": {
-		"AllResponse": {
-			"allOf": [{
-				"$ref": "#/definitions/CommonResponse"
-			}, {
-				"type": "object",
-				"required": ["charging"],
-				"properties": {
-					"charging": {
-						"type": "boolean",
-						"description": "充電状態フラグ。<br>充電中:true<br>非充電中:false"
-					},
-					"chargingTime": {
-						"type": "integer",
-						"format": "int64",
-						"description": "完全充電までの時間(秒)。<br>満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
-					},
-					"dischargingTime": {
-						"type": "integer",
-						"format": "int64",
-						"description": "完全放電までの時間(秒)。<br>充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE"
-					},
-					"level": {
-						"type": "number",
-						"description": "バッテリー残量。<br>範囲: 0.0 <= level <= 1.0"
-					}
-				}
-			}]
-		},
-		"CommonResponse": {
-			"type": "object",
-			"required": ["product", "result", "version"],
-			"properties": {
-				"result": {
-					"type": "integer",
-					"description": "0:正常応答<br>0以外:異常応答"
-				},
-				"product": {
-					"type": "string",
-					"description": "DeviceConnectシステムの名前。"
-				},
-				"version": {
-					"type": "string",
-					"description": "DeviceConnectシステムのバージョン名。"
-				},
-				"hmac": {
-					"type": "string",
-					"description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
-				}
-			}
-		}
-	}
+    "swagger": "2.0",
+    "basePath": "/gotapi/battery",
+    "info": {
+        "title": "Battery Profile",
+        "version": "2.0.0",
+        "description": "スマートデバイスのバッテリー情報を提供するAPI。"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "operationId": "batteryGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスのバッテリー情報を取得する。",
+                "description": "スマートデバイスのバッテリー情報として取得できない値がある場合は適切な値を代入してレスポンスを返却する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/AllResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "charging": true,
+                                "chargingTime": 10,
+                                "dischargingTime": 0,
+                                "level": 0.8
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/charging": {
+            "get": {
+                "operationId": "batteryChargingGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスの充電状態フラグを取得する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ChargingResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "charging": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/chargingTime": {
+            "get": {
+                "operationId": "batteryChargingTimeGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスの充電完了時間を取得する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ChargingTimeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "chargingTime": 10
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dischargingTime": {
+            "get": {
+                "operationId": "batteryDischargingTimeGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスの放電完了時間を取得する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/DischargingTimeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "dischargingTime": 0
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/level": {
+            "get": {
+                "operationId": "batteryLevelGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスのバッテリー残量を取得する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/LevelResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "level": 0.8
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/onBatteryChange": {
+            "get": {
+                "operationId": "batteryOnBatteryChangeGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスのバッテリー状態変化通知イベントを取得する。",
+                "description": "プラグイン側でキャッシュしている最新のイベントメッセージを1つ取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/OnBatteryChangeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "battery": {
+                                    "chargingTime": 10,
+                                    "dischargingTime": 0,
+                                    "level": 0.8
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "batteryOnBatteryChangePut",
+                "x-type": "event",
+                "summary": "スマートデバイスのバッテリーの状態が変化したことを通知する。",
+                "description": "充電時間、放電時間、バッテリー残量の値が変わった時にイベントが発行される。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "interval",
+                        "description": "イベント受信間隔。単位：mSec",
+                        "in": "formData",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventRegistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/OnBatteryChangeEvent"
+                    },
+                    "examples": {
+                        "application/json": {
+                            "serviceId": "example-service-id",
+                            "profile": "battery",
+                            "attribute": "onBatteryChange",
+                            "battery": {
+                                "chargingTime": 10,
+                                "dischargingTime": 0,
+                                "level": 0.8
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "batteryOnBatteryChangeDelete",
+                "x-type": "event",
+                "summary": "当該イベントの通知を停止する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventUnregistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/onChargingChange": {
+            "get": {
+                "operationId": "batteryOnChargingChangeGet",
+                "x-type": "one-shot",
+                "summary": "スマートデバイスのバッテリー充電状態変化通知イベントを取得する。",
+                "description": "プラグイン側でキャッシュしている最新のイベントメッセージを1つ取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/OnChargingChangeResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "battery": {
+                                    "charging": true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "operationId": "batteryOnChargingChangePut",
+                "x-type": "event",
+                "summary": "スマートフォンもしくは周辺機器へ他方のスマートデバイスのバッテリーの充電状態が変化したことを通知する。",
+                "description": "充電中フラグの値がtrueからfalse、もしくは、falseからtrueへ変わった時にイベントが発行される。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "formData",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "interval",
+                        "description": "イベント受信間隔。単位：mSec",
+                        "in": "formData",
+                        "required": false,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventRegistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
+                        }
+                    }
+                },
+                "x-event": {
+                    "schema": {
+                        "$ref": "#/definitions/OnChargingChangeEvent"
+                    },
+                    "examples": {
+                        "application/json": {
+                            "serviceId": "example-service-id",
+                            "profile": "battery",
+                            "attribute": "onChargingChange",
+                            "battery": {
+                                "charging": true
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "batteryOnChargingChangeDelete",
+                "x-type": "event",
+                "summary": "当該イベントの通知を停止する。",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。取得対象スマートデバイス",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/EventUnregistrationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    "definitions": {
+        "AllResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "charging"
+                    ],
+                    "properties": {
+                        "charging": {
+                            "type": "boolean",
+                            "title": "充電状態フラグ",
+                            "description": "充電中:true<br>非充電中:false"
+                        },
+                        "chargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全充電までの時間 (秒)",
+                            "description": "満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        },
+                        "dischargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全放電までの時間 (秒)",
+                            "description": "充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE"
+                        },
+                        "level": {
+                            "type": "number",
+                            "title": "バッテリー残量",
+                            "description": "範囲: 0.0 <= level <= 1.0"
+                        }
+                    }
+                }
+            ]
+        },
+        "ChargingResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "charging"
+                    ],
+                    "properties": {
+                        "charging": {
+                            "type": "boolean",
+                            "title": "充電状態フラグ",
+                            "description": "充電中:true<br>非充電中:false"
+                        }
+                    }
+                }
+            ]
+        },
+        "ChargingTimeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "chargingTime"
+                    ],
+                    "properties": {
+                        "chargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全充電までの時間 (秒)",
+                            "description": "満充電、または非充電中の場合は0。システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        }
+                    }
+                }
+            ]
+        },
+        "DischargingTimeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "dischargingTime"
+                    ],
+                    "properties": {
+                        "dischargingTime": {
+                            "type": "integer",
+                            "format": "int64",
+                            "title": "完全放電までの時間 (秒)",
+                            "description": "充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                        }
+                    }
+                }
+            ]
+        },
+        "LevelResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "level"
+                    ],
+                    "properties": {
+                        "level": {
+                            "type": "number",
+                            "title": "バッテリー残量",
+                            "description": "範囲: 0.0 <= level <= 1.0"
+                        }
+                    }
+                }
+            ]
+        },
+        "OnChargingChangeEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "title": "バッテリー情報",
+                            "required": [
+                                "charging"
+                            ],
+                            "properties": {
+                                "charging": {
+                                    "type": "boolean",
+                                    "title": "充電状態フラグ",
+                                    "description": "充電中:true<br>非充電中:false"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OnChargingChangeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "title": "バッテリー情報",
+                            "required": [
+                                "charging"
+                            ],
+                            "properties": {
+                                "charging": {
+                                    "type": "boolean",
+                                    "title": "充電状態フラグ",
+                                    "description": "充電中:true<br>非充電中:false"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OnBatteryChangeEvent": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonEvent"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "title": "バッテリー情報",
+                            "required": [
+                                "chargingTime",
+                                "dischargingTime",
+                                "level"
+                            ],
+                            "properties": {
+                                "chargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "title": "完全充電までの時間 (秒)",
+                                    "description": "満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "dischargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "title": "完全放電までの時間 (秒)",
+                                    "description": "充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "level": {
+                                    "type": "number",
+                                    "title": "バッテリー残量",
+                                    "description": "範囲: 0.0 <= level <= 1.0"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "OnBatteryChangeResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "required": [
+                        "battery"
+                    ],
+                    "properties": {
+                        "battery": {
+                            "type": "object",
+                            "title": "バッテリー情報",
+                            "required": [
+                                "chargingTime",
+                                "dischargingTime",
+                                "level"
+                            ],
+                            "properties": {
+                                "chargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "title": "完全充電までの時間 (秒)",
+                                    "description": "満充電、または非充電中の場合は0。<br>システムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "dischargingTime": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "title": "完全放電までの時間 (秒)",
+                                    "description": "充電中、またはシステムとして取得出来ない場合はNumber.MAX_VALUE。"
+                                },
+                                "level": {
+                                    "type": "number",
+                                    "title": "バッテリー残量",
+                                    "description": "範囲: 0.0 <= level <= 1.0"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "EventRegistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "EventUnregistrationResponse": {
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "システム名",
+                    "description": "DeviceConnectシステムの名前。"
+                },
+                "version": {
+                    "type": "string",
+                    "title": "システムバージョン",
+                    "description": "DeviceConnectシステムのバージョン名。"
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "署名",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        },
+        "CommonEvent": {
+            "type": "object",
+            "required": [
+                "serviceId",
+                "profile",
+                "interface",
+                "attribute"
+            ],
+            "properties": {
+                "serviceId": {
+                    "type": "string",
+                    "title": "サービスID",
+                    "description": "イベントを送信したサービスのID"
+                },
+                "profile": {
+                    "type": "string",
+                    "title": "プロファイル名",
+                    "description": "プロファイル名。"
+                },
+                "interface": {
+                    "type": "string",
+                    "title": "インターフェース名",
+                    "description": "インターフェース名。"
+                },
+                "attribute": {
+                    "type": "string",
+                    "title": "アトリビュート名",
+                    "description": "アトリビュート名。"
+                }
+            }
+        }
+    }
 }
