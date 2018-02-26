@@ -33,8 +33,11 @@ class MultipleSwaggerConverter {
                          final NameDuplicationCounter counter)
             throws IllegalPathFormatException, DuplicatedPathException {
         String basePath = swagger.getBasePath();
-        if (basePath == null || basePath.equals("")) {
-            basePath = SEPARATOR;
+        if (basePath == null) {
+            throw new IllegalArgumentException("basePath is null");
+        }
+        if (!basePath.startsWith(SEPARATOR)) {
+            throw new IllegalArgumentException("basePath must starts with `" + SEPARATOR + "`");
         }
 
         Map<String, Path> paths = swagger.getPaths();

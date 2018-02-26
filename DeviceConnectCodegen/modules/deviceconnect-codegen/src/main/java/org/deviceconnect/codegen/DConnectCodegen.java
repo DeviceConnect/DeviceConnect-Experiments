@@ -155,6 +155,12 @@ public class DConnectCodegen {
                             continue;
                         }
                         Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+
+                        String basePath = swagger.getBasePath();
+                        if (basePath == null || basePath.equals("")) {
+                            swagger.setBasePath("/");
+                        }
+
                         if (swagger != null) {
                             swaggerList.add(swagger);
                         }
@@ -429,6 +435,7 @@ public class DConnectCodegen {
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
         Swagger merged = new Swagger();
+        merged.setBasePath("/");
 
         // info
         Info info = new Info();
@@ -439,9 +446,8 @@ public class DConnectCodegen {
         // paths
         Map<String, Path> paths = new HashMap<>();
         for (Map.Entry<String, Swagger> swagger : swaggerMap.entrySet()) {
-            String profileName = swagger.getKey();
             for (Map.Entry<String, Path> subPath : swagger.getValue().getPaths().entrySet()) {
-                paths.put("/" + profileName + subPath.getKey(), subPath.getValue());
+                paths.put(swagger.getValue().getBasePath() + subPath.getKey(), subPath.getValue());
             }
         }
         merged.paths(paths);
