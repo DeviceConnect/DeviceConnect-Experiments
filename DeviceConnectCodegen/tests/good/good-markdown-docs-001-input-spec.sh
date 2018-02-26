@@ -1,6 +1,6 @@
 #!/bin/sh -x
 
 java -jar ../../bin/deviceconnect-codegen.jar \
-     --lang       deviceConnectMarkdownDocs \
-     --input-spec profile-specs/swagger.json \
-     --output     output/markdown-docs-001
+     --lang           deviceConnectMarkdownDocs \
+     --input-spec-dir profile-specs/swagger-files \
+     --output         output/markdown-docs-001
