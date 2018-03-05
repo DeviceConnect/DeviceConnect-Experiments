@@ -6,6 +6,8 @@
  */
 package org.deviceconnect.android.app.simplebot;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -13,6 +15,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -129,6 +133,17 @@ public class SimpleBotService extends Service {
         builder.setContentTitle(getString(R.string.app_name));
         builder.setContentText(content);
         builder.setSmallIcon(R.mipmap.ic_launcher);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = getString(R.string.notification_channel_id);
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    getString(R.string.notification_channel_title),
+                    NotificationManager.IMPORTANCE_LOW);
+            channel.setDescription(getString(R.string.notification_channel_desc));
+            NotificationManager manager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+            builder.setChannelId(channelId);
+        }
         startForeground(ONGOING_NOTIFICATION_ID, builder.build());
     }
 

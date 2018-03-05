@@ -85,4 +85,8 @@ Chunkテンプレートエンジンに対応していますので、サービス
     <string name="doze_description" translatable="false">最適化が解除されていません。最適化が解除されていないとバッググラントで正常に動作することができない恐れがあります。\n以下のボタンを押下して、最適化を解除してください。</string>
     <string name="doze_button" translatable="false">最適化を解除</string>
     <string name="doze_settings" translatable="false">最適化</string>
+
+    <string name="notification_channel_id" translatable="false">org.deviceconnect.android.app.simplebot</string>
+    <string name="notification_channel_title" translatable="false">SimpleBot Service</string>
+    <string name="notification_channel_desc" translatable="false">Botに寄せられたコメントを解析するサービス</string>
 </resources>
