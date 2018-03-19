@@ -105,7 +105,7 @@ Quick Startの[Open an existing Android Studio project]を選択してくださ�
 
 dConnectDeviceAWSIotを選択してください。<br>
 dConnectDeviceAWSIotは<br>
-{レポジトリフォルダ}/dConnectDeviceAWSIotにあります。<br>
+{レポジトリフォルダ}/PluginForAndroid/dConnectDeviceAWSIotにあります。<br>
 <br>
 <a href="images/awsiot-2.png" target="_blank">
 <img src="images/awsiot-2.png" border="0"

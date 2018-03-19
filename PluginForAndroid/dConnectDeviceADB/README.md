@@ -58,7 +58,7 @@ https://developer.android.com/studio/index.html
 3.2. Android Studioのツールバー上の File メニューから、 Open... を選択します。
 
 3.3. 手順1でチェックアウトしたadbプラグインのソースコードのルートフォルダを選択します。
-より具体的には、[DeviceConnect-Experiments]/dConnectDeviceADB を選択します。
+より具体的には、[DeviceConnect-Experiments]/PluginForAndroid/dConnectDeviceADB を選択します。
 
 3.4. OKを押します。
 
