@@ -28,6 +28,7 @@ Android Studio 2.2.1以上
 <a href="images/utf-8.png" target="_blank">
 <img src="images/utf-8.png" border="0" width="352" alt="" />
 </a><br>
+
 #### ※注意2：<br>Windowsでは展開するディレクトリ位置によっては「パスが長すぎる」とエラーになりますので、その場合はDeviceConnect-Androidをルートフォルダに展開してください。<br>
 ※本エラーは、バージョンに関わらず、すべてのWindowsで発生する可能性がありますので、ご注意ください。
 詳しくは<a href="http://windows.microsoft.com/ja-jp/windows/file-names-extensions-faq#1TC=windows-7" target="_blank">こちら</a>をご覧ください。
