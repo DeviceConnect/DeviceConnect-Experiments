@@ -8,6 +8,7 @@ package org.deviceconnect.android.app.simplebot;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
@@ -39,7 +40,11 @@ public class MainActivity extends Activity {
         // サービス開始
         if (SettingData.getInstance(this).active) {
             Intent serviceIntent = new Intent(MainActivity.this, SimpleBotService.class);
-            MainActivity.this.startService(serviceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                MainActivity.this.startForegroundService(serviceIntent);
+            } else {
+                MainActivity.this.startService(serviceIntent);
+            }
         }
 
         // 画面遷移

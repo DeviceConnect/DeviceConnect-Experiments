@@ -26,12 +26,6 @@
 
         <service android:name=".SimpleBotService" />
 
-        <receiver android:name=".StartupReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
