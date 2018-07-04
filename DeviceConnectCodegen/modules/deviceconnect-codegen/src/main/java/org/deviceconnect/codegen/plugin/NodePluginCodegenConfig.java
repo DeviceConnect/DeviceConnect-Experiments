@@ -6,6 +6,7 @@ import io.swagger.codegen.SupportingFile;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.*;
+import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.ProfileTemplate;
 
 import java.io.File;
@@ -148,13 +149,7 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
-        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-
-        ProfileTemplate template = new ProfileTemplate();
-        template.templateFile = "profile.js.mustache";
-        template.outputFile = profileName + ".js";
-        profileTemplates.add(template);
-        return profileTemplates;
+        return null; // 不要
     }
 
     @Override
@@ -173,15 +168,12 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         // index.js (= プラグイン本体の実装ファイル)
         supportingFiles.add(new SupportingFile("index.js.mustache", "", "index.js"));
-
-        // 共通ロジック
-        supportingFiles.add(new SupportingFile("profile.js", "", "profile.js"));
-        supportingFiles.add(new SupportingFile("serviceinformation.js.mustache", "", "profiles/serviceinformation.js"));
     }
 
     @Override
     protected String getProfileSpecFolder() {
-        return null; // 不要
+        String separator = File.separator;
+        return outputFolder + separator + "specs";
     }
 
     @Override
