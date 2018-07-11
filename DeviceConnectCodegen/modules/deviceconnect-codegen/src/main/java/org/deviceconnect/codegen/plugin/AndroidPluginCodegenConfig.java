@@ -796,18 +796,25 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
     }
 
+    // TODO: 他のプラットフォームと共通化する
     private String getExampleValue(final Property prop) {
         final String type = prop.getType();
         final String format = prop.getFormat();
         if ("boolean".equals(type)) {
             return "false";
         } else if ("string".equals(type)) {
-            StringProperty strProp = (StringProperty) prop;
-            List<String> enumList = strProp.getEnum();
-            if (enumList != null && enumList.size() > 0) {
-                return "\"" + enumList.get(0) + "\"";
+            if ("date-time".equals(format)) {
+                return "\"2000-01-01T01:01:0+09:00\"";
+            } else if ("date".equals(format)) {
+                return "\"2000-01-01\"";
             } else {
-                return "\"test\"";
+                StringProperty strProp = (StringProperty) prop;
+                List<String> enumList = strProp.getEnum();
+                if (enumList != null && enumList.size() > 0) {
+                    return "\"" + enumList.get(0) + "\"";
+                } else {
+                    return "\"test\"";
+                }
             }
         } else if ("integer".equals(type)) {
             if ("int64".equals(format)) {
