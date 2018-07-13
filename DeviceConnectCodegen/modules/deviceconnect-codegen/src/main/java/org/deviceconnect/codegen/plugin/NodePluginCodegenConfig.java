@@ -121,6 +121,10 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
                 return "\"2000-01-01T01:01:0+09:00\"";
             } else if ("date".equals(format)) {
                 return "\"2000-01-01\"";
+            } else if ("byte".equals(format)) {
+                return "\"dGVzdA==\"";
+            } else if ("binary".equals(format)) {
+                return "\"\""; // TODO: バイナリ形式の文字列表現の仕様を確認
             } else {
                 StringProperty strProp = (StringProperty) prop;
                 List<String> enumList = strProp.getEnum();
