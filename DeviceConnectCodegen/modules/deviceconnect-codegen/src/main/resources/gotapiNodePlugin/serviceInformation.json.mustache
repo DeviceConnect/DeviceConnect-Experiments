@@ -1,0 +1,182 @@
+{
+    "swagger": "2.0",
+    "basePath": "/gotapi/serviceInformation",
+    "info": {
+        "title": "ServiceInformation Profile",
+        "version": "2.0.0",
+        "description": "DeviceConnectシステム上の特定のサービスに関する情報を提供するAPI。"
+    },
+    "consumes": [
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "x-type": "one-shot",
+                "operationId": "serviceInformationGet",
+                "summary": "DeviceConnectシステム上の特定のサービスに関する情報を提供するAPI。",
+                "description": "サポートするプロファイル一覧、ネットワークへの接続状態を取得する。",
+                "parameters": [
+                    {
+                        "name": "serviceId",
+                        "description": "サービスID。",
+                        "in": "query",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/ServiceInformationResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "result": 0,
+                                "product": "Example System",
+                                "version": "1.0.0",
+                                "connect": {
+                                    "ble": true
+                                },
+                                "supports": ["example"],
+                                "supportApis": {
+                                    "example": {
+                                        "swagger": "2.0",
+                                        "basePath": "/gotapi/example",
+                                        "info": {
+                                            "title": "Example Profile",
+                                            "version": "1.0",
+                                            "description": ""
+                                        },
+                                        "paths": {
+                                            "/message": {
+                                                "post": {
+                                                    "x-type": "one-shot",
+                                                    "summary": "Post a message.",
+                                                    "parameters": [
+                                                        {
+                                                            "name": "serviceId",
+                                                            "in": "query",
+                                                            "required": true,
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "name": "message",
+                                                            "in": "query",
+                                                            "required": true,
+                                                            "type": "string"
+                                                        }
+                                                    ],
+                                                    "responses": {
+                                                        "200": {
+                                                            "description": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ServiceInformationResponse": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CommonResponse"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "connect",
+                        "supports"
+                    ],
+                    "properties": {
+                        "connect": {
+                            "type": "object",
+                            "title": "オブジェクト",
+                            "description": "ネットワークの接続状態",
+                            "properties": {
+                                "wifi": {
+                                    "type": "boolean",
+                                    "title": "Wi-Fi接続フラグ",
+                                    "description": "Wi-Fiの接続を提供しない場合は省略。"
+                                },
+                                "bluetooth": {
+                                    "type": "boolean",
+                                    "title": "Bluetooth接続フラグ",
+                                    "description": "Bluetoothの接続を提供しない場合は省略。"
+                                },
+                                "ble": {
+                                    "type": "boolean",
+                                    "title": "BLE接続フラグ",
+                                    "description": "BLEの接続を提供しない場合は省略。"
+                                },
+                                "NFC": {
+                                    "type": "boolean",
+                                    "title": "NFC接続フラグ",
+                                    "description": "NFCの接続を提供しない場合は省略。"
+                                }
+                            }
+                        },
+                        "supports": {
+                            "type": "array",
+                            "title": "プロファイル一覧",
+                            "description": "サポートしているプロファイル名の配列。",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "supportApis": {
+                            "type": "object",
+                            "title": "各プロファイルのDeviceConnectAPI仕様定義",
+                            "description": "指定されたサービスのサポートするプロファイル名をキーとして、そのプロファイルのAPIを定義するSwagger 2.0ドキュメントを提供する。",
+                            "additionalProperties": {
+                                "type": "object",
+                                "title": "DeviceConnectAPI仕様定義",
+                                "description": "Swagger 2.0形式で定義される。"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "CommonResponse": {
+            "type": "object",
+            "required": [
+                "result",
+                "product",
+                "version"
+            ],
+            "properties": {
+                "result": {
+                    "type": "integer",
+                    "title": "処理結果",
+                    "description": "0:正常応答<br>0以外:異常応答"
+                },
+                "product": {
+                    "type": "string",
+                    "title": "システム名",
+                    "description": "DeviceConnectシステムの名前。"
+                },
+                "version": {
+                    "type": "string",
+                    "title": "システムバージョン",
+                    "description": "DeviceConnectシステムのバージョン名。"
+                },
+                "hmac": {
+                    "type": "string",
+                    "title": "署名",
+                    "description": "レスポンスに対する署名。アプリケーション側から事前にHMACキーを共有されていた場合は必須。"
+                }
+            }
+        }
+    }
+}

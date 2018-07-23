@@ -59,11 +59,13 @@ function checkPath(s, t) {
 function getServiceInformation(message) {
   message.result = 0;
   message.supports = [
+    "serviceInformation",
   {{#supportedProfileNames}}
     "{{name}}"{{#hasNext}},{{/hasNext}}
   {{/supportedProfileNames}}
   ];
   message.supportApis = {
+    "serviceInformation": require('./specs/serviceInformation.json'),
   {{#supportedProfileNames}}
     "{{name}}": require('./specs/{{name}}.json'){{#hasNext}},{{/hasNext}}
   {{/supportedProfileNames}}

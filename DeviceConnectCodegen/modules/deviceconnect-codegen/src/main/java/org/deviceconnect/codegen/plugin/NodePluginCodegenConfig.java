@@ -12,7 +12,6 @@ import io.swagger.codegen.SupportingFile;
 import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.properties.*;
-import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.ProfileTemplate;
 
 import java.io.File;
@@ -185,6 +184,9 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         // index.js (= プラグイン本体の実装ファイル)
         supportingFiles.add(new SupportingFile("index.js.mustache", "", "index.js"));
+
+        // serviceInformation.json.mustache
+        supportingFiles.add(new SupportingFile("serviceInformation.json.mustache", "specs", "serviceInformation.json"));
     }
 
     @Override
