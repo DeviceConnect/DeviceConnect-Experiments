@@ -7,6 +7,9 @@
 package org.deviceconnect.codegen;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.deviceconnect.codegen.IllegalPathFormatException.Reason;
 
 public class DConnectPath {
@@ -30,8 +33,21 @@ public class DConnectPath {
         return parsePath(basePath.equals("/") ? pathExp : basePath + pathExp);
     }
 
-    public static DConnectPath parsePath(final String pathExp) throws IllegalPathFormatException {
-        return new DConnectPath(pathExp);
+    private static DConnectPath parsePath(final String pathExp) throws IllegalPathFormatException {
+        return new DConnectPath(normalizePath(pathExp));
+    }
+
+    private static String normalizePath(final String pathExp) {
+        // 空白のパス要素は無視
+        String[] parts = pathExp.split(SEPARATOR);
+        List<String> result = new ArrayList<>();
+        for (String part : parts) {
+            if ("".equals(part)) {
+                continue;
+            }
+            result.add(part);
+        }
+        return concatParts(result.toArray(new String[result.size()]));
     }
 
     private DConnectPath(final String pathExp) throws IllegalPathFormatException {
@@ -103,7 +119,7 @@ public class DConnectPath {
         return pathExp;
     }
 
-    private String concatParts(String... parts) {
+    private static String concatParts(String... parts) {
         if (parts == null) {
             return SEPARATOR;
         }
