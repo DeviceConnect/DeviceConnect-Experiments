@@ -1,0 +1,64 @@
+'use strict';
+
+let Profile = require('../profile.js');
+{{#hasEventApi}}
+let _eventTimerTable = {};
+
+function _startEventTimer(request, task, interval) {
+    if (interval === undefined) {
+        interval = 1000;
+    }
+    _stopEventTimer(request);
+    _eventTimerTable[_eventId(request)] = setInterval(task, interval);
+}
+
+function _stopEventTimer(request) {
+    let timerId = _eventTimerTable[_eventId(request)];
+    if (timerId !== undefined) {
+        clearInterval(timerId);
+    }
+}
+
+function _eventId(request) {
+    return request.request_path + '-' + request.serviceId;
+}
+{{/hasEventApi}}
+
+module.exports = new Profile({
+    operations: [
+        {{#apiList}}
+        {
+            method: '{{method}}',
+            path: '{{apiFullPath}}',
+            onRequest: function(util, message) {
+                {{#paramList}}
+                {{{declaration}}}
+                {{/paramList}}
+
+                // TODO ここでAPIを実装してください. 以下はサンプルのレスポンス作成処理です.
+                {{#isOneShotApi}}
+                message.result = 0;
+                {{#responses}}
+                {{{.}}}
+                {{/responses}}
+                {{/isOneShotApi}}
+                {{#isEventApi}}
+                {{#putApi}}
+                message.result = 0;
+                _startEventTimer(message, function() {
+                    {{#events}}
+                    {{{.}}}
+                    {{/events}}
+                    util.pushMessage(message);
+                }, interval);
+                {{/putApi}}
+                {{#deleteApi}}
+                message.result = 0;
+                _stopEventTimer(message);
+                {{/deleteApi}}
+                {{/isEventApi}}
+            }
+        }{{#hasNext}},{{/hasNext}}
+        {{/apiList}}
+    ]
+});

@@ -165,7 +165,12 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
-        return null; // 不要
+        final List<ProfileTemplate> profileTemplates = new ArrayList<>();
+        ProfileTemplate template = new ProfileTemplate();
+        template.templateFile = "profile.js.mustache";
+        template.outputFile = profileName + ".js";
+        profileTemplates.add(template);
+        return profileTemplates;
     }
 
     @Override
@@ -187,6 +192,12 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
 
         // serviceInformation.json.mustache
         supportingFiles.add(new SupportingFile("serviceInformation.json.mustache", "specs", "serviceInformation.json"));
+
+        // 共通ロジック (= プロファイルの基本処理)
+        supportingFiles.add(new SupportingFile("profile.js", "", "profile.js"));
+
+        // serviceInformation.js
+        supportingFiles.add(new SupportingFile("serviceInformation.js.mustache", "", "profiles/serviceInformation.js"));
     }
 
     @Override

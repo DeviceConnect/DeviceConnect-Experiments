@@ -13,13 +13,20 @@ let GotapiPlugin = function(util) {
         name: "{{displayName}} Service",
         online: true,
         scopes: [
-            "serviceinformation",
+            "serviceInformation",
             {{#supportedProfileNames}}
-            "{{name}}"{{#hasNext}},{{/hasNext}}
+            "{{id}}"{{#hasNext}},{{/hasNext}}
             {{/supportedProfileNames}}
         ]
       }
     ]
+  };
+
+  this.profiles = {
+    serviceInformation: require('./profiles/serviceInformation.js'),
+    {{#supportedProfileNames}}
+    {{id}}: require('./profiles/{{name}}.js'){{#hasNext}},{{/hasNext}}
+    {{/supportedProfileNames}}
   };
 };
 
@@ -30,22 +37,19 @@ GotapiPlugin.prototype.init = function(callback) {
 };
 
 GotapiPlugin.prototype.receiveMessage = function(message) {
-  var path = _createPath(message);
-  var method = message.method;
-  var rpath = path + ' ' + method;
+  var profile = null;
 
-  if (checkPath(rpath, '/gotapi/serviceInformation get')) {
-    getServiceInformation(message);
+  for (let name in this.profiles) {
+    if (checkPath(name, message.profile)) {
+      profile = this.profiles[name];
+      break;
+    }
   }
-  {{#profileList}}
-  {{#apiList}}
-  else if (checkPath(rpath, '{{apiFullPath}} {{method}}')) {
-    {{{functionName}}}(this.util, message)
-  }
-  {{/apiList}}
-  {{/profileList}}
-  else {
-    message.result = 401;
+
+  if (profile !== null) {
+    profile.receiveMessage(this.util, message);
+  } else {
+    message.result = 404;
   }
 
   this.util.returnMessage(message);
@@ -54,92 +58,6 @@ GotapiPlugin.prototype.receiveMessage = function(message) {
 function checkPath(s, t) {
   // パスの大文字小文字を無視
   return s.toLowerCase() === t.toLowerCase();
-}
-
-function getServiceInformation(message) {
-  message.result = 0;
-  message.supports = [
-    "serviceInformation",
-  {{#supportedProfileNames}}
-    "{{name}}"{{#hasNext}},{{/hasNext}}
-  {{/supportedProfileNames}}
-  ];
-  message.supportApis = {
-    "serviceInformation": require('./specs/serviceInformation.json'),
-  {{#supportedProfileNames}}
-    "{{name}}": require('./specs/{{name}}.json'){{#hasNext}},{{/hasNext}}
-  {{/supportedProfileNames}}
-  }
-}
-
-{{#profileList}}
-{{#apiList}}
-function {{{functionName}}}(util, message) {
-  {{#paramList}}
-  {{{declaration}}}
-  {{/paramList}}
-
-  // TODO ここでAPIを実装してください. 以下はサンプルのレスポンス作成処理です.
-  {{#isOneShotApi}}
-  message.result = 0;
-  {{#responses}}
-  {{{.}}}
-  {{/responses}}
-  {{/isOneShotApi}}
-  {{#isEventApi}}
-  {{#putApi}}
-  message.result = 0;
-  _startEventTimer(message, function() {
-    {{#events}}
-    {{{.}}}
-    {{/events}}
-    util.pushMessage(message);
-  }, interval);
-  {{/putApi}}
-  {{#deleteApi}}
-  message.result = 0;
-  _stopEventTimer(message);
-  {{/deleteApi}}
-  {{/isEventApi}}
-}
-{{/apiList}}
-
-{{/profileList}}
-
-function _createPath(message) {
-  if (message === undefined || message === null) {
-    return null;
-  }
-  let request_url = message.request_url;
-  if (request_url === undefined || request_url === null) {
-    return null;
-  }
-  request_url = request_url.split('?')[0];
-  if (request_url.endsWith('/')) {
-    request_url = request_url.substring(0, request_url.length - 1);
-  }
-  return request_url;
-};
-
-let _eventTimerTable = {};
-
-function _startEventTimer(request, task, interval) {
-  if (interval === undefined) {
-    interval = 1000;
-  }
-  _stopEventTimer(request);
-  _eventTimerTable[_eventId(request)] = setInterval(task, interval);
-}
-
-function _stopEventTimer(request) {
-  let timerId = _eventTimerTable[_eventId(request)];
-  if (timerId !== undefined) {
-    clearInterval(timerId);
-  }
-}
-
-function _eventId(request) {
-  return request.request_path + '-' + request.serviceId;
 }
 
 module.exports = GotapiPlugin;
