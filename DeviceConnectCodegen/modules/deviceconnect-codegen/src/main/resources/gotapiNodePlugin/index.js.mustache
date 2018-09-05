@@ -37,7 +37,7 @@ GotapiPlugin.prototype.init = function(callback) {
 };
 
 GotapiPlugin.prototype.receiveMessage = function(message) {
-  var profile = null;
+  let profile = null;
 
   for (let name in this.profiles) {
     if (checkPath(name, message.profile)) {
