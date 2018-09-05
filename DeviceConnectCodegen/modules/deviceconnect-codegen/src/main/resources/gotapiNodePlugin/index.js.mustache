@@ -40,7 +40,7 @@ GotapiPlugin.prototype.receiveMessage = function(message) {
   let profile = null;
 
   for (let name in this.profiles) {
-    if (checkPath(name, message.profile)) {
+    if (checkProfile(name, message.profile)) {
       profile = this.profiles[name];
       break;
     }
@@ -55,7 +55,11 @@ GotapiPlugin.prototype.receiveMessage = function(message) {
   this.util.returnMessage(message);
 };
 
-function checkPath(s, t) {
+function checkProfile(s, t) {
+  // プロファイルの最後に "/" が付いている場合は削除
+  if (t.endsWith('/')) {
+    t = t.substring(0, t.length - 1);
+  }
   // パスの大文字小文字を無視
   return s.toLowerCase() === t.toLowerCase();
 }
