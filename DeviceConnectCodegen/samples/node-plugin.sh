@@ -4,7 +4,7 @@
 LANG="gotapiNodePlugin"
 
 # プロファイル定義ファイル
-SPEC="./sample-profile-specs/swagger.json"
+SPEC="./sample-profile-specs/swagger-files"
 
 # スケルトンコード出力先
 # NOTE: フォルダ名の先頭に node-gotapi-plugin- を付けること.
@@ -16,6 +16,6 @@ DISPLAY_NAME="MyPlugin"
 # スケルトンコード生成ツールのバイナリ
 JAR_FILE="../bin/deviceconnect-codegen.jar"
 
-ARGS="--input-spec $SPEC  --lang $LANG --display-name $DISPLAY_NAME  --output $OUTPUT_DIR"
+ARGS="--input-spec-dir $SPEC  --lang $LANG --display-name $DISPLAY_NAME  --output $OUTPUT_DIR"
 
 java -Dfile.encoding=UTF-8 -jar $JAR_FILE $ARGS

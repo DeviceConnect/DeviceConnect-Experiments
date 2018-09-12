@@ -1,3 +1,9 @@
+/*
+ DConnectCodegen.java
+ Copyright (c) 2018 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
 package org.deviceconnect.codegen;
 
 
@@ -62,7 +68,6 @@ public class DConnectCodegen {
 
         ClientOptInput clientOptInput = new ClientOptInput();
         ClientOpts clientOpts = new ClientOpts();
-        File[] specFiles;
 
         CommandLine cmd;
         try {
@@ -96,85 +101,12 @@ public class DConnectCodegen {
                 config.setOutputDir(cmd.getOptionValue("o"));
             }
             if (cmd.hasOption("i")) {
-                String location = cmd.getOptionValue("i");
-                if(!checkSwagger(new File(location))) {
-                    return;
-                }
-                Swagger swagger = new SwaggerParser().read(location, clientOptInput.getAuthorizationValues(), true);
-                clientOptInput.swagger(swagger);
-
-                String basePath = swagger.getBasePath();
-                if (basePath == null || basePath.equals("")) {
-                    basePath = "/";
-                    swagger.setBasePath(basePath);
-                }
-                Map<String, Swagger> profiles = new HashMap<>();
-                Map<String, Path> paths = swagger.getPaths();
-                for (Map.Entry<String, Path> entry : paths.entrySet()) {
-                    Path path = entry.getValue();
-                    String pathName = entry.getKey();
-                    String fullPathName = basePath.equals("/") ? pathName : basePath + pathName;
-                    String[] parts = fullPathName.split("/");
-                    if (parts.length < 3) {
-                        continue;
-                    }
-                    String apiPart = parts[1];
-                    String profilePart = parts[2];
-                    String subPath = "/";
-                    for (int i = 3; i < parts.length; i++) {
-                        subPath += parts[i];
-                        if (i < parts.length - 1) {
-                            subPath += "/";
-                        }
-                    }
-                    checkProfileName(config, profilePart);
-
-                    Swagger profile = profiles.get(profilePart);
-                    if (profile == null) {
-                        profile = createProfileSpec(swagger);
-                        profile.setBasePath("/" + apiPart + "/" + profilePart);
-                        profiles.put(profilePart, profile);
-                    }
-                    Map<String, Path> subPaths = profile.getPaths();
-                    subPaths.put(subPath, path);
-                    profile.setPaths(subPaths);
-                }
-                config.setProfileSpecs(profiles);
+                File file = new File(cmd.getOptionValue("i"));
+                parseSwaggerFromFile(file, clientOptInput, config);
             } else if (cmd.hasOption("s")) {
                 File dir = new File(cmd.getOptionValue("s"));
                 if (dir.isDirectory()) {
-                    specFiles = dir.listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(final File dir, final String name) {
-                            return name.endsWith(".json") || name.endsWith(".yaml");
-                        }
-                    });
-                    List<Swagger> swaggerList = new ArrayList<>();
-                    for (File file : specFiles) {
-                        if(!checkSwagger(file)) {
-                            continue;
-                        }
-                        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
-
-                        String basePath = swagger.getBasePath();
-                        if (basePath == null || basePath.equals("")) {
-                            swagger.setBasePath("/");
-                        }
-
-                        if (swagger != null) {
-                            swaggerList.add(swagger);
-                        }
-                    }
-                    if (swaggerList.size() != specFiles.length) {
-                        return;
-                    }
-
-                    Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
-                    for (String profileName : profileSpecs.keySet()) {
-                        checkProfileName(config, profileName);
-                    }
-                    config.setProfileSpecs(profileSpecs);
-                    clientOptInput.swagger(mergeSwaggers(profileSpecs));
+                    parseSwaggerFromDirectory(dir, clientOptInput, config);
                 } else {
                     // TODO エラーメッセージ詳細化: ディレクトリではなくファイルへのパスが指定されている.
                     usage(options);
@@ -283,6 +215,93 @@ public class DConnectCodegen {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private static void parseSwaggerFromFile(File file,
+                                             ClientOptInput clientOptInput,
+                                             DConnectCodegenConfig config)
+        throws IOException, ProcessingException {
+        if(!checkSwagger(file)) {
+            return;
+        }
+        Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+        clientOptInput.swagger(swagger);
+
+        String basePath = swagger.getBasePath();
+        if (basePath == null || basePath.equals("")) {
+            basePath = "/";
+            swagger.setBasePath(basePath);
+        }
+        Map<String, Swagger> profiles = new HashMap<>();
+        Map<String, Path> paths = swagger.getPaths();
+        for (Map.Entry<String, Path> entry : paths.entrySet()) {
+            Path path = entry.getValue();
+            String pathName = entry.getKey();
+            String fullPathName = basePath.equals("/") ? pathName : basePath + pathName;
+            String[] parts = fullPathName.split("/");
+            if (parts.length < 3) {
+                continue;
+            }
+            String apiPart = parts[1];
+            String profilePart = parts[2];
+            String subPath = "/";
+            for (int i = 3; i < parts.length; i++) {
+                subPath += parts[i];
+                if (i < parts.length - 1) {
+                    subPath += "/";
+                }
+            }
+            checkProfileName(config, profilePart);
+
+            Swagger profile = profiles.get(profilePart);
+            if (profile == null) {
+                profile = createProfileSpec(swagger);
+                profile.setBasePath("/" + apiPart + "/" + profilePart);
+                profiles.put(profilePart, profile);
+            }
+            Map<String, Path> subPaths = profile.getPaths();
+            subPaths.put(subPath, path);
+            profile.setPaths(subPaths);
+        }
+        config.setProfileSpecs(profiles);
+    }
+
+    private static void parseSwaggerFromDirectory(File dir,
+                                                  ClientOptInput clientOptInput,
+                                                  DConnectCodegenConfig config)
+            throws IOException, ProcessingException, IllegalPathFormatException, DuplicatedPathException {
+        File[] specFiles = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".json") || name.endsWith(".yaml");
+            }
+        });
+        List<Swagger> swaggerList = new ArrayList<>();
+        for (File file : specFiles) {
+            if(!checkSwagger(file)) {
+                continue;
+            }
+            Swagger swagger = new SwaggerParser().read(file.getAbsolutePath(), clientOptInput.getAuthorizationValues(), true);
+
+            String basePath = swagger.getBasePath();
+            if (basePath == null || basePath.equals("")) {
+                swagger.setBasePath("/");
+            }
+
+            if (swagger != null) {
+                swaggerList.add(swagger);
+            }
+        }
+        if (swaggerList.size() != specFiles.length) {
+            return;
+        }
+
+        Map<String, Swagger> profileSpecs = SWAGGER_CONVERTER.convert(swaggerList);
+        for (String profileName : profileSpecs.keySet()) {
+            checkProfileName(config, profileName);
+        }
+        config.setProfileSpecs(profileSpecs);
+        clientOptInput.swagger(mergeSwaggers(profileSpecs));
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {

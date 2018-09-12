@@ -1,3 +1,9 @@
+/*
+ AbstractPluginCodegenConfig.java
+ Copyright (c) 2018 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
 package org.deviceconnect.codegen.plugin;
 
 
@@ -86,6 +92,7 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
     @Override
     public void preprocessSwagger(final Swagger swagger) {
         Map<String, Map<String, Object>> profiles = new LinkedHashMap<>();
+
         for (Map.Entry<String, Path> pathEntry : swagger.getPaths().entrySet()) {
             Path path = pathEntry.getValue();
             DConnectPath dConnectPath;
@@ -171,6 +178,17 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
                         break;
                 }
 
+                // Function Name
+                String functionName = method.name().toLowerCase()
+                        + toUpperCapital(profileName, false);
+                if (interfaceName != null) {
+                    functionName += toUpperCapital(interfaceName, false);
+                }
+                if (attributeName != null) {
+                    functionName += toUpperCapital(attributeName, false);
+                }
+                api.put("functionName", functionName);
+
                 // Parameter declarations
                 List<Object> paramList = new ArrayList<>();
                 for (final Parameter param : operation.getParameters()) {
@@ -191,10 +209,12 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
 
         // 各プロファイルのスケルトンコード生成
         List<Object> supportedProfileNames = new ArrayList<>();
+        List<Map<String, Object>> profileList = new ArrayList<>();
         for (final Iterator<Map.Entry<String, Map<String, Object>>> it = profiles.entrySet().iterator(); it.hasNext(); ) {
             final Map.Entry<String, Map<String, Object>> entry = it.next();
             final String profileName = entry.getKey();
             final Map<String, Object> profile = entry.getValue();
+
             try {
                 List<ProfileTemplate> profileTemplates = prepareProfileTemplates(profileName, profile);
                 if (profileTemplates != null) {
@@ -211,8 +231,10 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
                 String id = profileName.toLowerCase();
                 boolean hasNext = it.hasNext();
             });
+            profileList.add(profile);
         }
         additionalProperties.put("supportedProfileNames", supportedProfileNames);
+        additionalProperties.put("profileList", profileList);
 
         // プロファイル定義ファイルのコピー
         try {

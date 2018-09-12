@@ -14,7 +14,13 @@ Profile.prototype._createPath = function(message) {
     if (request_url === undefined || request_url === null) {
         return null;
     }
-    return request_url.split('?')[0];
+    // URLクエリパラメータを削除
+    request_url = request_url.split('?')[0];
+    // プロファイルの最後に "/" が付いている場合は削除
+    if (request_url.endsWith('/')) {
+        request_url = request_url.substring(0, request_url.length - 1);
+    }
+    return request_url;
 };
 
 Profile.prototype._findOperation = function(path, method) {

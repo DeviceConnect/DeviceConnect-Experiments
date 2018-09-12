@@ -8,11 +8,20 @@ module.exports = new Profile({
             path: '/gotapi/serviceinformation',
             onRequest: function(util,message) {
                 message.result = 0;
+                message.connect = {
+                };
                 message.supports = [
+                    "serviceInformation",
                     {{#supportedProfileNames}}
                     "{{id}}"{{#hasNext}},{{/hasNext}}
                     {{/supportedProfileNames}}
                 ];
+                message.supportApis = {
+                    "serviceInformation": require('../specs/serviceInformation.json'),
+                    {{#supportedProfileNames}}
+                    "{{id}}": require('../specs/{{name}}.json'){{#hasNext}},{{/hasNext}}
+                    {{/supportedProfileNames}}
+                };
             }
         }
     ]
