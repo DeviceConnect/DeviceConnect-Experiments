@@ -42,6 +42,14 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>samples/sample-profile-specs/swagger-files</directory>
+            <outputDirectory>samples/sample-profile-specs/swagger-files</outputDirectory>
+            <includes>
+                <include>*.json</include>
+                <include>*.yaml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>standard-profile-specs</directory>
             <outputDirectory>standard-profile-specs</outputDirectory>
             <includes>

@@ -1,3 +1,9 @@
+/*
+ NodePluginCodegenConfig.java
+ Copyright (c) 2018 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
 package org.deviceconnect.codegen.plugin;
 
 
@@ -109,18 +115,29 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
         }
     }
 
+    // TODO: 他のプラットフォームと共通化する
     private String getExampleValue(final Property prop) {
         final String type = prop.getType();
         final String format = prop.getFormat();
         if ("boolean".equals(type)) {
             return "false";
         } else if ("string".equals(type)) {
-            StringProperty strProp = (StringProperty) prop;
-            List<String> enumList = strProp.getEnum();
-            if (enumList != null && enumList.size() > 0) {
-                return "\"" + enumList.get(0) + "\"";
+            if ("date-time".equals(format)) {
+                return "\"2000-01-01T01:01:0+09:00\"";
+            } else if ("date".equals(format)) {
+                return "\"2000-01-01\"";
+            } else if ("byte".equals(format)) {
+                return "\"dGVzdA==\"";
+            } else if ("binary".equals(format)) {
+                return "\"\""; // TODO: バイナリ形式の文字列表現の仕様を確認
             } else {
-                return "\"test\"";
+                StringProperty strProp = (StringProperty) prop;
+                List<String> enumList = strProp.getEnum();
+                if (enumList != null && enumList.size() > 0) {
+                    return "\"" + enumList.get(0) + "\"";
+                } else {
+                    return "\"test\"";
+                }
             }
         } else if ("integer".equals(type)) {
             if ("int64".equals(format)) {
@@ -149,7 +166,6 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
     @Override
     protected List<ProfileTemplate> prepareProfileTemplates(final String profileName, final Map<String, Object> properties) {
         final List<ProfileTemplate> profileTemplates = new ArrayList<>();
-
         ProfileTemplate template = new ProfileTemplate();
         template.templateFile = "profile.js.mustache";
         template.outputFile = profileName + ".js";
@@ -174,14 +190,20 @@ public class NodePluginCodegenConfig extends AbstractPluginCodegenConfig {
         // index.js (= プラグイン本体の実装ファイル)
         supportingFiles.add(new SupportingFile("index.js.mustache", "", "index.js"));
 
-        // 共通ロジック
+        // serviceInformation.json.mustache
+        supportingFiles.add(new SupportingFile("serviceInformation.json.mustache", "specs", "serviceInformation.json"));
+
+        // 共通ロジック (= プロファイルの基本処理)
         supportingFiles.add(new SupportingFile("profile.js", "", "profile.js"));
-        supportingFiles.add(new SupportingFile("serviceinformation.js.mustache", "", "profiles/serviceinformation.js"));
+
+        // serviceInformation.js
+        supportingFiles.add(new SupportingFile("serviceInformation.js.mustache", "", "profiles/serviceInformation.js"));
     }
 
     @Override
     protected String getProfileSpecFolder() {
-        return null; // 不要
+        String separator = File.separator;
+        return outputFolder + separator + "specs";
     }
 
     @Override

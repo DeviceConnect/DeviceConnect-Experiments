@@ -13,7 +13,7 @@ let GotapiPlugin = function(util) {
         name: "{{displayName}} Service",
         online: true,
         scopes: [
-            "serviceinformation",
+            "serviceInformation",
             {{#supportedProfileNames}}
             "{{id}}"{{#hasNext}},{{/hasNext}}
             {{/supportedProfileNames}}
@@ -23,7 +23,7 @@ let GotapiPlugin = function(util) {
   };
 
   this.profiles = {
-    serviceinformation: require('./profiles/serviceinformation.js'),
+    serviceInformation: require('./profiles/serviceInformation.js'),
     {{#supportedProfileNames}}
     {{id}}: require('./profiles/{{name}}.js'){{#hasNext}},{{/hasNext}}
     {{/supportedProfileNames}}
@@ -37,13 +37,15 @@ GotapiPlugin.prototype.init = function(callback) {
 };
 
 GotapiPlugin.prototype.receiveMessage = function(message) {
-  var profile = null;
+  let profile = null;
+
   for (let name in this.profiles) {
-    if (name.toLowerCase() === message.profile.toLowerCase()) {
-        profile = this.profiles[name];
-        break;
+    if (checkProfile(name, message.profile)) {
+      profile = this.profiles[name];
+      break;
     }
   }
+
   if (profile !== null) {
     profile.receiveMessage(this.util, message);
   } else {
@@ -52,5 +54,14 @@ GotapiPlugin.prototype.receiveMessage = function(message) {
 
   this.util.returnMessage(message);
 };
+
+function checkProfile(s, t) {
+  // プロファイルの最後に "/" が付いている場合は削除
+  if (t.endsWith('/')) {
+    t = t.substring(0, t.length - 1);
+  }
+  // パスの大文字小文字を無視
+  return s.toLowerCase() === t.toLowerCase();
+}
 
 module.exports = GotapiPlugin;
