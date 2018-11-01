@@ -149,6 +149,13 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                         }
                         Object response = createResponseDocument(profileSpec, op);
                         Object event = createEventDocument(profileSpec, op);
+                        String tag() {
+                            String tag = this.name;
+                            tag = tag.toLowerCase();
+                            tag = tag.replaceAll(" ", "-");  // 半角スペース -> 半角ハイフン
+                            tag = tag.replaceAll("/", "");  // 半角スラッシュ -> 空文字
+                            return tag;
+                        }
                     });
                 }
             }
