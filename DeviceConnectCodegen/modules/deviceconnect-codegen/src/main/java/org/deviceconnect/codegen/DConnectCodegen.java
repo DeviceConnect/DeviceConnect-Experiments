@@ -203,9 +203,11 @@ public class DConnectCodegen {
             new Codegen() {
                 @Override
                 public File writeToFile(final String filename, final String contents) throws IOException {
-                    // LICENSE ファイルは出力させない
+                    // 不要なファイルは出力させない
                     if (filename != null) {
-                        if (filename.endsWith("LICENSE") || filename.endsWith(".swagger-codegen-ignore")) {
+                        if (filename.endsWith("VERSION")
+                            || filename.endsWith("LICENSE")
+                            || filename.endsWith(".swagger-codegen-ignore")) {
                             return null;
                         }
                     }
