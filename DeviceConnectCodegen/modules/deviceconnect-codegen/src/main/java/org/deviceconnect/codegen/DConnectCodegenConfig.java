@@ -21,6 +21,10 @@ public interface DConnectCodegenConfig extends CodegenConfig {
 
     void setProfileSpecs(Map<String, Swagger> profileSpecs);
 
+    Swagger getOriginalSwagger();
+
+    void setOriginalSwagger(Swagger swagger);
+
     String getDefaultDisplayName();
 
     ValidationResultSet validateOptions(CommandLine cmd, ClientOpts clientOpts);

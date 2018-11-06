@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
 
+    protected Swagger originalSwagger;
+
     protected Map<String, Swagger> profileSpecs;
 
     protected abstract String profileFileFolder();
@@ -39,6 +41,16 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
     @Override
     public void setProfileSpecs(final Map<String, Swagger> profileSpecs) {
         this.profileSpecs = profileSpecs;
+    }
+
+    @Override
+    public Swagger getOriginalSwagger() {
+        return this.originalSwagger;
+    }
+
+    @Override
+    public void setOriginalSwagger(final Swagger swagger) {
+        this.originalSwagger = swagger;
     }
 
     @Override

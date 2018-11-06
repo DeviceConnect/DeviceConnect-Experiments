@@ -17,14 +17,20 @@ import io.swagger.codegen.SupportingFile;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.CommandLine;
+import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.ValidationResultSet;
 
 import java.util.Map;
 
-public class HtmlAppCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
+public class HtmlAppCodegenConfig extends AbstractCodegenConfig implements DConnectCodegenConfig {
 
     private Map<String, Swagger> profileSpecs;
+
+    @Override
+    protected String profileFileFolder() {
+        return null; // Not be used.
+    }
 
     @Override
     public ValidationResultSet validateOptions(final CommandLine cmd, final ClientOpts clientOpts) {

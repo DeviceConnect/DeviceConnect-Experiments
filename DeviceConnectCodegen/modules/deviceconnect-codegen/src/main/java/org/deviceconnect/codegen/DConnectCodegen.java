@@ -266,6 +266,7 @@ public class DConnectCodegen {
             profile.setPaths(subPaths);
         }
         config.setProfileSpecs(profiles);
+        config.setOriginalSwagger(swagger);
     }
 
     private static void parseSwaggerFromDirectory(File dir,
@@ -303,7 +304,9 @@ public class DConnectCodegen {
             checkProfileName(config, profileName);
         }
         config.setProfileSpecs(profileSpecs);
-        clientOptInput.swagger(mergeSwaggers(profileSpecs));
+        Swagger swagger = mergeSwaggers(profileSpecs);
+        config.setOriginalSwagger(swagger);
+        clientOptInput.swagger(swagger);
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {

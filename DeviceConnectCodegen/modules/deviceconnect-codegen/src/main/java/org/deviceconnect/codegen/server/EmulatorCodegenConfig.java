@@ -15,16 +15,15 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.sun.org.apache.xml.internal.utils.Hashtree2Node;
 import io.swagger.codegen.*;
 import io.swagger.models.*;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Yaml;
 import org.apache.commons.cli.CommandLine;
+import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.ValidationResultSet;
 
@@ -40,7 +39,7 @@ import java.util.*;
  * This class is implemented by modification of NodeJSServerCodegen class.
  * </p>
  */
-public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
+public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DConnectCodegenConfig {
 
     private Map<String, Swagger> profileSpecs;
 
@@ -48,6 +47,10 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
     protected int serverPort = 4035;
     protected String projectName = "swagger-server";
 
+    @Override
+    protected String profileFileFolder() {
+        return null; // Not be used.
+    }
 
     public EmulatorCodegenConfig() {
         super();
@@ -241,7 +244,7 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
 
     private void checkPaths(final Swagger swagger) {
         List<Object> pathList = new ArrayList<>();
-        final String basePath = swagger.getBasePath();
+       final String basePath = swagger.getBasePath();
         Map<String, Path> paths = swagger.getPaths();
         if (paths != null) {
             for (final Iterator<String> it = paths.keySet().iterator(); it.hasNext(); ) {
@@ -408,7 +411,7 @@ public class EmulatorCodegenConfig extends DefaultCodegen implements DConnectCod
 
     @Override
     public Map<String, Object> postProcessSupportingFileData(Map<String, Object> objs) {
-        Swagger swagger = (Swagger)objs.get("swagger");
+        Swagger swagger = getOriginalSwagger();
         if(swagger != null) {
             try {
                 SimpleModule module = new SimpleModule();
