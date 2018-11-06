@@ -285,7 +285,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
     }
 
     private Object createEventDocument(final Swagger swagger, final Operation operation) {
-        DConnectOperation dConnectOperation = DConnectOperation.parse(swagger, operation);
+        DConnectOperation dConnectOperation = DConnectOperation.parse(operation);
         if (dConnectOperation == null) {
             return null;
         }

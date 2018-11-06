@@ -26,6 +26,7 @@ import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.DConnectCodegenConfig;
 import org.deviceconnect.codegen.ValidationResultSet;
+import org.deviceconnect.codegen.models.DConnectOperation;
 
 import java.io.File;
 import java.io.IOException;
@@ -276,17 +277,20 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
                         if (method == HttpMethod.PUT) {
                             try {
                                 Operation operation = operationMap.get(method);
-                                JsonNode event = (JsonNode) operation.getVendorExtensions().get("x-event");
-                                if (event != null) {
-                                    JsonNode examples = event.get("examples");
-                                    if (examples != null) {
-                                        JsonNode json = examples.get("application/json");
-                                        if (json != null) {
-                                            final String eventJson = mapper.writeValueAsString(json);
-                                            eventList.add(new Object() {
-                                                String key = (basePath + pathname).toLowerCase();
-                                                String json = eventJson;
-                                            });
+                                DConnectOperation dConnectOperation = DConnectOperation.parse(operation);
+                                if (dConnectOperation != null) {
+                                    Response event = dConnectOperation.getEventModel();
+                                    if (event != null) {
+                                        Map<String, Object> examples = event.getExamples();
+                                        if (examples != null) {
+                                            Object json = examples.get("application/json");
+                                            if (json != null) {
+                                                final String eventJson = mapper.writeValueAsString(json);
+                                                eventList.add(new Object() {
+                                                    String key = (basePath + pathname).toLowerCase();
+                                                    String json = eventJson;
+                                                });
+                                            }
                                         }
                                     }
                                 }

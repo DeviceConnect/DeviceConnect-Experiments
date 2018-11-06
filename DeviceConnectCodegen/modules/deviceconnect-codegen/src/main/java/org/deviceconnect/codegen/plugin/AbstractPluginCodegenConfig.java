@@ -114,7 +114,7 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
 
             for (Map.Entry<HttpMethod, Operation> operationEntry : path.getOperationMap().entrySet()) {
                 HttpMethod method = operationEntry.getKey();
-                DConnectOperation operation = DConnectOperation.parse(swagger, operationEntry.getValue());
+                DConnectOperation operation = DConnectOperation.parse(operationEntry.getValue());
 
                 final Map<String, Object> api = new HashMap<>();
                 final String interfaceName = dConnectPath.getInterfaceName();

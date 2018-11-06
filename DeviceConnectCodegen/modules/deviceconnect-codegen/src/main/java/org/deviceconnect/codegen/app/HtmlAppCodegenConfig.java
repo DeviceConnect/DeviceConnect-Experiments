@@ -15,7 +15,6 @@ import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.DefaultCodegen;
 import io.swagger.codegen.SupportingFile;
 import io.swagger.models.Swagger;
-import io.swagger.parser.SwaggerParser;
 import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.AbstractCodegenConfig;
 import org.deviceconnect.codegen.DConnectCodegenConfig;

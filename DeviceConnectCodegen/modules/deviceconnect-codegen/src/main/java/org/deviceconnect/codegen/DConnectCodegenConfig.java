@@ -12,7 +12,6 @@ import io.swagger.codegen.CodegenConfig;
 import io.swagger.models.Swagger;
 import org.apache.commons.cli.CommandLine;
 
-import java.io.File;
 import java.util.Map;
 
 public interface DConnectCodegenConfig extends CodegenConfig {

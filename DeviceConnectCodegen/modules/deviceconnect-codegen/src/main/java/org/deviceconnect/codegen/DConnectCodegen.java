@@ -7,6 +7,7 @@
 package org.deviceconnect.codegen;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -19,6 +20,7 @@ import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
+import io.swagger.util.Json;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
@@ -266,7 +268,7 @@ public class DConnectCodegen {
             profile.setPaths(subPaths);
         }
         config.setProfileSpecs(profiles);
-        config.setOriginalSwagger(swagger);
+        config.setOriginalSwagger(cloneSwagger(swagger));
     }
 
     private static void parseSwaggerFromDirectory(File dir,
@@ -305,8 +307,20 @@ public class DConnectCodegen {
         }
         config.setProfileSpecs(profileSpecs);
         Swagger swagger = mergeSwaggers(profileSpecs);
-        config.setOriginalSwagger(swagger);
+        config.setOriginalSwagger(cloneSwagger(swagger));
         clientOptInput.swagger(swagger);
+    }
+
+    protected static JsonNode convertToNode(final Swagger swagger) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        String jsonAsString = mapper.writeValueAsString(swagger);
+        return mapper.readTree(jsonAsString);
+    }
+
+    private static Swagger cloneSwagger(final Swagger swagger) throws IOException {
+        JsonNode json = convertToNode(swagger);
+        return Json.mapper().convertValue(json, Swagger.class);
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
