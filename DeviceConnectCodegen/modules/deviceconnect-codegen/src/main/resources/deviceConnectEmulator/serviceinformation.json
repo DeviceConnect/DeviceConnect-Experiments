@@ -12,6 +12,7 @@
                 "x-type": "one-shot",
                 "summary": "",
                 "description": "",
+                "operationId": "serviceInformationGet",
                 "parameters": [
                     {
                         "name": "serviceId",
