@@ -183,6 +183,33 @@
                 }
             ]
         },
+        "AccelerationInfo": {
+            "type": "object",
+            "title": "加速度",
+            "description": "加速度のオブジェクト。",
+            "required": [
+                "x",
+                "y",
+                "z"
+            ],
+            "properties": {
+                "x": {
+                    "type": "number",
+                    "title": "x軸成分",
+                    "description": "x軸方向への加速度（m/s2）。"
+                },
+                "y": {
+                    "type": "number",
+                    "title": "y軸成分",
+                    "description": "y軸方向への加速度（m/s2）。"
+                },
+                "z": {
+                    "type": "number",
+                    "title": "z軸成分",
+                    "description": "z軸方向への加速度（m/s2）。"
+                }
+            }
+        },
         "DeviceOrientationInfo": {
             "type": "object",
             "required": [
@@ -203,31 +230,7 @@
                             "description": "インターバル (単位: ミリ秒)"
                         },
                         "acceleration": {
-                            "type": "object",
-                            "title": "加速度",
-                            "description": "加速度のオブジェクト。",
-                            "required": [
-                                "x",
-                                "y",
-                                "z"
-                            ],
-                            "properties": {
-                                "x": {
-                                    "type": "number",
-                                    "title": "x軸成分",
-                                    "description": "x軸方向への加速度（m/s2）。"
-                                },
-                                "y": {
-                                    "type": "number",
-                                    "title": "y軸成分",
-                                    "description": "y軸方向への加速度（m/s2）。"
-                                },
-                                "z": {
-                                    "type": "number",
-                                    "title": "z軸成分",
-                                    "description": "z軸方向への加速度（m/s2）。"
-                                }
-                            }
+                            "$ref": "#/definitions/AccelerationInfo"
                         },
                         "accelerationIncludingGravity": {
                             "type": "object",

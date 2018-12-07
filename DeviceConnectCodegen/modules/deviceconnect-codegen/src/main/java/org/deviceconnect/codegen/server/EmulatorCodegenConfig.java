@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import io.swagger.codegen.*;
 import io.swagger.models.*;
+import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
@@ -522,8 +523,14 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             if (!jsonPointers.contains(jsonPointer)) {
                 jsonPointers.add(jsonPointer);
             }
-        } else {
-            // TODO オブジェクトプロパティもトレースする.
+        } else if (property instanceof ObjectProperty) {
+            ObjectProperty object = (ObjectProperty) property;
+            Map<String, Property> properties = object.getProperties();
+            if (properties != null) {
+                for (Map.Entry<String, Property> entry : properties.entrySet()) {
+                    collectReferencesFromProperty(entry.getValue(), jsonPointers);
+                }
+            }
         }
     }
 
@@ -541,8 +548,13 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             if (!jsonPointers.contains(jsonPointer)) {
                 jsonPointers.add(jsonPointer);
             }
-        } else {
-            // TODO オブジェクトプロパティもトレースする.
+        }
+
+        Map<String, Property> properties = model.getProperties();
+        if (properties != null) {
+            for (Map.Entry<String, Property> entry : properties.entrySet()) {
+                collectReferencesFromProperty(entry.getValue(), jsonPointers);
+            }
         }
     }
 
