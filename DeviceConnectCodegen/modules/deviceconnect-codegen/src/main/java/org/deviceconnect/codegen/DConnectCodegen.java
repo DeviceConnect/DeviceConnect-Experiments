@@ -7,7 +7,6 @@
 package org.deviceconnect.codegen;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -20,12 +19,12 @@ import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
-import io.swagger.util.Json;
 import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
 import org.deviceconnect.codegen.util.SwaggerJsonValidator;
+import org.deviceconnect.codegen.util.SwaggerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +267,7 @@ public class DConnectCodegen {
             profile.setPaths(subPaths);
         }
         config.setProfileSpecs(profiles);
-        config.setOriginalSwagger(cloneSwagger(swagger));
+        config.setOriginalSwagger(SwaggerUtils.cloneSwagger(swagger));
     }
 
     private static void parseSwaggerFromDirectory(File dir,
@@ -307,20 +306,8 @@ public class DConnectCodegen {
         }
         config.setProfileSpecs(profileSpecs);
         Swagger swagger = mergeSwaggers(profileSpecs);
-        config.setOriginalSwagger(cloneSwagger(swagger));
+        config.setOriginalSwagger(SwaggerUtils.cloneSwagger(swagger));
         clientOptInput.swagger(swagger);
-    }
-
-    protected static JsonNode convertToNode(final Swagger swagger) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        String jsonAsString = mapper.writeValueAsString(swagger);
-        return mapper.readTree(jsonAsString);
-    }
-
-    private static Swagger cloneSwagger(final Swagger swagger) throws IOException {
-        JsonNode json = convertToNode(swagger);
-        return Json.mapper().convertValue(json, Swagger.class);
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
@@ -480,6 +467,18 @@ public class DConnectCodegen {
         info.setTitle("Device Connect");
         info.setVersion("1.0.0");
         merged.setInfo(info);
+
+        // consumes
+        List<String> consumes = new ArrayList<>();
+        for (Map.Entry<String, Swagger> entry : swaggerMap.entrySet()) {
+            Swagger swagger = entry.getValue();
+            for (String mimeType : swagger.getConsumes()) {
+                if (!consumes.contains(mimeType)) {
+                    consumes.add(mimeType);
+                }
+            }
+        }
+        merged.setConsumes(consumes);
 
         // paths
         Map<String, Path> paths = new HashMap<>();

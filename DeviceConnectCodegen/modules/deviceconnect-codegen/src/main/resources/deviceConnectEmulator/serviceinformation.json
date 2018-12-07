@@ -6,6 +6,7 @@
         "description": ""
     },
     "consumes": [],
+    "basePath": "/gotapi/serviceInformation",
     "paths": {
         "/": {
             "get": {

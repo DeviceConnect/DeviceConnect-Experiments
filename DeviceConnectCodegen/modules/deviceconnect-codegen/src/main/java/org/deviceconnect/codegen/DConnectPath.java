@@ -144,4 +144,16 @@ public class DConnectPath {
     public String toString() {
         return getPath();
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof DConnectPath)) {
+            return false;
+        }
+        DConnectPath that = (DConnectPath) o;
+        return that.pathExp.equalsIgnoreCase(this.pathExp);
+    }
 }

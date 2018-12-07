@@ -20,13 +20,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import io.swagger.codegen.*;
 import io.swagger.models.*;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
+import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.commons.cli.CommandLine;
-import org.deviceconnect.codegen.AbstractCodegenConfig;
-import org.deviceconnect.codegen.DConnectCodegenConfig;
-import org.deviceconnect.codegen.ValidationResultSet;
+import org.deviceconnect.codegen.*;
 import org.deviceconnect.codegen.models.DConnectOperation;
+import org.deviceconnect.codegen.util.SwaggerUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -211,13 +213,20 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             }
         }
 
+        modifySwagger(swagger);
+    }
+
+    private void modifySwagger(Swagger swagger) {
         appendAvailability(swagger);
         appendAuthorization(swagger);
         appendServiceDiscovery(swagger);
         appendServiceInformation(swagger);
         checkPaths(swagger);
         checkEvents(swagger);
+        appendControllers(swagger);
+    }
 
+    private void appendControllers(Swagger swagger) {
         // need vendor extensions for x-swagger-router-controller
         Map<String, Path> paths = swagger.getPaths();
         if(paths != null) {
@@ -313,7 +322,7 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             Path path = authorizationSpec.getPath("/");
 
             Map<String, Path> paths = allSpecs.getPaths();
-            paths.put("/availability", path);
+            paths.put("/gotapi/availability", path);
             allSpecs.setPaths(paths);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -328,8 +337,8 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             Path accessTokenPath = authorizationSpec.getPath("/accessToken");
 
             Map<String, Path> paths = allSpecs.getPaths();
-            paths.put("/authorization/grant", grantPath);
-            paths.put("/authorization/accessToken", accessTokenPath);
+            paths.put("/gotapi/authorization/grant", grantPath);
+            paths.put("/gotapi/authorization/accessToken", accessTokenPath);
             allSpecs.setPaths(paths);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -348,12 +357,16 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             for (String key : profileSpecs.keySet()) {
                 scopes.add(key);
             }
+            scopes.add("availability");
+            scopes.add("authorization");
+            scopes.add("serviceDiscovery");
+            scopes.add("serviceInformation");
             Collections.sort(scopes);
             Map<String, Object> service = (Map<String, Object>) ((List<Object>) example.get("services")).get(0);
             service.put("scopes", scopes);
 
             Map<String, Path> paths = allSpecs.getPaths();
-            paths.put("/serviceDiscovery", path);
+            paths.put("/gotapi/serviceDiscovery", path);
             allSpecs.setPaths(paths);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -372,21 +385,150 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
             for (String key : profileSpecs.keySet()) {
                 supports.add(key);
             }
+            supports.add("availability");
+            supports.add("authorization");
+            supports.add("serviceDiscovery");
+            supports.add("serviceInformation");
             Collections.sort(supports);
             example.put("supports", supports);
 
             // supportsApiプロパティの初期化
             Map<String, Object> supportApis = new LinkedHashMap<>();
             for (String profileName : supports) {
-                supportApis.put(profileName, convertToMap(profileSpecs.get(profileName)));
+                Swagger filtered = filterSwaggerWithProfileName(allSpecs, profileName);
+                supportApis.put(profileName, convertToMap(filtered));
             }
             example.put("supportApis", supportApis);
 
             Map<String, Path> paths = allSpecs.getPaths();
-            paths.put("/serviceInformation", path);
+            paths.put("/gotapi/serviceInformation", path);
             allSpecs.setPaths(paths);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static Swagger filterSwaggerWithProfileName(final Swagger swagger, final String profileName) throws IOException {
+        try {
+            LOGGER.info("filterSwaggerWithProfileName: " + profileName);
+
+            Swagger filtered = SwaggerUtils.cloneSwagger(swagger);
+            Map<String, Path> paths = filtered.getPaths();
+            String basePath = swagger.getBasePath();
+
+            // 不要なAPI定義を削除する.
+            for (Iterator<Map.Entry<String, Path>> it = paths.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<String, Path> entry = it.next();
+                LOGGER.debug("Filter API: basePath=" + basePath + ", path=" + entry.getKey());
+                DConnectPath otherPath = DConnectPath.parsePath(basePath, entry.getKey());
+                if (!otherPath.getProfileName().equals(profileName)) {
+                    it.remove();
+                }
+            }
+
+            // 不要なModel定義を削除する.
+            deleteUnusedDefinitions(filtered);
+
+            return filtered;
+        } catch (IllegalPathFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void deleteUnusedDefinitions(final Swagger swagger) {
+        Map<String, Model> definitions = swagger.getDefinitions();
+        if (definitions != null) {
+            List<String> used = new LinkedList<>();
+
+            Map<String, Path> paths = swagger.getPaths();
+            if (paths != null) {
+                for (Map.Entry<String, Path> path : paths.entrySet()) {
+                    Map<HttpMethod, Operation> operations = path.getValue().getOperationMap();
+                    if (operations != null) {
+                        for (Map.Entry<HttpMethod, Operation> operation : operations.entrySet()) {
+                            Map<String, Response> responses = operation.getValue().getResponses();
+                            if (responses != null) {
+                                for (Map.Entry<String, Response> response : responses.entrySet()) {
+                                    Property schema = response.getValue().getSchema();
+                                    // レスポンス定義
+                                    collectReferencesFromProperty(schema, used);
+                                }
+                            }
+
+                            Map<String, Object> extensions = operation.getValue().getVendorExtensions();
+                            if (extensions != null) {
+                                Object typeObj = extensions.get("x-type");
+                                if (typeObj != null && typeObj.equals("event")) {
+                                    Object eventObj = extensions.get("x-event");
+                                    if (eventObj != null && eventObj instanceof Map) {
+                                        Map<String, Object> event = (Map<String, Object>) eventObj;
+                                        Object schemaObj = event.get("schema");
+                                        if (schemaObj != null && schemaObj instanceof Map) {
+                                            // イベント定義
+                                            Map<String, Object> schema = (Map<String, Object>) schemaObj;
+                                            Object refObj = schema.get("$ref");
+                                            if (refObj instanceof String && !used.contains(refObj)) {
+                                                String ref = (String) refObj;
+                                                String prefix = "#/definitions/";
+                                                if (ref.startsWith(prefix)) {
+                                                    ref = ref.substring(prefix.length());
+                                                    used.add(ref);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            for (int i = 0; i < used.size(); i++) {
+                String key = used.get(i);
+                collectReferencesFromModel(definitions.get(key), used);
+            }
+
+            List<String> unused = new LinkedList<>(definitions.keySet());
+            unused.removeAll(used);
+            for (String key : unused) {
+                LOGGER.debug("Unused: " + key);
+                definitions.remove(key);
+            }
+        }
+    }
+
+    private static void collectReferencesFromProperty(final Property property,
+                                                      final List<String> jsonPointers) {
+        LOGGER.debug("Property: Class=" + property.getClass());
+        if (property instanceof RefProperty) {
+            RefProperty ref = (RefProperty) property;
+            String jsonPointer = ref.getSimpleRef();
+            if (!jsonPointers.contains(jsonPointer)) {
+                jsonPointers.add(jsonPointer);
+            }
+        } else {
+            // TODO オブジェクトプロパティもトレースする.
+        }
+    }
+
+    private static void collectReferencesFromModel(final Model model,
+                                                   final List<String> jsonPointers) {
+        LOGGER.debug("Model: Title=" + model.getTitle() + ", Class=" + model.getClass());
+        if (model instanceof ComposedModel) {
+            ComposedModel composed = (ComposedModel) model;
+            for (Model m : composed.getAllOf()) {
+                collectReferencesFromModel(m, jsonPointers);
+            }
+        } else if (model instanceof RefModel) {
+            RefModel ref = (RefModel) model;
+            String jsonPointer = ref.getSimpleRef();
+            if (!jsonPointers.contains(jsonPointer)) {
+                jsonPointers.add(jsonPointer);
+            }
+        } else {
+            // TODO オブジェクトプロパティもトレースする.
         }
     }
 
@@ -416,7 +558,9 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
     @Override
     public Map<String, Object> postProcessSupportingFileData(Map<String, Object> objs) {
         Swagger swagger = getOriginalSwagger();
-        if(swagger != null) {
+        if (swagger != null) {
+            modifySwagger(swagger);
+
             try {
                 SimpleModule module = new SimpleModule();
                 module.addSerializer(Double.class, new JsonSerializer<Double>() {
