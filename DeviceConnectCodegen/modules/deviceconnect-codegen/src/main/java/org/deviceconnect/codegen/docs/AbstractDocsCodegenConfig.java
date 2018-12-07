@@ -68,7 +68,6 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                 basePath = "/gotapi/" + profileKey;
                 profileName = profileKey;
             } else {
-                System.out.println("basePath: " + basePath);
                 profileName = basePath.split("/")[2];
             }
 

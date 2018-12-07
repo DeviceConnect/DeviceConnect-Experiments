@@ -469,16 +469,19 @@ public class DConnectCodegen {
         merged.setInfo(info);
 
         // consumes
-        List<String> consumes = new ArrayList<>();
+        List<String> allConsumes = new ArrayList<>();
         for (Map.Entry<String, Swagger> entry : swaggerMap.entrySet()) {
             Swagger swagger = entry.getValue();
-            for (String mimeType : swagger.getConsumes()) {
-                if (!consumes.contains(mimeType)) {
-                    consumes.add(mimeType);
+            List<String> consumes = swagger.getConsumes();
+            if (consumes != null) {
+                for (String mimeType : consumes) {
+                    if (!allConsumes.contains(mimeType)) {
+                        allConsumes.add(mimeType);
+                    }
                 }
             }
         }
-        merged.setConsumes(consumes);
+        merged.setConsumes(allConsumes);
 
         // paths
         Map<String, Path> paths = new HashMap<>();
