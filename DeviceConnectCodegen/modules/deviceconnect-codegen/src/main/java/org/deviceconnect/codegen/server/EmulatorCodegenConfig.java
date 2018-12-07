@@ -24,7 +24,6 @@ import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
-import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.commons.cli.CommandLine;
 import org.deviceconnect.codegen.*;

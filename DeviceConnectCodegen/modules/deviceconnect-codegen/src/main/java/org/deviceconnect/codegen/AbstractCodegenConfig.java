@@ -58,6 +58,11 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
         return input.replace("*/", "*_/").replace("/*", "/_*");
     }
 
+    @Override
+    public String escapeQuotationMark(final String input) {
+        return input.replace("\"", "\\\"");
+    }
+
     protected static String toUpperCapital(final String str, final boolean onlyFirstChar) {
         StringBuffer buf = new StringBuffer(str.length());
         buf.append(str.substring(0, 1).toUpperCase());
