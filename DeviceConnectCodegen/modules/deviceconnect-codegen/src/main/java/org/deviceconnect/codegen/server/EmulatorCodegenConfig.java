@@ -254,16 +254,24 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
 
     private void checkPaths(final Swagger swagger) {
         List<Object> pathList = new ArrayList<>();
-       final String basePath = swagger.getBasePath();
+        final String basePath = swagger.getBasePath();
         Map<String, Path> paths = swagger.getPaths();
         if (paths != null) {
             for (final Iterator<String> it = paths.keySet().iterator(); it.hasNext(); ) {
-                final String path = it.next();
-                final boolean hasNext = it.hasNext();
-                pathList.add(new Object() {
-                    String path() { return basePath + path; }
-                    boolean hasNext() { return hasNext; }
-                });
+                try {
+                    final String path = it.next();
+                    final DConnectPath dConnectPath = DConnectPath.parsePath(basePath, path);
+                    final boolean hasNext = it.hasNext();
+                    pathList.add(new Object() {
+                        String path() {
+                            return dConnectPath.getPath();
+                        }
+                        boolean hasNext() { return hasNext; }
+                    });
+                } catch (IllegalPathFormatException e) {
+                    // Fix bug.
+                    throw new RuntimeException(e);
+                }
             }
         }
         additionalProperties.put("pathList", pathList);
@@ -286,7 +294,7 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
                         if (method == HttpMethod.PUT) {
                             try {
                                 Operation operation = operationMap.get(method);
-                                DConnectOperation dConnectOperation = DConnectOperation.parse(operation);
+                                final DConnectOperation dConnectOperation = DConnectOperation.parse(operation);
                                 if (dConnectOperation != null) {
                                     Response event = dConnectOperation.getEventModel();
                                     if (event != null) {
@@ -294,11 +302,17 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
                                         if (examples != null) {
                                             Object json = examples.get("application/json");
                                             if (json != null) {
-                                                final String eventJson = mapper.writeValueAsString(json);
-                                                eventList.add(new Object() {
-                                                    String key = (basePath + pathname).toLowerCase();
-                                                    String json = eventJson;
-                                                });
+                                                try {
+                                                    final String eventJson = mapper.writeValueAsString(json);
+                                                    final DConnectPath dConnectPath = DConnectPath.parsePath(basePath, pathname);
+                                                    eventList.add(new Object() {
+                                                        String key = dConnectPath.getPath().toLowerCase();
+                                                        String json = eventJson;
+                                                    });
+                                                } catch (IllegalPathFormatException e) {
+                                                    // Fix bug
+                                                    throw new RuntimeException(e);
+                                                }
                                             }
                                         }
                                     }
@@ -410,7 +424,7 @@ public class EmulatorCodegenConfig extends AbstractCodegenConfig implements DCon
 
     private static Swagger filterSwaggerWithProfileName(final Swagger swagger, final String profileName) throws IOException {
         try {
-            LOGGER.info("filterSwaggerWithProfileName: " + profileName);
+            LOGGER.debug("filterSwaggerWithProfileName: " + profileName);
 
             Swagger filtered = SwaggerUtils.cloneSwagger(swagger);
             Map<String, Path> paths = filtered.getPaths();

@@ -52,7 +52,7 @@ class MultipleSwaggerConverter {
             String pathName = entry.getKey();
             DConnectPath path = DConnectPath.parsePath(basePath, pathName);
             counter.count(path.toCanonicalPathName());
-            LOGGER.info("Base Path: " + path.getBathPath() + ", Sub Path: " + path.getSubPath() + ", Profile: " + path.getProfileName());
+            LOGGER.debug("Base Path: " + path.getBathPath() + ", Sub Path: " + path.getSubPath() + ", Profile: " + path.getProfileName());
 
             String key = path.getProfileName();
             Swagger cache = result.get(key);
