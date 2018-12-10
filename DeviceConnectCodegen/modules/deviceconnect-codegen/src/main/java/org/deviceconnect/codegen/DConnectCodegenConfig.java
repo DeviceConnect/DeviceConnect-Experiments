@@ -12,7 +12,6 @@ import io.swagger.codegen.CodegenConfig;
 import io.swagger.models.Swagger;
 import org.apache.commons.cli.CommandLine;
 
-import java.io.File;
 import java.util.Map;
 
 public interface DConnectCodegenConfig extends CodegenConfig {
@@ -20,6 +19,10 @@ public interface DConnectCodegenConfig extends CodegenConfig {
     Map<String, Swagger> getProfileSpecs();
 
     void setProfileSpecs(Map<String, Swagger> profileSpecs);
+
+    Swagger getOriginalSwagger();
+
+    void setOriginalSwagger(Swagger swagger);
 
     String getDefaultDisplayName();
 

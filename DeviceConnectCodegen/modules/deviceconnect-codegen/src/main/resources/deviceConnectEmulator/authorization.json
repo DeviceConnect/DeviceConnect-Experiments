@@ -6,12 +6,14 @@
         "description": ""
     },
     "consumes": [],
+    "basePath": "/gotapi/authorization",
     "paths": {
         "/grant": {
             "get": {
                 "x-type": "one-shot",
                 "summary": "",
                 "description": "",
+                "operationId": "authorizationGrantGet",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -36,6 +38,7 @@
                 "x-type": "one-shot",
                 "summary": "",
                 "description": "",
+                "operationId": "authorizationAccessTokenGet",
                 "parameters": [
                     {
                         "name": "clientId",

@@ -270,6 +270,9 @@ var main = (function(parent, global) {
 
     function createDConnectPath(basePath, path) {
         if (basePath !== undefined) {
+        	if (basePath === '/') {
+                basePath = '';
+        	}
             return basePath + path;
         }
         if (path === '/') {

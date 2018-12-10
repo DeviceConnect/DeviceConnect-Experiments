@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractCodegenConfig extends DefaultCodegen implements DConnectCodegenConfig {
 
+    protected Swagger originalSwagger;
+
     protected Map<String, Swagger> profileSpecs;
 
     protected abstract String profileFileFolder();
@@ -42,8 +44,23 @@ public abstract class AbstractCodegenConfig extends DefaultCodegen implements DC
     }
 
     @Override
+    public Swagger getOriginalSwagger() {
+        return this.originalSwagger;
+    }
+
+    @Override
+    public void setOriginalSwagger(final Swagger swagger) {
+        this.originalSwagger = swagger;
+    }
+
+    @Override
     public String escapeUnsafeCharacters(final String input) {
         return input.replace("*/", "*_/").replace("/*", "/_*");
+    }
+
+    @Override
+    public String escapeQuotationMark(final String input) {
+        return input.replace("\"", "\\\"");
     }
 
     protected static String toUpperCapital(final String str, final boolean onlyFirstChar) {

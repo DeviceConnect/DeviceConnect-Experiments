@@ -68,7 +68,6 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                 basePath = "/gotapi/" + profileKey;
                 profileName = profileKey;
             } else {
-                System.out.println("basePath: " + basePath);
                 profileName = basePath.split("/")[2];
             }
 
@@ -149,6 +148,13 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
                         }
                         Object response = createResponseDocument(profileSpec, op);
                         Object event = createEventDocument(profileSpec, op);
+                        String tag() {
+                            String tag = this.name;
+                            tag = tag.toLowerCase();
+                            tag = tag.replaceAll(" ", "-");  // 半角スペース -> 半角ハイフン
+                            tag = tag.replaceAll("/", "");  // 半角スラッシュ -> 空文字
+                            return tag;
+                        }
                     });
                 }
             }
@@ -278,7 +284,7 @@ public abstract class AbstractDocsCodegenConfig extends AbstractCodegenConfig {
     }
 
     private Object createEventDocument(final Swagger swagger, final Operation operation) {
-        DConnectOperation dConnectOperation = DConnectOperation.parse(swagger, operation);
+        DConnectOperation dConnectOperation = DConnectOperation.parse(operation);
         if (dConnectOperation == null) {
             return null;
         }

@@ -207,38 +207,6 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
     }
 
     @Override
-    public String toModelName(String name) {
-        // add prefix, suffix if needed
-        if (!StringUtils.isEmpty(modelNamePrefix)) {
-            name = modelNamePrefix + "_" + name;
-        }
-
-        if (!StringUtils.isEmpty(modelNameSuffix)) {
-            name = name + "_" + modelNameSuffix;
-        }
-
-        // camelize the model name
-        // phone_number => PhoneNumber
-        name = camelize(sanitizeName(name));
-
-        // model name cannot use reserved keyword, e.g. return
-        if (isReservedWord(name)) {
-            String modelName = "Model" + name;
-            LOGGER.warn(name + " (reserved word) cannot be used as model name. Renamed to " + modelName);
-            return modelName;
-        }
-
-        // model name starts with number
-        if (name.matches("^\\d.*")) {
-            String modelName = "Model" + name; // e.g. 200Response => Model200Response (after camelize)
-            LOGGER.warn(name + " (model name starts with number) cannot be used as model name. Renamed to " + modelName);
-            return modelName;
-        }
-
-        return name;
-    }
-
-    @Override
     public String toParamName(String name) {
         // should be the same as variable name
         return toVarName(name);

@@ -23,7 +23,9 @@ import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
+import org.deviceconnect.codegen.util.SortedSwagger;
 import org.deviceconnect.codegen.util.SwaggerJsonValidator;
+import org.deviceconnect.codegen.util.SwaggerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,9 +205,11 @@ public class DConnectCodegen {
             new Codegen() {
                 @Override
                 public File writeToFile(final String filename, final String contents) throws IOException {
-                    // LICENSE ファイルは出力させない
+                    // 不要なファイルは出力させない
                     if (filename != null) {
-                        if (filename.endsWith("LICENSE") || filename.endsWith(".swagger-codegen-ignore")) {
+                        if (filename.endsWith("VERSION")
+                            || filename.endsWith("LICENSE")
+                            || filename.endsWith(".swagger-codegen-ignore")) {
                             return null;
                         }
                     }
@@ -264,6 +268,7 @@ public class DConnectCodegen {
             profile.setPaths(subPaths);
         }
         config.setProfileSpecs(profiles);
+        config.setOriginalSwagger(SwaggerUtils.cloneSwagger(swagger));
     }
 
     private static void parseSwaggerFromDirectory(File dir,
@@ -301,7 +306,9 @@ public class DConnectCodegen {
             checkProfileName(config, profileName);
         }
         config.setProfileSpecs(profileSpecs);
-        clientOptInput.swagger(mergeSwaggers(profileSpecs));
+        Swagger swagger = mergeSwaggers(profileSpecs);
+        config.setOriginalSwagger(SwaggerUtils.cloneSwagger(swagger));
+        clientOptInput.swagger(swagger);
     }
 
     private static boolean checkSwagger(final File file) throws IOException, ProcessingException {
@@ -355,7 +362,7 @@ public class DConnectCodegen {
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
-        Swagger profile = new Swagger();
+        Swagger profile = new SortedSwagger();
         profile.setSwagger(swagger.getSwagger());
         Info info = new Info();
         info.setTitle(swagger.getInfo().getTitle());
@@ -453,7 +460,7 @@ public class DConnectCodegen {
     }
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
-        Swagger merged = new Swagger();
+        Swagger merged = new SortedSwagger();
         merged.setBasePath("/");
 
         // info
@@ -461,6 +468,21 @@ public class DConnectCodegen {
         info.setTitle("Device Connect");
         info.setVersion("1.0.0");
         merged.setInfo(info);
+
+        // consumes
+        List<String> allConsumes = new ArrayList<>();
+        for (Map.Entry<String, Swagger> entry : swaggerMap.entrySet()) {
+            Swagger swagger = entry.getValue();
+            List<String> consumes = swagger.getConsumes();
+            if (consumes != null) {
+                for (String mimeType : consumes) {
+                    if (!allConsumes.contains(mimeType)) {
+                        allConsumes.add(mimeType);
+                    }
+                }
+            }
+        }
+        merged.setConsumes(allConsumes);
 
         // paths
         Map<String, Path> paths = new HashMap<>();
