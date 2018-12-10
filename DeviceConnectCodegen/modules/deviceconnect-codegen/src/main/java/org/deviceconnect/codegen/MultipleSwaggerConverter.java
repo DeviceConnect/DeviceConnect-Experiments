@@ -11,6 +11,7 @@ import io.swagger.models.Info;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import org.deviceconnect.codegen.util.SortedSwagger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ class MultipleSwaggerConverter {
             String pathName = entry.getKey();
             DConnectPath path = DConnectPath.parsePath(basePath, pathName);
             counter.count(path.toCanonicalPathName());
-            LOGGER.info("Base Path: " + path.getBathPath() + ", Sub Path: " + path.getSubPath() + ", Profile: " + path.getProfileName());
+            LOGGER.debug("Base Path: " + path.getBathPath() + ", Sub Path: " + path.getSubPath() + ", Profile: " + path.getProfileName());
 
             String key = path.getProfileName();
             Swagger cache = result.get(key);
@@ -87,7 +88,7 @@ class MultipleSwaggerConverter {
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
-        Swagger profile = new Swagger();
+        Swagger profile = new SortedSwagger();
         profile.setSwagger(swagger.getSwagger());
         Info info = new Info();
         info.setTitle(swagger.getInfo().getTitle());

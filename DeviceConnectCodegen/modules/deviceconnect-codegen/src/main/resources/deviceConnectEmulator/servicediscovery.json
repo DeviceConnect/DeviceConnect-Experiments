@@ -13,6 +13,7 @@
                 "x-type": "one-shot",
                 "summary": "",
                 "description": "",
+                "operationId": "serviceDiscoveryGet",
                 "parameters": [],
                 "responses": {
                     "200": {

@@ -7,14 +7,14 @@
     <tbody>
         <tr><th>API</th><th>概要</th></tr>
         {{#operationList}}
-        <tr><td><a href="#{{id}}">{{name}}</a></td><td>{{{summary}}}</td></tr>
+        <tr><td><a href="#{{tag}}">{{name}}</a></td><td>{{{summary}}}</td></tr>
         {{/operationList}}
     </tbody>
 </table>
 
 {{#operationList}}
 
-## <a name="{{id}}">{{name}}</a>
+## <a id="{{tag}}">{{name}}</a>
 
 ### 種別
 {{type}}

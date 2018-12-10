@@ -13,6 +13,7 @@
                 "x-type": "one-shot",
                 "summary": "",
                 "description": "",
+                "operationId": "availabilityGet",
                 "parameters": [],
                 "responses": {
                     "200": {
