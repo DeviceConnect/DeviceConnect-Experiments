@@ -33,7 +33,7 @@ DeviceConnect Codegenは、DeviceConnectシステム上で動作するプラグ�
 |samples/profiles-specs|シェルスクリプトのサンプルに入力するプロファイル定義ファイル群。|
 
 ## Get Started
-[deviceconnect-codegen-project-1.7.0-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.7.0) をPC上の任意の場所にダウンロードし、解凍してください。
+[deviceconnect-codegen-project-1.8.2-dist.zip](https://github.com/TakayukiHoshi1984/DeviceConnect-Experiments/releases/tag/codegen-v1.8.2) をPC上の任意の場所にダウンロードし、解凍してください。
 
 解凍後、ターミナルを起動し、以下のコマンドによりをサンプルのスケルトンコードを生成してください。
 
