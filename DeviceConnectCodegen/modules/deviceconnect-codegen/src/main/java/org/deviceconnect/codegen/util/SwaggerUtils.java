@@ -1,3 +1,9 @@
+/*
+ SwaggerUtils.java
+ Copyright (c) 2018 NTT DOCOMO,INC.
+ Released under the MIT license
+ http://opensource.org/licenses/mit-license.php
+ */
 package org.deviceconnect.codegen.util;
 
 
@@ -20,7 +26,7 @@ public final class SwaggerUtils {
 
     public static Swagger cloneSwagger(final Swagger swagger) throws IOException {
         JsonNode json = convertToNode(swagger);
-        return Json.mapper().convertValue(json, Swagger.class);
+        return Json.mapper().convertValue(json, SortedSwagger.class);
     }
 
     private SwaggerUtils() {

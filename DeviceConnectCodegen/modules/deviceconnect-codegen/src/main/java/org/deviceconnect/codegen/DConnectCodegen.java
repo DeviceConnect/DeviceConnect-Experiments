@@ -23,6 +23,7 @@ import org.apache.commons.cli.*;
 import org.deviceconnect.codegen.app.HtmlAppCodegenConfig;
 import org.deviceconnect.codegen.docs.HtmlDocsCodegenConfig;
 import org.deviceconnect.codegen.docs.MarkdownDocsCodegenConfig;
+import org.deviceconnect.codegen.util.SortedSwagger;
 import org.deviceconnect.codegen.util.SwaggerJsonValidator;
 import org.deviceconnect.codegen.util.SwaggerUtils;
 import org.slf4j.Logger;
@@ -361,7 +362,7 @@ public class DConnectCodegen {
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
-        Swagger profile = new Swagger();
+        Swagger profile = new SortedSwagger();
         profile.setSwagger(swagger.getSwagger());
         Info info = new Info();
         info.setTitle(swagger.getInfo().getTitle());
@@ -459,7 +460,7 @@ public class DConnectCodegen {
     }
 
     private static Swagger mergeSwaggers(Map<String, Swagger> swaggerMap) {
-        Swagger merged = new Swagger();
+        Swagger merged = new SortedSwagger();
         merged.setBasePath("/");
 
         // info

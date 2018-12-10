@@ -11,6 +11,7 @@ import io.swagger.models.Info;
 import io.swagger.models.Model;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import org.deviceconnect.codegen.util.SortedSwagger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,7 @@ class MultipleSwaggerConverter {
     }
 
     private static Swagger createProfileSpec(final Swagger swagger) {
-        Swagger profile = new Swagger();
+        Swagger profile = new SortedSwagger();
         profile.setSwagger(swagger.getSwagger());
         Info info = new Info();
         info.setTitle(swagger.getInfo().getTitle());
