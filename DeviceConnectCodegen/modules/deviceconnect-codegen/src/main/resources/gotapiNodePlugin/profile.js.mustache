@@ -5,7 +5,7 @@ let Profile = require('../profile.js');
 let _eventTimerTable = {};
 
 function _startEventTimer(request, task, interval) {
-    if (interval === undefined) {
+    if (interval === null || interval === undefined) {
         interval = 1000;
     }
     _stopEventTimer(request);
@@ -50,7 +50,7 @@ module.exports = new Profile({
                     {{{.}}}
                     {{/events}}
                     util.pushMessage(message);
-                }, interval);
+                }, {{#canSetInterval}}interval{{/canSetInterval}}{{^canSetInterval}}1000{{/canSetInterval}});
                 {{/putApi}}
                 {{#deleteApi}}
                 message.result = 0;
