@@ -256,8 +256,9 @@ Androidプラグインのビルド時に使用される署名情報の保存さ�
 *1: `--input-spec` または `--input-spec-dir` のいずれかを必ず指定すること。両方指定された場合は `--input-spec` が優先される。
 
 ## 開発環境
-### ビルドツール
-Apache Maven 3.3.9+
+### 開発ツール
+- Apache Maven 3.3.9+
+- Python 2.x
 
 ### ビルド方法
 DeviceConnectCodegenのルートディレクトリで下記のコマンドを実行すると、本ツールをビルドできます。
@@ -272,6 +273,25 @@ $ mvn package
 |:--|:--|
 |バイナリ|DeviceConnectCodegen/bin/deviceconnect-codegen.jar|
 |配布用zip|DeviceConnectCodegen/target/deviceconnect-codegen-project-1.8.3-dist.zip|
+
+### バージョン更新
+新しいバージョンを開発する場合は、以下のPython 2.x スクリプトで全体的にバージョン設定を書き換えること。
+
+例: バージョン a.b.c に変更する場合
+
+```
+$ cd DeviceConnect-Experiments/DeviceConnectCodegen
+$ python tools/version.py a.b.c
+```
+
+正常に変更された場合は、以下のログが標準出力される。
+
+```
+Changed: /(略)/DeviceConnect-Experiments/DeviceConnectCodegen/pom.xml
+Changed: /(略)/DeviceConnect-Experiments/DeviceConnectCodegen/modules/deviceconnect-codegen/pom.xml
+Changed: /(略)/DeviceConnect-Experiments/DeviceConnectCodegen/README.md
+Completed
+```
 
 ## 参考リンク
 - [Swagger](http://swagger.io/)
