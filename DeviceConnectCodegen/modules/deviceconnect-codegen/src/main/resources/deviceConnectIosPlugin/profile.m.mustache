@@ -39,10 +39,7 @@
             [response setResult:DConnectMessageResultTypeOk];
 
             // 以下、サンプルのイベントの定期的送信を開始.
-            if (interval == LONG_LONG_MIN) {
-                interval = 1000;
-            }
-            [weakSelf startEventTimer:request interval:interval handler:^{
+            [weakSelf startEventTimer:request interval:{{#canSetInterval}}interval{{/canSetInterval}}{{^canSetInterval}}1000{{/canSetInterval}} handler:^{
                 NSArray *events = [mgr eventListForServiceId:serviceId
                                                      profile:[request profile]
                                                    interface:[request interface]
@@ -91,6 +88,10 @@
 - (void) startEventTimer:(DConnectRequestMessage*)request
                 interval:(long long)interval
                 handler:(dispatch_block_t)handler {
+    if (interval == LONG_LONG_MIN) {
+        interval = 1000;
+    }
+
     NSString *key = [self createTimerKey:request];
     dispatch_source_t _timerSource = (dispatch_source_t) [self timerForKey:key];
 

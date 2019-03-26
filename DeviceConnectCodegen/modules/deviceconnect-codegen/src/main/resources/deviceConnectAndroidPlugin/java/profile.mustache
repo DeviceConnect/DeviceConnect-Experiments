@@ -67,9 +67,6 @@ public class {{profileClass}} extends DConnectProfile {
                 {{/isOneShotApi}}
                 {{#isEventApi}}
                 {{#putApi}}
-                if (interval == null) {
-                    interval = 1000L;
-                }
                 EventError error = EventManager.INSTANCE.addEvent(request);
                 switch (error) {
                     case NONE:
@@ -88,7 +85,7 @@ public class {{profileClass}} extends DConnectProfile {
                                 sendEvent(message, event.getAccessToken());
                             }
                         };
-                        startTimer(taskId, task, interval);
+                        startTimer(taskId, task, {{#canSetInterval}}interval{{/canSetInterval}}{{^canSetInterval}}1000L{{/canSetInterval}});
                         break;
                     case INVALID_PARAMETER:
                         MessageUtils.setInvalidRequestParameterError(response);
@@ -136,11 +133,11 @@ public class {{profileClass}} extends DConnectProfile {
     private final Map<String, TimerTask> mTimerTasks = new ConcurrentHashMap<>();
     private final Timer mTimer = new Timer();
 
-    private void startTimer(final String taskId, final TimerTask task, final long interval) {
+    private void startTimer(final String taskId, final TimerTask task, final Long interval) {
         synchronized (mTimerTasks) {
             stopTimer(taskId);
             mTimerTasks.put(taskId, task);
-            mTimer.scheduleAtFixedRate(task, 0, interval);
+            mTimer.scheduleAtFixedRate(task, 0, interval != null ? interval : 1000L);
         }
     }
 
