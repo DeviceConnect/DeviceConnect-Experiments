@@ -252,6 +252,12 @@ public class AndroidPluginCodegenConfig extends AbstractPluginCodegenConfig {
         // README
         supportingFiles.add(new SupportingFile("README.md.mustache", "", "README.md"));
 
+        // Gradle Wrapper
+        supportingFiles.add(new SupportingFile("gradleFiles/wrapper/gradlew", "", "gradlew"));
+        supportingFiles.add(new SupportingFile("gradleFiles/wrapper/gradlew.bat", "", "gradlew.bat"));
+        supportingFiles.add(new SupportingFile("gradleFiles/wrapper/gradle-wrapper.jar", "gradle/wrapper", "gradle-wrapper.jar"));
+        supportingFiles.add(new SupportingFile("gradleFiles/wrapper/gradle-wrapper.properties", "gradle/wrapper", "gradle-wrapper.properties"));
+
         // ビルド設定ファイル
         supportingFiles.add(new SupportingFile("gradleFiles/settings.gradle.mustache", "", "settings.gradle"));
         String manifest = getManifestTemplateFile();

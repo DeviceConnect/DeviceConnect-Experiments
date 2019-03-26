@@ -1,2 +1,5 @@
 target/
 standard-profile-specs/
+
+!gradlew
+!gradlew.bat

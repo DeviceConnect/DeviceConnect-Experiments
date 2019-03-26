@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.parameters.SerializableParameter;
 import io.swagger.models.properties.RefProperty;
 
 import java.util.List;
@@ -47,6 +48,26 @@ public class DConnectOperation {
 
     public Response getEventModel() {
         return eventModel;
+    }
+
+    public boolean hasIntervalForEvent() {
+        if (getType() != Type.EVENT) {
+            return false;
+        }
+        List<Parameter> params = entity.getParameters();
+        if (params == null) {
+            return false;
+        }
+        for (Parameter param : params) {
+            if ("interval".equals(param.getName())) {
+                if (param instanceof SerializableParameter) {
+                    if ("integer".equals(((SerializableParameter) param).getType())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static DConnectOperation parse(final Operation entity) {

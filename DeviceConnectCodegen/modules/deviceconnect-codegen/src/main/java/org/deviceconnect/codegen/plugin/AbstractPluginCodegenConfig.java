@@ -169,6 +169,7 @@ public abstract class AbstractPluginCodegenConfig extends AbstractCodegenConfig 
                             Response event = operation.getEventModel();
                             if (event != null) {
                                 api.put("events", getEventCreation(swagger, event));
+                                api.put("canSetInterval", operation.hasIntervalForEvent());
                             }
                         }
                         break;
