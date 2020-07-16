@@ -11,7 +11,7 @@
     case dConnect.constants.ErrorCode.TIMEOUT:
       return 'Device Web APIサーバとの通信がタイムアウトしました。';
     case dConnect.constants.ErrorCode.INVALID_ORIGIN:
-      return 'Device Web APIへのアクセスが許可されませんでした。ホワイトリストの設定をご確認ください。';
+      return 'Device Web APIへのアクセスが許可されませんでした。許可リストの設定をご確認ください。';
     case dConnect.constants.ErrorCode.ILLEGAL_DEVICE_STATE:
       return 'デバイス側の状態異常が発生しました。';
     case dConnect.constants.ErrorCode.ILLEGAL_SERVER_STATE:

@@ -343,7 +343,7 @@ public class Utils {
                             DConnectHelper.DConnectHelperException e = (DConnectHelper.DConnectHelperException)error;
                             if (e.errorCode == 2) {
                                 outError = null;
-                                outAuthInfo = new DConnectHelper.AuthInfo("dummy_id", null);
+                                outAuthInfo = new DConnectHelper.AuthInfo("example_id", null);
                             }
                         }
                         // 失敗したらクリア

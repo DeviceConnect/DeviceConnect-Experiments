@@ -28,8 +28,8 @@
                                 "version": "1.0.0",
                                 "services": [
                                     {
-                                        "id": "dummy.deviceconnect.org",
-                                        "name": "Dummy Service",
+                                        "id": "example.deviceconnect.org",
+                                        "name": "PlaceHolder Service",
                                         "online": true,
                                         "scopes": []
                                     }

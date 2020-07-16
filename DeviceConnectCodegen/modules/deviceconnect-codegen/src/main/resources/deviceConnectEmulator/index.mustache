@@ -121,7 +121,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
         }
 
         // Check whether already connected with same origin.
-        var origin = request.origin || 'dummy';
+        var origin = request.origin || 'example';
         if (websockets[origin] && !websockets[origin].isSame(connection)) {
           console.log('Already connected: origin = ' + origin);
           var error = {
@@ -201,7 +201,7 @@ function stopEvent(req) {
 function parseOrigin(req) {
   var origin = req.headers.origin;
   if (!origin) {
-    origin = 'dummy';
+    origin = 'example';
   }
   return origin;
 }
