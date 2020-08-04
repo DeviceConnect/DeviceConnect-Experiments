@@ -464,7 +464,7 @@ public class Peer {
             }
 
             PeerConnectionFactory.initializeFieldTrials(FIELD_TRIAL_AUTOMATIC_RESIZE);
-            WebRtcAudioManager.setBlacklistDeviceForOpenSLESUsage(true);
+            WebRtcAudioManager.setDenyListDeviceForOpenSLESUsage(true);
             boolean result = PeerConnectionFactory.initializeAndroidGlobals(mContext,
                     enableAudio, enableVideo, enableHWCodec);
             if (!result) {
