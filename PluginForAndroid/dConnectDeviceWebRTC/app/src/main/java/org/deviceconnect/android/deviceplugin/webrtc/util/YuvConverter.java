@@ -89,7 +89,7 @@ public class YuvConverter {
 
     public YuvConverter (EglBase.Context sharedContext) {
         eglBase = EglBase.create(sharedContext, EglBase.CONFIG_PIXEL_RGBA_BUFFER);
-        eglBase.createDummyPbufferSurface();
+        eglBase.createPlaceHolderPbufferSurface();
         eglBase.makeCurrent();
 
         shader = new GlShader(VERTEX_SHADER, FRAGMENT_SHADER);
